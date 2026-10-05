@@ -81,28 +81,8 @@ gtest_discover_tests(EdpTests)
 
 set(TCPTransportInterface_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessage.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/MulticastTransportInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/RTCPMessageManager.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/TCPControlMessage.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorBasic.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResource.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceBasic.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPTransportInterface.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPv4Transport.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPv6Transport.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TransportInterface.cpp
     )
-if(TLS_FOUND)
-    set(TCPTransportInterface_SOURCE
-        ${TCPTransportInterface_SOURCE}
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorSecure.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceSecure.cpp
-        )
-endif()
 
 set(PDPTESTS_SOURCE PDPTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterList.cpp
@@ -124,11 +104,7 @@ set(PDPTESTS_SOURCE PDPTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/FlowControllerConsts.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkBuffer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkConfiguration.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChainingTransport.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterfaceWithFilter.cpp
@@ -175,6 +151,10 @@ target_link_libraries(PDPTests
 fastdds_target_link_object_groups(PDPTests
     fastdds::log
     fastdds::rtps::host-net
+    fastdds::rtps::transport-core
+    fastdds::rtps::network-factory
+    fastdds::rtps::transport-tcp
+    fastdds::rtps::transport-tcpv6
     )
 
 

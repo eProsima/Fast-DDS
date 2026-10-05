@@ -242,6 +242,12 @@ function(fastdds_target_link_object_groups target)
 
         _fastdds_robj_group_sources(_gsrcs ${_group})
 
+        # A group may contribute nothing in some configurations (e.g. all its
+        # sources depend on a disabled option); there is nothing to share then.
+        if(NOT _gsrcs)
+            continue()
+        endif()
+
         # Some suites also list part of the group explicitly in their own source
         # list. INTERFACE source propagation used to merge both, sharing objects
         # would instead link the same symbols twice, so drop them here.

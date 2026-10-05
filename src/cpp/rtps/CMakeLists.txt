@@ -193,3 +193,307 @@ fastdds_declare_object_group(fastdds-rtps-core-full
     )
 
 #}}}
+
+#{{{ Interface library for grouping the transport building blocks shared by every transport
+
+add_library(fastdds-rtps-transport-core INTERFACE)
+
+add_library(fastdds::rtps::transport-core ALIAS fastdds-rtps-transport-core)
+
+target_compile_features(fastdds-rtps-transport-core INTERFACE cxx_std_11)
+
+target_sources(fastdds-rtps-transport-core INTERFACE
+    messages/RTPSMessageCreator.cpp
+    network/NetworkBuffer.cpp
+    network/NetworkConfiguration.cpp
+    transport/ChainingTransport.cpp
+    transport/ChannelResource.cpp
+    transport/MulticastTransportInterface.cpp
+    transport/tcp/TCPControlMessage.cpp
+    transport/TransportInterface.cpp
+    )
+
+# Settings this group's code is sensitive to. See cmake/common/reusable_objects.cmake.
+fastdds_declare_object_group(fastdds-rtps-transport-core
+    MOCKS
+        rtps/Log
+    DEFINES
+        ENABLE_OLD_LOG_MACROS_
+        FASTDDS_ENFORCE_LOG_INFO
+        HAVE_LOG_NO_ERROR
+        HAVE_LOG_NO_INFO
+        HAVE_LOG_NO_WARNING
+    )
+
+#}}}
+
+#{{{ Interface library for grouping the network factory
+
+add_library(fastdds-rtps-network-factory INTERFACE)
+
+add_library(fastdds::rtps::network-factory ALIAS fastdds-rtps-network-factory)
+
+target_compile_features(fastdds-rtps-network-factory INTERFACE cxx_std_11)
+
+target_sources(fastdds-rtps-network-factory INTERFACE
+    network/NetworkFactory.cpp
+    )
+
+# Settings this group's code is sensitive to. See cmake/common/reusable_objects.cmake.
+fastdds_declare_object_group(fastdds-rtps-network-factory
+    MOCKS
+        dds/QosPolicies
+        dds/TypeSupport
+        rtps/Endpoint
+        rtps/Log
+        rtps/MessageReceiver
+        rtps/NetworkFactory
+        rtps/ReaderHistory
+        rtps/ReaderLocator
+        rtps/ReaderProxyData
+        rtps/ReceiverResource
+        rtps/ResourceEvent
+        rtps/RTPSMessageGroup
+        rtps/RTPSParticipant
+        rtps/RTPSParticipantAttributes
+        rtps/RTPSReader
+        rtps/RTPSWriter
+        rtps/StatefulReader
+        rtps/StatefulWriter
+        rtps/StatelessWriter
+        rtps/TCPTransportDescriptor
+        rtps/UDPTransportDescriptor
+        rtps/UDPv4TransportDescriptor
+        rtps/WriterHistory
+        rtps/WriterProxyData
+    DEFINES
+        ENABLE_OLD_LOG_MACROS_
+        FASTDDS_ENFORCE_LOG_INFO
+        HAVE_LOG_NO_ERROR
+        HAVE_LOG_NO_INFO
+        HAVE_LOG_NO_WARNING
+    )
+
+#}}}
+
+#{{{ Interface library for grouping the TCP transport (IPv4 and common parts)
+
+add_library(fastdds-rtps-transport-tcp INTERFACE)
+
+add_library(fastdds::rtps::transport-tcp ALIAS fastdds-rtps-transport-tcp)
+
+target_compile_features(fastdds-rtps-transport-tcp INTERFACE cxx_std_11)
+
+target_sources(fastdds-rtps-transport-tcp INTERFACE
+    transport/tcp/RTCPMessageManager.cpp
+    transport/TCPAcceptor.cpp
+    transport/TCPAcceptorBasic.cpp
+    transport/TCPChannelResource.cpp
+    transport/TCPChannelResourceBasic.cpp
+    transport/TCPTransportInterface.cpp
+    transport/TCPv4Transport.cpp
+    )
+
+# Same condition under which the consumer suites compile these sources.
+if(TLS_FOUND)
+    target_sources(fastdds-rtps-transport-tcp INTERFACE
+        transport/TCPAcceptorSecure.cpp
+        transport/TCPChannelResourceSecure.cpp
+        )
+endif()
+
+# Settings this group's code is sensitive to. See cmake/common/reusable_objects.cmake.
+fastdds_declare_object_group(fastdds-rtps-transport-tcp
+    MOCKS
+        dds/QosPolicies
+        rtps/Endpoint
+        rtps/Log
+        rtps/ReaderLocator
+        rtps/ReaderProxyData
+        rtps/RTPSMessageGroup
+        rtps/RTPSParticipantAttributes
+        rtps/RTPSWriter
+        rtps/StatefulWriter
+        rtps/StatelessWriter
+        rtps/TCPTransportDescriptor
+        rtps/TCPv4TransportDescriptor
+        rtps/TCPv6TransportDescriptor
+        rtps/UDPTransportDescriptor
+        rtps/UDPv4TransportDescriptor
+        rtps/WriterHistory
+    DEFINES
+        ENABLE_OLD_LOG_MACROS_
+        FASTDDS_ENFORCE_LOG_INFO
+        HAVE_LOG_NO_ERROR
+        HAVE_LOG_NO_INFO
+        HAVE_LOG_NO_WARNING
+    )
+
+#}}}
+
+#{{{ Interface library for grouping the TCPv6 transport
+
+add_library(fastdds-rtps-transport-tcpv6 INTERFACE)
+
+add_library(fastdds::rtps::transport-tcpv6 ALIAS fastdds-rtps-transport-tcpv6)
+
+target_compile_features(fastdds-rtps-transport-tcpv6 INTERFACE cxx_std_11)
+
+target_sources(fastdds-rtps-transport-tcpv6 INTERFACE
+    transport/TCPv6Transport.cpp
+    )
+
+# Settings this group's code is sensitive to. See cmake/common/reusable_objects.cmake.
+fastdds_declare_object_group(fastdds-rtps-transport-tcpv6
+    MOCKS
+        dds/QosPolicies
+        rtps/Endpoint
+        rtps/Log
+        rtps/ReaderLocator
+        rtps/ReaderProxyData
+        rtps/RTPSMessageGroup
+        rtps/RTPSParticipantAttributes
+        rtps/RTPSWriter
+        rtps/StatefulWriter
+        rtps/StatelessWriter
+        rtps/TCPTransportDescriptor
+        rtps/TCPv6TransportDescriptor
+        rtps/UDPTransportDescriptor
+        rtps/UDPv4TransportDescriptor
+        rtps/WriterHistory
+    DEFINES
+        ENABLE_OLD_LOG_MACROS_
+        FASTDDS_ENFORCE_LOG_INFO
+        HAVE_LOG_NO_ERROR
+        HAVE_LOG_NO_INFO
+        HAVE_LOG_NO_WARNING
+    )
+
+#}}}
+
+#{{{ Interface library for grouping the UDP transport (IPv4 and common parts)
+
+add_library(fastdds-rtps-transport-udp INTERFACE)
+
+add_library(fastdds::rtps::transport-udp ALIAS fastdds-rtps-transport-udp)
+
+target_compile_features(fastdds-rtps-transport-udp INTERFACE cxx_std_11)
+
+target_sources(fastdds-rtps-transport-udp INTERFACE
+    transport/UDPChannelResource.cpp
+    transport/UDPTransportInterface.cpp
+    transport/UDPv4Transport.cpp
+    )
+
+# Settings this group's code is sensitive to. See cmake/common/reusable_objects.cmake.
+fastdds_declare_object_group(fastdds-rtps-transport-udp
+    MOCKS
+        dds/QosPolicies
+        rtps/Endpoint
+        rtps/Log
+        rtps/MessageReceiver
+        rtps/ReaderLocator
+        rtps/ReaderProxyData
+        rtps/ReceiverResource
+        rtps/RTPSMessageGroup
+        rtps/RTPSParticipantAttributes
+        rtps/RTPSWriter
+        rtps/StatefulWriter
+        rtps/StatelessWriter
+        rtps/UDPTransportDescriptor
+        rtps/UDPv4TransportDescriptor
+        rtps/WriterHistory
+    DEFINES
+        ENABLE_OLD_LOG_MACROS_
+        FASTDDS_ENFORCE_LOG_INFO
+        HAVE_LOG_NO_ERROR
+        HAVE_LOG_NO_INFO
+        HAVE_LOG_NO_WARNING
+    )
+
+#}}}
+
+#{{{ Interface library for grouping the UDPv6 transport
+
+add_library(fastdds-rtps-transport-udpv6 INTERFACE)
+
+add_library(fastdds::rtps::transport-udpv6 ALIAS fastdds-rtps-transport-udpv6)
+
+target_compile_features(fastdds-rtps-transport-udpv6 INTERFACE cxx_std_11)
+
+target_sources(fastdds-rtps-transport-udpv6 INTERFACE
+    transport/UDPv6Transport.cpp
+    )
+
+# Settings this group's code is sensitive to. See cmake/common/reusable_objects.cmake.
+fastdds_declare_object_group(fastdds-rtps-transport-udpv6
+    MOCKS
+        dds/QosPolicies
+        rtps/Endpoint
+        rtps/Log
+        rtps/MessageReceiver
+        rtps/ReaderLocator
+        rtps/ReaderProxyData
+        rtps/RTPSMessageGroup
+        rtps/RTPSParticipantAttributes
+        rtps/RTPSWriter
+        rtps/StatefulWriter
+        rtps/StatelessWriter
+        rtps/UDPTransportDescriptor
+        rtps/UDPv4TransportDescriptor
+        rtps/UDPv6TransportDescriptor
+        rtps/WriterHistory
+    DEFINES
+        ENABLE_OLD_LOG_MACROS_
+        FASTDDS_ENFORCE_LOG_INFO
+        HAVE_LOG_NO_ERROR
+        HAVE_LOG_NO_INFO
+        HAVE_LOG_NO_WARNING
+    )
+
+#}}}
+
+#{{{ Interface library for grouping the shared memory transport
+
+add_library(fastdds-rtps-transport-shm INTERFACE)
+
+add_library(fastdds::rtps::transport-shm ALIAS fastdds-rtps-transport-shm)
+
+target_compile_features(fastdds-rtps-transport-shm INTERFACE cxx_std_11)
+
+# Same condition under which the consumer suites compile this source.
+if(IS_THIRDPARTY_BOOST_OK)
+    target_sources(fastdds-rtps-transport-shm INTERFACE
+        transport/shared_mem/SharedMemTransport.cpp
+        )
+endif()
+
+# Settings this group's code is sensitive to. See cmake/common/reusable_objects.cmake.
+fastdds_declare_object_group(fastdds-rtps-transport-shm
+    MOCKS
+        dds/QosPolicies
+        rtps/Endpoint
+        rtps/Log
+        rtps/MessageReceiver
+        rtps/ReaderLocator
+        rtps/ReaderProxyData
+        rtps/ReceiverResource
+        rtps/RTPSMessageGroup
+        rtps/RTPSParticipantAttributes
+        rtps/RTPSWriter
+        rtps/SharedMemSegment
+        rtps/SharedMemTransportDescriptor
+        rtps/StatefulWriter
+        rtps/StatelessWriter
+        rtps/UDPTransportDescriptor
+        rtps/UDPv4TransportDescriptor
+        rtps/WriterHistory
+    DEFINES
+        ENABLE_OLD_LOG_MACROS_
+        FASTDDS_ENFORCE_LOG_INFO
+        HAVE_LOG_NO_ERROR
+        HAVE_LOG_NO_INFO
+        HAVE_LOG_NO_WARNING
+    )
+
+#}}}

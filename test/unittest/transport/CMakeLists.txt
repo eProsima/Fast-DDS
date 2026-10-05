@@ -40,25 +40,7 @@ endif()
 
 set(TCPTransportInterface_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessage.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/MulticastTransportInterface.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/RTCPMessageManager.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/TCPControlMessage.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorBasic.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResource.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceBasic.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPTransportInterface.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPv4Transport.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPv6Transport.cpp
     )
-if(TLS_FOUND)
-    set(TCPTransportInterface_SOURCE
-        ${TCPTransportInterface_SOURCE}
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorSecure.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceSecure.cpp
-        )
-endif()
 
 set(UDPV4TESTS_SOURCE
     UDPv4Tests.cpp
@@ -70,20 +52,11 @@ set(UDPV4TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessage.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkBuffer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkConfiguration.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChainingTransport.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterfaceWithFilter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TransportInterface.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPChannelResource.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPTransportInterface.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPv4Transport.cpp
     ${TCPTransportInterface_SOURCE}
     )
 
@@ -97,20 +70,11 @@ set(ASIOHELPERSTESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessage.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkBuffer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkConfiguration.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChainingTransport.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterfaceWithFilter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TransportInterface.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPChannelResource.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPTransportInterface.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPv4Transport.cpp
     ${TCPTransportInterface_SOURCE}
     )
 
@@ -125,21 +89,11 @@ set(UDPV6TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessage.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkBuffer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkConfiguration.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChainingTransport.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterfaceWithFilter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TransportInterface.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPChannelResource.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPTransportInterface.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPv4Transport.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPv6Transport.cpp
     ${TCPTransportInterface_SOURCE}
     )
 
@@ -155,40 +109,16 @@ set(TCPV4TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessage.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkBuffer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkConfiguration.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChainingTransport.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/MulticastTransportInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterfaceWithFilter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/RTCPMessageManager.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/TCPControlMessage.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorBasic.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResource.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceBasic.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPTransportInterface.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPv4Transport.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TransportInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/TimedConditionVariable.cpp
     )
-
-if(TLS_FOUND)
-    set(TCPV4TESTS_SOURCE
-        ${TCPV4TESTS_SOURCE}
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorSecure.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceSecure.cpp
-        )
-endif()
 
 set(TCPV6TESTS_SOURCE
     TCPv6Tests.cpp
@@ -201,41 +131,16 @@ set(TCPV6TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessage.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkBuffer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkConfiguration.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChainingTransport.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/MulticastTransportInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterfaceWithFilter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/RTCPMessageManager.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/TCPControlMessage.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorBasic.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResource.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceBasic.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPTransportInterface.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPv4Transport.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPv6Transport.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TransportInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/TimedConditionVariable.cpp
     )
-
-if(TLS_FOUND)
-    set(TCPV6TESTS_SOURCE
-        ${TCPV6TESTS_SOURCE}
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorSecure.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceSecure.cpp
-        )
-endif()
 
 set(SHAREDMEMTESTS_SOURCE
     SharedMemTests.cpp
@@ -246,19 +151,12 @@ set(SHAREDMEMTESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/GuidPrefix_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkBuffer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkConfiguration.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChainingTransport.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterfaceWithFilter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/SharedMemTransport.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/SharedMemTransportDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TransportInterface.cpp
     ${TCPTransportInterface_SOURCE}
     )
 
@@ -307,6 +205,11 @@ target_link_libraries(UDPv4Tests
 fastdds_target_link_object_groups(UDPv4Tests
     fastdds::log
     fastdds::rtps::host-net
+    fastdds::rtps::transport-core
+    fastdds::rtps::network-factory
+    fastdds::rtps::transport-tcp
+    fastdds::rtps::transport-tcpv6
+    fastdds::rtps::transport-udp
     )
 
 gtest_discover_tests(UDPv4Tests)
@@ -339,6 +242,12 @@ if(NOT DISABLE_UDPV6_TESTS)
     fastdds_target_link_object_groups(UDPv6Tests
         fastdds::log
         fastdds::rtps::host-net
+        fastdds::rtps::transport-core
+        fastdds::rtps::network-factory
+        fastdds::rtps::transport-tcp
+        fastdds::rtps::transport-tcpv6
+        fastdds::rtps::transport-udp
+        fastdds::rtps::transport-udpv6
         )
 
     gtest_discover_tests(UDPv6Tests)
@@ -368,6 +277,10 @@ if(NOT DISABLE_UDPV6_TESTS)
     fastdds_target_link_object_groups(TCPv6Tests
         fastdds::log
         fastdds::rtps::host-net
+        fastdds::rtps::transport-core
+        fastdds::rtps::network-factory
+        fastdds::rtps::transport-tcp
+        fastdds::rtps::transport-tcpv6
         )
 
     gtest_discover_tests(TCPv6Tests)
@@ -398,6 +311,9 @@ target_link_libraries(TCPv4Tests
 fastdds_target_link_object_groups(TCPv4Tests
     fastdds::log
     fastdds::rtps::host-net
+    fastdds::rtps::transport-core
+    fastdds::rtps::network-factory
+    fastdds::rtps::transport-tcp
     )
 
 gtest_discover_tests(TCPv4Tests)
@@ -431,6 +347,11 @@ if(IS_THIRDPARTY_BOOST_OK)
     fastdds_target_link_object_groups(SharedMemTests
         fastdds::log
         fastdds::rtps::host-net
+        fastdds::rtps::transport-core
+        fastdds::rtps::network-factory
+        fastdds::rtps::transport-tcp
+        fastdds::rtps::transport-tcpv6
+        fastdds::rtps::transport-shm
         )
 
     gtest_discover_tests(SharedMemTests)
@@ -488,6 +409,11 @@ target_link_libraries(AsioHelpersTests
 fastdds_target_link_object_groups(AsioHelpersTests
     fastdds::log
     fastdds::rtps::host-net
+    fastdds::rtps::transport-core
+    fastdds::rtps::network-factory
+    fastdds::rtps::transport-tcp
+    fastdds::rtps::transport-tcpv6
+    fastdds::rtps::transport-udp
     )
 
 gtest_discover_tests(AsioHelpersTests)

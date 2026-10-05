@@ -189,10 +189,6 @@ set(STATEFUL_READER_TESTS_SOURCE StatefulReaderTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPool.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPoolRegistry.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessage.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkBuffer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkConfiguration.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/external_locators.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp
@@ -201,28 +197,11 @@ set(STATEFUL_READER_TESTS_SOURCE StatefulReaderTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChainingTransport.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/MulticastTransportInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterfaceWithFilter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/SharedMemTransportDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/RTCPMessageManager.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/TCPControlMessage.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorBasic.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResource.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceBasic.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPTransportInterface.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPv4Transport.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPv6Transport.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TransportInterface.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPChannelResource.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPTransportInterface.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPv4Transport.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPv6Transport.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/LivelinessManager.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/LocatorSelectorSender.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/ReaderProxy.cpp
@@ -269,21 +248,6 @@ if (FASTDDS_STATISTICS)
         ${statistics_sources}
         )
 
-endif()
-
-# SHM Transport
-if(IS_THIRDPARTY_BOOST_OK)
-    list(APPEND STATEFUL_READER_TESTS_SOURCE
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/SharedMemTransport.cpp
-        )
-endif()
-
-# TLS Support
-if(TLS_FOUND)
-    list(APPEND STATEFUL_READER_TESTS_SOURCE
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceSecure.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorSecure.cpp
-        )
 endif()
 
 # Security Support
@@ -344,6 +308,13 @@ fastdds_target_link_object_groups(StatefulReaderTests
     fastdds::xtypes::type-representation
     fastdds::rtps::host-net
     fastdds::rtps::core-full
+    fastdds::rtps::transport-core
+    fastdds::rtps::network-factory
+    fastdds::rtps::transport-tcp
+    fastdds::rtps::transport-tcpv6
+    fastdds::rtps::transport-udp
+    fastdds::rtps::transport-udpv6
+    fastdds::rtps::transport-shm
     )
 
 gtest_discover_tests(StatefulReaderTests)
@@ -378,11 +349,6 @@ set(STATELESS_READER_TESTS_SOURCE StatelessReaderTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPool.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPoolRegistry.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessage.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkBuffer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkConfiguration.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChainingTransport.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/external_locators.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp
@@ -391,27 +357,11 @@ set(STATELESS_READER_TESTS_SOURCE StatelessReaderTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/MulticastTransportInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterfaceWithFilter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/SharedMemTransportDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/RTCPMessageManager.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/TCPControlMessage.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorBasic.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResource.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceBasic.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPTransportInterface.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPv4Transport.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPv6Transport.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TransportInterface.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPChannelResource.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPTransportInterface.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPv4Transport.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPv6Transport.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/LivelinessManager.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/LocatorSelectorSender.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/ReaderProxy.cpp
@@ -458,21 +408,6 @@ if (FASTDDS_STATISTICS)
         ${statistics_sources}
         )
 
-endif()
-
-# SHM Transport
-if(IS_THIRDPARTY_BOOST_OK)
-    list(APPEND STATELESS_READER_TESTS_SOURCE
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/SharedMemTransport.cpp
-        )
-endif()
-
-# TLS Support
-if(TLS_FOUND)
-    list(APPEND STATELESS_READER_TESTS_SOURCE
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceSecure.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorSecure.cpp
-        )
 endif()
 
 # Security Support
@@ -533,6 +468,13 @@ fastdds_target_link_object_groups(StatelessReaderTests
     fastdds::xtypes::type-representation
     fastdds::rtps::host-net
     fastdds::rtps::core-full
+    fastdds::rtps::transport-core
+    fastdds::rtps::network-factory
+    fastdds::rtps::transport-tcp
+    fastdds::rtps::transport-tcpv6
+    fastdds::rtps::transport-udp
+    fastdds::rtps::transport-udpv6
+    fastdds::rtps::transport-shm
     )
 
 gtest_discover_tests(StatelessReaderTests)
