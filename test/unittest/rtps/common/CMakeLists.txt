@@ -13,17 +13,11 @@
 # limitations under the License.
 
 set(CACHECHANGETESTS_SOURCE CacheChangeTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
+    )
 set(GUID_UTILS_TESTS_SOURCE GuidUtilsTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/GuidPrefix_t.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterfaceWithFilter.cpp
     )
 
 if(ANDROID)
@@ -43,17 +37,11 @@ set(SERIALIZEDPAYLOADTESTS_SOURCE SerializedPayloadTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp)
 set(SEQUENCENUMBERTESTS_SOURCE SequenceNumberTests.cpp)
 set(PORTPARAMETERSTESTS_SOURCE PortParametersTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterfaceWithFilter.cpp
     )
 
 set(TIMETESTS_SOURCE TimeTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
+    )
 
 set(VENDORIDTESTS_SOURCE VendorIdTests.cpp)
 
@@ -63,6 +51,10 @@ target_include_directories(CacheChangeTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(CacheChangeTests GTest::gtest)
+fastdds_target_link_object_groups(CacheChangeTests
+    fastdds::time
+    )
+
 gtest_discover_tests(CacheChangeTests)
 
 add_executable(GuidUtilsTests ${GUID_UTILS_TESTS_SOURCE})
@@ -80,6 +72,8 @@ target_link_libraries(GuidUtilsTests
 fastdds_target_link_object_groups(GuidUtilsTests
     fastdds::log
     fastdds::rtps::host-net
+    fastdds::rtps::net-interface
+    fastdds::time
     )
 
 gtest_discover_tests(GuidUtilsTests)
@@ -108,6 +102,8 @@ target_link_libraries(PortParametersTests
 fastdds_target_link_object_groups(PortParametersTests
     fastdds::log
     fastdds::rtps::host-net
+    fastdds::rtps::net-interface
+    fastdds::time
     )
 
 gtest_discover_tests(PortParametersTests PROPERTIES LABELS "NoMemoryCheck")
@@ -161,6 +157,10 @@ target_include_directories(TimeTests PRIVATE ${GTEST_INCLUDE_DIRS}
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(TimeTests GTest::gtest)
+fastdds_target_link_object_groups(TimeTests
+    fastdds::time
+    )
+
 gtest_discover_tests(TimeTests PROPERTIES LABELS "NoMemoryCheck")
 
 ###################

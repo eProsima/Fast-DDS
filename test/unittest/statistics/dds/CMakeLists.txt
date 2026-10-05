@@ -80,7 +80,6 @@ if (FASTDDS_STATISTICS)
         DomainParticipantStatisticsListenerTests.cpp)
 
     add_executable(DomainParticipantStatisticsListenerTests
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/domain/DomainParticipantStatisticsListener.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesPubSubTypes.cxx
@@ -88,7 +87,6 @@ if (FASTDDS_STATISTICS)
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesTypeObjectSupport.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
         ${TINYXML2_SOURCES}
         ${DOMAINPARTICIPANTSTATISTICSLISTENER_TESTS_SOURCE})
     target_include_directories(DomainParticipantStatisticsListenerTests PRIVATE
@@ -110,6 +108,7 @@ if (FASTDDS_STATISTICS)
         fastdds::xtypes::dynamic-types::impl
         fastdds::xtypes::type-representation
         fastdds::rtps::host-net
+        fastdds::time
         )
 
     gtest_discover_tests(DomainParticipantStatisticsListenerTests)
@@ -135,7 +134,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterList.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/QosPolicyUtils.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/QosPolicyUtils.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/domain/DomainParticipant.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/domain/DomainParticipantFactory.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/domain/qos/DomainParticipantFactoryQos.cpp
@@ -186,7 +184,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/discovery/participant/PDP.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/GuidPrefix_t.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/DataSharing/DataSharingPayloadPool.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/FlowControllerConsts.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/FlowControllerFactory.cpp
@@ -204,9 +201,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterfaceWithFilter.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/SharedMemTransportDescriptor.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/LivelinessManager.cpp
@@ -249,7 +243,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Entity.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterList.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/QosPolicyUtils.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/domain/DomainParticipant.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/domain/DomainParticipantFactory.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/domain/qos/DomainParticipantFactoryQos.cpp
@@ -293,7 +286,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/discovery/participant/PDP.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/GuidPrefix_t.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/DataSharing/DataSharingPayloadPool.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/FlowControllerConsts.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/FlowControllerFactory.cpp
@@ -311,9 +303,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterfaceWithFilter.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/SharedMemTransportDescriptor.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/LivelinessManager.cpp
@@ -409,6 +398,8 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         fastdds::rtps::transport-udp
         fastdds::rtps::transport-udpv6
         fastdds::rtps::transport-shm
+        fastdds::rtps::net-interface
+        fastdds::time
         )
 
 
@@ -451,6 +442,8 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         fastdds::rtps::transport-udp
         fastdds::rtps::transport-udpv6
         fastdds::rtps::transport-shm
+        fastdds::rtps::net-interface
+        fastdds::time
         )
 
 

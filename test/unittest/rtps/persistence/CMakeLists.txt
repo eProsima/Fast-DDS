@@ -18,18 +18,13 @@ if(SQLITE3_SUPPORT)
 
     set(PERSISTENCETESTS_SOURCE
         PersistenceTests.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/CacheChangePool.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/sqlite3.c
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/SQLite3PersistenceService.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterfaceWithFilter.cpp
         )
 
     add_executable(PersistenceTests ${PERSISTENCETESTS_SOURCE})
@@ -49,6 +44,8 @@ if(SQLITE3_SUPPORT)
     fastdds_target_link_object_groups(PersistenceTests
         fastdds::log
         fastdds::rtps::host-net
+        fastdds::rtps::net-interface
+        fastdds::time
         )
 
     gtest_discover_tests(PersistenceTests)

@@ -12,6 +12,53 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+#{{{ Interface library for grouping the time types (DDS and RTPS)
+
+add_library(fastdds-time INTERFACE)
+
+add_library(fastdds::time ALIAS fastdds-time)
+
+target_compile_features(fastdds-time INTERFACE cxx_std_11)
+
+target_sources(fastdds-time INTERFACE
+    common/Time_t.cpp
+    ${FASTDDS_DIR}/src/cpp/fastdds/core/Time_t.cpp
+    )
+
+# Neither mocks nor definitions reach these sources: a single flavour.
+# See cmake/common/reusable_objects.cmake.
+fastdds_declare_object_group(fastdds-time)
+
+#}}}
+
+#{{{ Interface library for grouping the network interface and netmask filter types
+
+add_library(fastdds-rtps-net-interface INTERFACE)
+
+add_library(fastdds::rtps::net-interface ALIAS fastdds-rtps-net-interface)
+
+target_compile_features(fastdds-rtps-net-interface INTERFACE cxx_std_11)
+
+target_sources(fastdds-rtps-net-interface INTERFACE
+    transport/network/NetmaskFilterKind.cpp
+    transport/network/NetworkInterface.cpp
+    transport/network/NetworkInterfaceWithFilter.cpp
+    )
+
+# Settings this group's code is sensitive to. See cmake/common/reusable_objects.cmake.
+fastdds_declare_object_group(fastdds-rtps-net-interface
+    MOCKS
+        rtps/Log
+    DEFINES
+        ENABLE_OLD_LOG_MACROS_
+        FASTDDS_ENFORCE_LOG_INFO
+        HAVE_LOG_NO_ERROR
+        HAVE_LOG_NO_INFO
+        HAVE_LOG_NO_WARNING
+    )
+
+#}}}
+
 #{{{ Interface library for grouping the host, locator and network utilities
 
 add_library(fastdds-rtps-host-net INTERFACE)

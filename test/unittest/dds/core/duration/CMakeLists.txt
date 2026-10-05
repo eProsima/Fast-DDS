@@ -13,8 +13,6 @@
 # limitations under the License.
 
 set(DURATION_TESTS_SOURCE
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     DurationTests.cpp)
 
 add_executable(DurationTests ${DURATION_TESTS_SOURCE})
@@ -26,4 +24,8 @@ target_include_directories(DurationTests PRIVATE
 )
 target_link_libraries(DurationTests
     GTest::gtest)
+fastdds_target_link_object_groups(DurationTests
+    fastdds::time
+    )
+
 gtest_discover_tests(DurationTests)

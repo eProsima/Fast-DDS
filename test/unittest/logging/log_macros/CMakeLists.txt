@@ -13,12 +13,7 @@
 # limitations under the License.
 
 set(LOG_COMMON_SOURCE
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterfaceWithFilter.cpp
     )
 
 # MACROS LOG TEST ALL
@@ -42,6 +37,8 @@ target_link_libraries(LogMacrosAllActiveTests
 fastdds_target_link_object_groups(LogMacrosAllActiveTests
     fastdds::log
     fastdds::rtps::host-net
+    fastdds::rtps::net-interface
+    fastdds::time
     )
 
 gtest_discover_tests(LogMacrosAllActiveTests)
@@ -68,6 +65,8 @@ target_link_libraries(LogMacrosNoInfoTests
 fastdds_target_link_object_groups(LogMacrosNoInfoTests
     fastdds::log
     fastdds::rtps::host-net
+    fastdds::rtps::net-interface
+    fastdds::time
     )
 
 gtest_discover_tests(LogMacrosNoInfoTests)
@@ -94,6 +93,8 @@ target_link_libraries(LogMacrosNoWarningTests
 fastdds_target_link_object_groups(LogMacrosNoWarningTests
     fastdds::log
     fastdds::rtps::host-net
+    fastdds::rtps::net-interface
+    fastdds::time
     )
 
 gtest_discover_tests(LogMacrosNoWarningTests)
@@ -120,6 +121,8 @@ target_link_libraries(LogMacrosNoErrorTests
 fastdds_target_link_object_groups(LogMacrosNoErrorTests
     fastdds::log
     fastdds::rtps::host-net
+    fastdds::rtps::net-interface
+    fastdds::time
     )
 
 gtest_discover_tests(LogMacrosNoErrorTests)
@@ -146,6 +149,8 @@ target_link_libraries(LogMacrosDefaultTests
 fastdds_target_link_object_groups(LogMacrosDefaultTests
     fastdds::log
     fastdds::rtps::host-net
+    fastdds::rtps::net-interface
+    fastdds::time
     )
 
 gtest_discover_tests(LogMacrosDefaultTests)
@@ -174,6 +179,8 @@ target_link_libraries(LogMacrosInternalDebugOffTests
 fastdds_target_link_object_groups(LogMacrosInternalDebugOffTests
     fastdds::log
     fastdds::rtps::host-net
+    fastdds::rtps::net-interface
+    fastdds::time
     )
 
 gtest_discover_tests(LogMacrosInternalDebugOffTests)
@@ -199,6 +206,8 @@ target_link_libraries(OldLogMacrosTests
 fastdds_target_link_object_groups(OldLogMacrosTests
     fastdds::log
     fastdds::rtps::host-net
+    fastdds::rtps::net-interface
+    fastdds::time
     )
 
 gtest_discover_tests(OldLogMacrosTests)
@@ -225,6 +234,8 @@ target_link_libraries(OldLogMacrosDisableTests
 fastdds_target_link_object_groups(OldLogMacrosDisableTests
     fastdds::log
     fastdds::rtps::host-net
+    fastdds::rtps::net-interface
+    fastdds::time
     )
 
 gtest_discover_tests(OldLogMacrosDisableTests)

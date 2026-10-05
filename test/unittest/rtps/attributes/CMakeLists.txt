@@ -48,10 +48,8 @@ set(SERVER_ATTRIBUTES_TESTS_EXEC ServerAttributesTests)
 
 set(SERVER_ATTRIBUTES_TESTS_SOURCE
     ServerAttributesTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ServerAttributes.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/GuidPrefix_t.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     )
 
 add_executable(${SERVER_ATTRIBUTES_TESTS_EXEC} ${SERVER_ATTRIBUTES_TESTS_SOURCE})
@@ -71,6 +69,7 @@ target_link_libraries(${SERVER_ATTRIBUTES_TESTS_EXEC}
 fastdds_target_link_object_groups(${SERVER_ATTRIBUTES_TESTS_EXEC}
     fastdds::log
     fastdds::rtps::host-net
+    fastdds::time
     )
 
 

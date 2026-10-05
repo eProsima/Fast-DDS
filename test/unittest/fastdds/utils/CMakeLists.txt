@@ -13,10 +13,8 @@
 # limitations under the License.
 
 set(TYPE_PROPAGATION_SOURCE
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/utils/TypePropagation.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     TypePropagationTests.cpp)
 
 add_executable(TypePropagationTests ${TYPE_PROPAGATION_SOURCE})
@@ -30,4 +28,8 @@ target_link_libraries(TypePropagationTests
     fastcdr
     GTest::gtest
     )
+fastdds_target_link_object_groups(TypePropagationTests
+    fastdds::time
+    )
+
 gtest_discover_tests(TypePropagationTests)

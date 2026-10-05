@@ -21,20 +21,13 @@ set(DATAREADERTESTS_SOURCE
     DataReaderTests.cpp
     )
 set(DATAREADERINSTANCETESTS_SOURCE DataReaderInstanceTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     )
 set(DATAREADERHISTORYTESTS_SOURCE DataReaderHistoryTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/history/DataReaderHistory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/History.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/ReaderHistory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterfaceWithFilter.cpp
     )
 
 if(ANDROID)
@@ -85,6 +78,10 @@ target_include_directories(DataReaderInstanceTests PRIVATE
 target_link_libraries(DataReaderInstanceTests foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
+fastdds_target_link_object_groups(DataReaderInstanceTests
+    fastdds::time
+    )
+
 gtest_discover_tests(DataReaderInstanceTests)
 
 add_executable(DataReaderHistoryTests ${DATAREADERHISTORYTESTS_SOURCE})
@@ -106,6 +103,8 @@ target_link_libraries(DataReaderHistoryTests
 fastdds_target_link_object_groups(DataReaderHistoryTests
     fastdds::log
     fastdds::rtps::host-net
+    fastdds::rtps::net-interface
+    fastdds::time
     )
 
 gtest_discover_tests(DataReaderHistoryTests)
