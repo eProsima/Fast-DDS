@@ -31,6 +31,11 @@ GuardCondition::GuardCondition()
 
 GuardCondition::~GuardCondition()
 {
+    // Detach here, while this is still a fully constructed GuardCondition.
+    // Condition::~Condition() also detaches, but it runs after the vtable has
+    // been rewritten, so a concurrent WaitSetImpl::wait() may call
+    // get_trigger_value() on a partially destroyed object.
+    notifier_->will_be_deleted(*this);
 }
 
 bool GuardCondition::get_trigger_value() const
