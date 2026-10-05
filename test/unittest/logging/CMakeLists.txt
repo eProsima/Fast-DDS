@@ -16,18 +16,11 @@ add_subdirectory(log_macros)
 
 set(LOG_COMMON_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/network.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterfaceWithFilter.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/Host.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     )
 
 # LOG TEST
@@ -56,6 +49,7 @@ target_link_libraries(LogTests
     )
 fastdds_target_link_object_groups(LogTests
     fastdds::log
+    fastdds::rtps::host-net
     )
 
 gtest_discover_tests(LogTests)
@@ -92,6 +86,7 @@ target_link_libraries(LogFileTests GTest::gtest ${MOCKS}
     )
 fastdds_target_link_object_groups(LogFileTests
     fastdds::log
+    fastdds::rtps::host-net
     )
 
 gtest_discover_tests(LogFileTests)

@@ -15,21 +15,14 @@
 set(FLOWCONTROLLER_COMMON_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/FlowControllerConsts.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/network.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterfaceWithFilter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/LocatorSelectorSender.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/Host.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     )
 
 set(FLOWCONTROLLERFACTORYTESTS_SOURCE
@@ -56,6 +49,7 @@ target_link_libraries(FlowControllerFactoryTests
     )
 fastdds_target_link_object_groups(FlowControllerFactoryTests
     fastdds::log
+    fastdds::rtps::host-net
     )
 
 gtest_discover_tests(FlowControllerFactoryTests)
@@ -87,6 +81,7 @@ target_link_libraries(FlowControllerPublishModesTests
     )
 fastdds_target_link_object_groups(FlowControllerPublishModesTests
     fastdds::log
+    fastdds::rtps::host-net
     )
 
 gtest_discover_tests(FlowControllerPublishModesTests)
@@ -114,6 +109,7 @@ target_link_libraries(FlowControllerSchedulersTests
     )
 fastdds_target_link_object_groups(FlowControllerSchedulersTests
     fastdds::log
+    fastdds::rtps::host-net
     )
 
 gtest_discover_tests(FlowControllerSchedulersTests)

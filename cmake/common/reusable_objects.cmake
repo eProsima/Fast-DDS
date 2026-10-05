@@ -317,6 +317,8 @@ function(fastdds_create_reusable_objects)
             ${THIRDPARTY_BOOST_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
             ${TINYXML2_INCLUDE_DIR}
+            $<$<BOOL:${OPENSSL_INCLUDE_DIR}>:${OPENSSL_INCLUDE_DIR}>
+            $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
             )
 
         # Only the flavour definitions. The common ones are inherited from the
