@@ -603,8 +603,9 @@ bool UDPTransportInterface::send(
             (void)timeout;
 #ifndef _WIN32
             struct timeval timeStruct;
-            timeStruct.tv_sec = 0;
-            timeStruct.tv_usec = timeout.count() > 0 ? timeout.count() : 0;
+            auto timeout_count = timeout.count() > 0 ? timeout.count() : 0;
+            timeStruct.tv_sec = static_cast<decltype(timeStruct.tv_sec)>(timeout_count / 1000000);
+            timeStruct.tv_usec = static_cast<decltype(timeStruct.tv_usec)>(timeout_count % 1000000);
             setsockopt(getSocketPtr(socket)->native_handle(), SOL_SOCKET, SO_SNDTIMEO,
                     reinterpret_cast<const char*>(&timeStruct), sizeof(timeStruct));
 #endif // ifndef _WIN32
