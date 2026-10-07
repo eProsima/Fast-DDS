@@ -101,7 +101,7 @@ PublisherApp::PublisherApp(
     uint32_t sample_limit = samples_ + 1; // include dispose sample
     if (samples_ == 0)
     {
-        sample_limit = DATAWRITER_QOS_DEFAULT.resource_limits().max_samples_per_instance;
+        sample_limit = CLIParser::DEFAULT_HISTORY_DEPTH;
     }
     writer_qos.resource_limits().max_instances = instances_;
     writer_qos.history().depth = sample_limit;
