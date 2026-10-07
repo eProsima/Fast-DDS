@@ -651,6 +651,39 @@ ReturnCode_t dyn_type_tree_to_idl(
     return ret;
 }
 
+/**
+ * Write a named type, placing array bounds after the declarator.
+ * @param [in] info Type spelling, member name and dynamic type of the declaration.
+ * @param [out] idl Output stream.
+ * @return RETCODE_OK on success, or RETCODE_BAD_PARAMETER for a malformed array spelling.
+ */
+static ReturnCode_t declaration_to_idl(
+        const TreeNodeType& info,
+        std::ostream& idl) noexcept
+{
+    if (TK_ARRAY == info.dynamic_type->get_kind())
+    {
+        const auto dim_pos = info.type_kind_name.find("[");
+
+        if (std::string::npos == dim_pos)
+        {
+            EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Array type name is not well formed.");
+            return RETCODE_BAD_PARAMETER;
+        }
+
+        const auto kind_name_str = info.type_kind_name.substr(0, dim_pos);
+        const auto dim_str = info.type_kind_name.substr(dim_pos, std::string::npos);
+
+        idl << kind_name_str << " " << info.member_name << dim_str;
+    }
+    else
+    {
+        idl << info.type_kind_name << " " << info.member_name;
+    }
+
+    return RETCODE_OK;
+}
+
 ReturnCode_t alias_to_idl(
         const TreeNode<TreeNodeType>& node,
         std::ostream& idl) noexcept
@@ -675,7 +708,8 @@ ReturnCode_t alias_to_idl(
     idl << "typedef ";
 
     // Find the base type of the alias
-    ret = type_kind_to_idl(type_descriptor->base_type(), idl);
+    std::stringstream base_type_idl;
+    ret = type_kind_to_idl(type_descriptor->base_type(), base_type_idl);
 
     if (RETCODE_OK != ret)
     {
@@ -683,7 +717,8 @@ ReturnCode_t alias_to_idl(
         return ret;
     }
 
-    idl << " " << type_name << ";\n";
+    ret = declaration_to_idl(TreeNodeType(type_name, base_type_idl.str(), type_descriptor->base_type()), idl);
+    idl << ";\n";
 
     // Close modules definition (if any)
     close_modules_definition(n_modules, idl);
@@ -1092,14 +1127,23 @@ ReturnCode_t union_to_idl(
 
         idl << TAB_SEPARATOR << TAB_SEPARATOR << tabulate_n(n_modules);
 
-        ret = type_kind_to_idl(member_descriptor->type(), idl);
+        std::stringstream member_type_idl;
+        ret = type_kind_to_idl(member_descriptor->type(), member_type_idl);
 
         if (RETCODE_OK != ret)
         {
             return ret;
         }
 
-        idl << " " << member->get_name().to_string() << ";\n";
+        ret = declaration_to_idl(TreeNodeType(member->get_name().to_string(), member_type_idl.str(),
+                        member_descriptor->type()), idl);
+
+        if (RETCODE_OK != ret)
+        {
+            return ret;
+        }
+
+        idl << ";\n";
     }
 
     // Close type definition
@@ -1122,27 +1166,7 @@ ReturnCode_t node_to_idl(
         idl << "@key ";
     }
 
-    if (TK_ARRAY == node.info.dynamic_type->get_kind())
-    {
-        const auto dim_pos = node.info.type_kind_name.find("[");
-
-        if (std::string::npos == dim_pos)
-        {
-            EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL, "Array type name is not well formed.");
-            return RETCODE_BAD_PARAMETER;
-        }
-
-        const auto kind_name_str = node.info.type_kind_name.substr(0, dim_pos);
-        const auto dim_str = node.info.type_kind_name.substr(dim_pos, std::string::npos);
-
-        idl << kind_name_str << " " << node.info.member_name << dim_str;
-    }
-    else
-    {
-        idl << node.info.type_kind_name << " " << node.info.member_name;
-    }
-
-    return RETCODE_OK;
+    return declaration_to_idl(node.info, idl);
 }
 
 unsigned int open_modules_definition(
