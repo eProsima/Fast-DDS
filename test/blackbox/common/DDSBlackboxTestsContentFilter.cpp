@@ -1208,6 +1208,8 @@ TEST(DDSContentFilter, ShouldNotFailWithTooManySubExpressionsDiscovered)
  */
 TEST(DDSContentFilter, LateJointerSubWithCFTMustReceiveData)
 {
+    registerHelloWorldTypes();
+
     // Create writer
     PubSubWriter<HelloWorldPubSubType> writer("ShortT");
     std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> udp_descriptor =
