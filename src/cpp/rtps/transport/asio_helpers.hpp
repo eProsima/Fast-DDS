@@ -15,6 +15,7 @@
 #ifndef RTPS_TRANSPORT__ASIO_HELPERS_HPP_
 #define RTPS_TRANSPORT__ASIO_HELPERS_HPP_
 
+#include <chrono>
 #include <cstdint>
 
 #include "../network/asio.hpp"
@@ -174,6 +175,43 @@ struct asio_helpers
             socket, receive_buffer_size, minimum_socket_buffer, final_receive_buffer_size);
 
         return send_buffer_size_set && receive_buffer_size_set;
+    }
+
+    /**
+     * @brief Convert a duration into the normalized `struct timeval` representation expected by
+     * `SO_SNDTIMEO` / `SO_RCVTIMEO`.
+     *
+     * The kernel requires `tv_usec` to be normalized to [0, 999999]. Passing the raw microsecond
+     * count makes any duration of one second or longer out of range, and the option is then rejected
+     * with `EINVAL`, silently leaving the socket without a timeout.
+     *
+     * @tparam Rep Representation type of the input duration.
+     * @tparam Period Period type of the input duration.
+     *
+     * @param timeout Timeout to convert. Non-positive values are mapped to a zero timeout.
+     * @param time_struct Output parameter receiving the normalized timeval.
+     */
+    template<typename Rep, typename Period>
+    static inline void duration_to_timeval(
+            const std::chrono::duration<Rep, Period>& timeout,
+            timeval& time_struct)
+    {
+        using namespace std::chrono;
+
+        if (timeout > timeout.zero())
+        {
+            const auto total_microseconds = duration_cast<microseconds>(timeout);
+            const auto whole_seconds = duration_cast<seconds>(total_microseconds);
+
+            time_struct.tv_sec = static_cast<decltype(time_struct.tv_sec)>(whole_seconds.count());
+            time_struct.tv_usec = static_cast<decltype(time_struct.tv_usec)>(
+                (total_microseconds - whole_seconds).count());
+        }
+        else
+        {
+            time_struct.tv_sec = 0;
+            time_struct.tv_usec = 0;
+        }
     }
 
 };
