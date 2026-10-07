@@ -52,7 +52,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastdds::dds;
 
 /* Regression test for: https://github.com/eProsima/Fast-DDS/pull/6217
