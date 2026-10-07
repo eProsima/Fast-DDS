@@ -64,7 +64,7 @@ jobs:
           submodules: true
           ref: ${{ inputs.fastdds_ref }}
 
-      - name: Install Fix Python version
+      - name: Install Fixed Python version
         uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
           python-version: '3.11'
@@ -169,7 +169,7 @@ jobs:
         run: |
           tar -C "${{ github.workspace }}" -xpf "${{ runner.temp }}/asan_build_${{ inputs.label }}.tar"
 
-      - name: Install Fix Python version
+      - name: Install Fixed Python version
         uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
           python-version: '3.11'
@@ -257,7 +257,7 @@ jobs:
           submodules: true
           ref: ${{ inputs.fastdds_ref }}
 
-      - name: Install Fix Python version
+      - name: Install Fixed Python version
         uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
           python-version: '3.11'
@@ -531,7 +531,7 @@ jobs:
           submodules: true
           ref: ${{ inputs.fastdds_ref }}
 
-      - name: Install Fix Python version
+      - name: Install Fixed Python version
         uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
           python-version: '3.11'
@@ -638,7 +638,7 @@ jobs:
         run: |
           tar -C "${{ github.workspace }}" -xpf "${{ runner.temp }}/ubsan_build_${{ inputs.label }}.tar"
 
-      - name: Install Fix Python version
+      - name: Install Fixed Python version
         uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
           python-version: '3.11'
