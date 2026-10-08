@@ -533,8 +533,13 @@ bool StatelessReader::processDataMsg(
                     change_pool_->release_cache(change_to_add);
                     return false;
                 }
-
-                datasharing_pool->get_payload(change->serializedPayload, payload_owner, *change_to_add);
+                if (!datasharing_pool->get_payload(change->serializedPayload, payload_owner, *change_to_add))
+                {
+                    logWarning(RTPS_MSG_IN, IDSTRING "Discarding change with invalid DataSharing payload "
+                            "from writer " << change->writerGUID);
+                    change_pool_->release_cache(change_to_add);  // Drop the change permanently
+                    return true;
+                }
             }
             else if (payload_pool_->get_payload(change->serializedPayload, payload_owner, *change_to_add))
             {
@@ -579,6 +584,14 @@ bool StatelessReader::processDataFragMsg(
     {
         if (writer.guid == writer_guid)
         {
+            // Datasharing communication will never send fragments, so the message is spoofed
+            if (writer.is_datasharing)
+            {
+                logWarning(RTPS_MSG_IN, IDSTRING "Discarding DATA_FRAG from DataSharing writer "
+                        << writer_guid);
+                return true;
+            }
+
             // Always assert liveliness on scope exit
             auto assert_liveliness_lambda = [&lock, this, &writer_guid](void*)
                     {
@@ -586,9 +599,6 @@ bool StatelessReader::processDataFragMsg(
                         assert_writer_liveliness(writer_guid);
                     };
             std::unique_ptr<void, decltype(assert_liveliness_lambda)> p{ this, assert_liveliness_lambda };
-
-            // Datasharing communication will never send fragments
-            assert(!writer.is_datasharing);
 
             // Check if CacheChange was received.
             if (!thereIsUpperRecordOf(writer_guid, incomingChange->sequenceNumber))
