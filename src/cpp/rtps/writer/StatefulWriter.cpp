@@ -17,14 +17,12 @@
  *
  */
 
-<<<<<<< HEAD
 #include <fastdds/rtps/writer/StatefulWriter.h>
-=======
+
 #include <algorithm>
 #include <mutex>
 #include <stdexcept>
 #include <vector>
->>>>>>> 575d045 (Fix volatile reader desync after initial positioning GAP (#6542) (#6544))
 
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/writer/WriterListener.h>
@@ -44,8 +42,6 @@
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 
-#include <fastdds/rtps/history/WriterHistory.h>
-
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/TimeConversion.h>
 
@@ -59,10 +55,6 @@
 #include "../builtin/discovery/database/DiscoveryDataBase.hpp"
 
 #include "../flowcontrol/FlowController.hpp"
-
-#include <mutex>
-#include <vector>
-#include <stdexcept>
 
 namespace eprosima {
 namespace fastrtps {
@@ -550,59 +542,26 @@ bool StatefulWriter::change_removed_by_history(
     // Take note of biggest removed sequence number to improve sending of gaps
     if (sequence_number > biggest_removed_sequence_number_)
     {
-<<<<<<< HEAD
         biggest_removed_sequence_number_ = sequence_number;
-=======
+    }
 
-        // Take note of biggest removed sequence number to improve sending of gaps
-        if (sequence_number > biggest_removed_sequence_number_)
+    // Flush pending irrelevant GAPs for any remote reader before the change is erased from history
+    for (ReaderProxy* reader : matched_remote_readers_)
+    {
+        if (SequenceNumber_t::unknown() != reader->first_irrelevant_removed() &&
+                reader->first_irrelevant_removed() <= sequence_number)
         {
-            biggest_removed_sequence_number_ = sequence_number;
-        }
-
-        // Flush pending irrelevant GAPs for any remote reader before the change is erased from history
-        for (ReaderProxy* reader : matched_remote_readers_)
-        {
-            if (SequenceNumber_t::unknown() != reader->first_irrelevant_removed() &&
-                    reader->first_irrelevant_removed() <= sequence_number)
+            try
             {
-                try
-                {
-                    RTPSMessageGroup group(mp_RTPSParticipant, this, reader->message_sender());
-                    send_heartbeat_nts_(1u, group, true);  // Final Heartbeat
-                    add_gaps_for_removed_irrelevants(*reader, group);
-                }
-                catch (const RTPSMessageGroup::timeout&)
-                {
-                    EPROSIMA_LOG_ERROR(RTPS_WRITER, "Max blocking time reached");
-                }
+                RTPSMessageGroup group(mp_RTPSParticipant, this, reader->message_sender());
+                send_heartbeat_nts_(1u, group, true);  // Final Heartbeat
+                add_gaps_for_removed_irrelevants(*reader, group);
+            }
+            catch (const RTPSMessageGroup::timeout&)
+            {
+                logError(RTPS_WRITER, "Max blocking time reached");
             }
         }
-
-        // Invalidate CacheChange pointer in ReaderProxies.
-        for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-                [sequence_number](ReaderProxy* reader)
-                {
-                    reader->change_has_been_removed(sequence_number);
-                    return false;
-                }
-                );
-
-        // remove from datasharing pool history
-        if (is_datasharing_compatible())
-        {
-            auto pool = std::dynamic_pointer_cast<WriterPool>(payload_pool_);
-            assert (pool != nullptr);
-
-            pool->remove_from_shared_history(a_change);
-            EPROSIMA_LOG_INFO(RTPS_WRITER, "Removing shared cache change with SN " << a_change->sequenceNumber);
-        }
-
-        may_remove_change_ = 2;
-        may_remove_change_cond_.notify_one();
-
-        ret_value = true;
->>>>>>> 575d045 (Fix volatile reader desync after initial positioning GAP (#6542) (#6544))
     }
 
     // Invalidate CacheChange pointer in ReaderProxies.
@@ -1137,14 +1096,8 @@ bool StatefulWriter::matched_reader_add(
         }
         else
         {
-<<<<<<< HEAD
             logWarning(RTPS_WRITER, "Maximum number of reader proxies (" << max_readers
                                                                          << ") reached for writer " << m_guid);
-=======
-            EPROSIMA_LOG_WARNING(RTPS_WRITER, "Maximum number of reader proxies (" << max_readers
-                                                                                   << ") reached for writer "
-                                                                                   << m_guid);
->>>>>>> 575d045 (Fix volatile reader desync after initial positioning GAP (#6542) (#6544))
             return false;
         }
     }
@@ -1285,17 +1238,10 @@ bool StatefulWriter::matched_reader_add(
         rp->acked_changes_set(mp_history->next_sequence_number());
     }
 
-<<<<<<< HEAD
     logInfo(RTPS_WRITER, "Reader Proxy " << rp->guid() << " added to " << this->m_guid.entityId << " with "
                                          << rdata.remote_locators().unicast.size() << "(u)-"
                                          << rdata.remote_locators().multicast.size()
                                          << "(m) locators");
-=======
-    EPROSIMA_LOG_INFO(RTPS_WRITER, "Reader Proxy " << rp->guid() << " added to " << this->m_guid.entityId << " with "
-                                                   << rdata.remote_locators().unicast.size() << "(u)-"
-                                                   << rdata.remote_locators().multicast.size()
-                                                   << "(m) locators");
->>>>>>> 575d045 (Fix volatile reader desync after initial positioning GAP (#6542) (#6544))
 
     if (nullptr != mp_listener)
     {

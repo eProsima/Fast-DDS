@@ -446,7 +446,7 @@ TEST(SequenceNumberSet, AddOperation)
     ASSERT_TRUE(set.add(seq));
 
     seq += 3;
-    
+
     ASSERT_FALSE(set.add(seq));
 
 }
@@ -491,9 +491,6 @@ TEST(SequenceNumberSet, GetMaxSeqNumOperation)
     ASSERT_EQ(set.max(), expected_seq);
 }
 
-<<<<<<< HEAD
-int main(int argc, char **argv)
-=======
 /*!
  * @fn TEST(SequenceNumberSet, ComparisonForUnknownSeqNum)
  * @brief This test checks the unknown sequence number is always lower than any other sequence number.
@@ -515,7 +512,6 @@ TEST(SequenceNumberSet, ComparisonForUnknownSeqNum)
 int main(
         int argc,
         char** argv)
->>>>>>> 575d045 (Fix volatile reader desync after initial positioning GAP (#6542) (#6544))
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

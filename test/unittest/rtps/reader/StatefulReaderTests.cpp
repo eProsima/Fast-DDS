@@ -35,11 +35,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-<<<<<<< HEAD
 namespace {
-=======
-using namespace eprosima::fastdds::dds;
->>>>>>> 575d045 (Fix volatile reader desync after initial positioning GAP (#6542) (#6544))
 
 class RemovingListener : public ReaderListener
 {
