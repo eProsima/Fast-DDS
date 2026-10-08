@@ -14,6 +14,7 @@
 
 #include <fastrtps/rtps/common/SequenceNumber.h>
 
+#include <algorithm>
 #include <climits>
 #include <gtest/gtest.h>
 
@@ -490,7 +491,31 @@ TEST(SequenceNumberSet, GetMaxSeqNumOperation)
     ASSERT_EQ(set.max(), expected_seq);
 }
 
+<<<<<<< HEAD
 int main(int argc, char **argv)
+=======
+/*!
+ * @fn TEST(SequenceNumberSet, ComparisonForUnknownSeqNum)
+ * @brief This test checks the unknown sequence number is always lower than any other sequence number.
+ */
+TEST(SequenceNumberSet, ComparisonForUnknownSeqNum)
+{
+    SequenceNumber_t seq = SequenceNumber_t::unknown();
+    SequenceNumber_t seq_higher;
+    ASSERT_GT(seq_higher, seq);
+    ASSERT_EQ(std::max(seq_higher, seq), seq_higher);
+    seq_higher.high = 1;
+    ASSERT_GT(seq_higher, seq);
+    ASSERT_EQ(std::max(seq_higher, seq), seq_higher);
+    SequenceNumber_t seq_higher_low(0, 1);
+    ASSERT_GT(seq_higher_low, seq);
+    ASSERT_EQ(std::max(seq_higher_low, seq), seq_higher_low);
+}
+
+int main(
+        int argc,
+        char** argv)
+>>>>>>> 575d045 (Fix volatile reader desync after initial positioning GAP (#6542) (#6544))
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
