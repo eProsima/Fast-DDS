@@ -843,7 +843,6 @@ TEST(WriterProxyTests, GapIgnoredUntilHeartbeat)
 {
     WriterProxyData wattr(4u, 1u);
     StatefulReader readerMock;
-    EXPECT_CALL(readerMock, getEventResource()).Times(1u);
     WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig());
     EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initialAcknackDelay)).Times(1u);
     EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeatResponseDelay)).Times(1u);
