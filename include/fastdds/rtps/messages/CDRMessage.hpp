@@ -381,6 +381,10 @@ inline bool CDRMessage::readString(
     *stri = "";
     if (str_size > 1)
     {
+        if (msg->buffer[msg->pos + str_size - 1] != '\0')
+        {
+            return false;
+        }
         *stri = (const char*) &(msg->buffer[msg->pos]);
     }
     msg->pos += str_size;

@@ -1817,6 +1817,67 @@ TEST(BuiltinDataSerializationTests, msg_partition_oob_strlen)
     ASSERT_NO_FATAL_FAILURE(out.readFromCDRMessage(&msg, network, true));
 }
 
+/**
+ * @test Deserialization rejects a `PID_TOPIC_NAME` with no NUL terminator in its declared length,
+ * without leaking bytes past that length into the parsed topic name.
+ */
+TEST(BuiltinDataSerializationTests, msg_topic_name_oob_strlen)
+{
+    const uint8_t buffer[] = {
+        0x00, 0x03, 0x00, 0x00,  // Encapsulation (PL_CDR_LE)
+        0x05, 0x00, 0x14, 0x00,  // PID_TOPIC_NAME, parameter length 20
+        0x08, 0x00, 0x00, 0x00,  // String length 8
+        0x61, 0x61, 0x61, 0x61,  // 8 bytes with no NUL terminator
+        0x61, 0x61, 0x61, 0x61,
+        0x53, 0x45, 0x43, 0x52,  // "SECRET!" outside the declared string of size 8
+        0x45, 0x54, 0x21, 0x00,
+        0x01, 0x00, 0x00, 0x00,  // PID_SENTINEL
+    };
+
+    CDRMessage_t msg(0);
+    msg.init(const_cast<octet*>(reinterpret_cast<const octet*>(buffer)), sizeof(buffer));
+    msg.length = sizeof(buffer);
+    msg.msg_endian = LITTLEEND;
+
+    ReaderProxyData out(max_unicast_locators, max_multicast_locators);
+    EXPECT_FALSE(out.readFromCDRMessage(&msg, network, true));
+    EXPECT_EQ(std::string::npos, std::string(out.topicName().c_str()).find("SECRET"));
+}
+
+/**
+ * @test Tests a `PID_PROPERTY_LIST` whose strings have no NUL terminator does not cause an OOB read when
+ * accessing the parsed properties.
+ * Property storage is sized to the received data, so `second()` reads past the allocation.
+ * Run this test under AddressSanitizer to detect the resulting invalid memory access.
+ */
+TEST(BuiltinDataSerializationTests, msg_property_list_oob_strlen)
+{
+    const uint8_t buffer[] = {
+        0x00, 0x03, 0x00, 0x00,  // Encapsulation (PL_CDR_LE)
+        0x59, 0x00, 0x14, 0x00,  // PID_PROPERTY_LIST, parameter length 20
+        0x01, 0x00, 0x00, 0x00,  // num_properties 1
+        0x04, 0x00, 0x00, 0x00,  // Name length 4
+        0x61, 0x61, 0x61, 0x61,  // 4 bytes with no NUL terminator
+        0x04, 0x00, 0x00, 0x00,  // Value length 4
+        0x62, 0x62, 0x62, 0x62,  // 4 bytes with no NUL terminator
+        0x01, 0x00, 0x00, 0x00,  // PID_SENTINEL
+    };
+
+    CDRMessage_t msg(0);
+    msg.init(const_cast<octet*>(reinterpret_cast<const octet*>(buffer)), sizeof(buffer));
+    msg.length = sizeof(buffer);
+
+    ParticipantProxyData out(RTPSParticipantAllocationAttributes{});
+    ASSERT_NO_FATAL_FAILURE(out.readFromCDRMessage(&msg, true, network, false));
+
+    // Same accesses done by discovery on received properties (e.g. PDP::check_participant_type)
+    for (const auto& property : out.m_properties)
+    {
+        ASSERT_NO_FATAL_FAILURE(property.first());
+        ASSERT_NO_FATAL_FAILURE(property.second());
+    }
+}
+
 // Regression test for redmine issue #24564.
 // sequence_length inside TypeInformation is wire-controlled; without a bound against
 // parameter_length, vector::resize drives a ~1.4 GB allocation.
