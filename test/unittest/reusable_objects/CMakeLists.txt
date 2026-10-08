@@ -12,20 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set(DURATION_TESTS_SOURCE
-    DurationTests.cpp)
+###############################################################################
+# Materialize the OBJECT libraries requested by the test suites.
+#
+# This directory is added last on purpose: every fastdds_target_link_object_groups()
+# call has already run, so the full set of flavours is known, and the libraries
+# are created in a directory with no test specific settings of its own. The
+# definitions common to all unit tests are inherited from test/unittest.
+###############################################################################
 
-add_executable(DurationTests ${DURATION_TESTS_SOURCE})
-target_include_directories(DurationTests PRIVATE
-    ${Asio_INCLUDE_DIR}
-    ${PROJECT_SOURCE_DIR}/include
-    ${PROJECT_BINARY_DIR}/include
-    ${PROJECT_SOURCE_DIR}/src/cpp
-)
-target_link_libraries(DurationTests
-    GTest::gtest)
-fastdds_target_link_object_groups(DurationTests
-    fastdds::time
-    )
-
-gtest_discover_tests(DurationTests)
+fastdds_create_reusable_objects()

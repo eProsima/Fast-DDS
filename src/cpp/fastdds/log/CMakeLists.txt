@@ -36,4 +36,17 @@ target_sources(fastdds-log INTERFACE
     StdoutErrConsumer.cpp
     )
 
+# Settings this group's code is sensitive to. See cmake/common/reusable_objects.cmake.
+fastdds_declare_object_group(fastdds-log
+    MOCKS
+        rtps/Log
+    DEFINES
+        ENABLE_OLD_LOG_MACROS_
+        FASTDDS_ENFORCE_LOG_INFO
+        HAVE_LOG_NO_ERROR
+        HAVE_LOG_NO_INFO
+        HAVE_LOG_NO_WARNING
+        STDOUTERR_LOG_CONSUMER
+    )
+
 #}}}
