@@ -1456,6 +1456,8 @@ TEST_F(SHMTransportTests, dead_listener_sender_port_recover)
 // rather than failing one case.
 TEST_F(SHMTransportTests, port_corrupt_segment_recovers_on_open)
 {
+    const std::string domain_name("SHMTests");
+
     auto shared_mem_manager = SharedMemManager::create(domain_name);
     SharedMemGlobal* shared_mem_global = shared_mem_manager->global_segment();
     MockPortSharedMemGlobal port_mocker;
