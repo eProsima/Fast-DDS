@@ -722,6 +722,9 @@ inline bool ParameterSerializer<ParameterPropertyList_t>::read_content_from_cdr_
         valid = valid && fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &property1_size);
         remain -= sizeof(uint32_t);
         valid = valid && (remain >= property1_size);
+        // A property name is a CDR string, so it must be NUL-terminated within its declared size
+        valid = valid && (property1_size >= 1) &&
+                (cdr_message->buffer[cdr_message->pos + property1_size - 1] == '\0');
         if (!valid)
         {
             return false;
@@ -743,6 +746,9 @@ inline bool ParameterSerializer<ParameterPropertyList_t>::read_content_from_cdr_
         valid = valid && fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &property2_size);
         remain -= sizeof(uint32_t);
         valid = valid && (remain >= property2_size);
+        // A property value is a CDR string, so it must be NUL-terminated within its declared size
+        valid = valid && (property2_size >= 1) &&
+                (cdr_message->buffer[cdr_message->pos + property2_size - 1] == '\0');
         if (!valid)
         {
             return false;
