@@ -645,7 +645,13 @@ bool StatefulReader::processDataMsg(
                     // Matched in datasharing_listener_, but no datasharing pool available, irrecoverable error.
                     return true;
                 }
-                datasharing_pool->get_payload(change->serializedPayload, payload_owner, *change_to_add);
+                if (!datasharing_pool->get_payload(change->serializedPayload, payload_owner, *change_to_add))
+                {
+                    EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Discarding change with invalid DataSharing payload "
+                            "from writer " << change->writerGUID);
+                    change_pool_->release_cache(change_to_add);  // Drop the change permanently
+                    return true;
+                }
             }
             else if (change->serializedPayload.length == 0 && change->kind != ChangeKind_t::ALIVE &&
                     change->instanceHandle.isDefined())
@@ -712,6 +718,14 @@ bool StatefulReader::processDataFragMsg(
     // TODO: see if we need manage framework fragmented DATA message
     if (acceptMsgFrom(incomingChange->writerGUID, &pWP) && pWP)
     {
+        // Datasharing communication will never send fragments, so the message is spoofed
+        if (pWP->is_datasharing_writer())
+        {
+            EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Discarding DATA_FRAG from DataSharing writer "
+                    << incomingChange->writerGUID);
+            return true;
+        }
+
         // Always assert liveliness on scope exit
         auto assert_liveliness_lambda = [&lock, this, incomingChange](void*)
                 {

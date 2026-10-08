@@ -28,6 +28,7 @@
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
+#include "UDPMessageSender.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -1021,6 +1022,184 @@ TEST(DDSDataSharing, ReaderDeletionWithRejectedSampleDoesNotHang)
 
     destroy_thread.join();
     writer.destroy();
+}
+
+namespace {
+
+// Serialized FixedSized sample: encapsulation header + FixedSized::index = 0x1337
+struct SpoofedSerializedData
+{
+    uint8_t encapsulation[2] = {0x00, CDR_LE};
+    uint8_t encapsulation_opts[2] = {0x00, 0x00};
+    uint8_t data[4] = {0x37, 0x13, 0x00, 0x00};
+};
+
+struct SpoofedDataSubMsg
+{
+    struct Header
+    {
+        uint8_t submessage_id = 0x15;
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
+        uint8_t flags = 0x04;        // Data present, big endian
+#else
+        uint8_t flags = 0x05;        // Data present, little endian
+#endif  // FASTDDS_IS_BIG_ENDIAN_TARGET
+        uint16_t octets_to_next_header = 28;
+        uint16_t extra_flags = 0;
+        uint16_t octets_to_inline_qos = 16;
+        EntityId_t reader_id{};
+        EntityId_t writer_id{};
+        SequenceNumber_t sn{ 1 };
+    };
+
+    Header header;
+    SpoofedSerializedData payload;
+};
+
+struct SpoofedDataFragSubMsg
+{
+    struct Header
+    {
+        uint8_t submessage_id = 0x16;
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
+        uint8_t flags = 0x00;        // big endian, no key
+#else
+        uint8_t flags = 0x01;        // little endian, no key
+#endif  // FASTDDS_IS_BIG_ENDIAN_TARGET
+        uint16_t octets_to_next_header = 40;
+        uint16_t extra_flags = 0;
+        uint16_t octets_to_inline_qos = 28;
+        EntityId_t reader_id{};
+        EntityId_t writer_id{};
+        SequenceNumber_t sn{ 1 };
+        // Whole sample delivered as two fragments in a single submessage
+        uint32_t fragment_starting_num = 1;
+        uint16_t fragments_in_submessage = 2;
+        uint16_t fragment_size = 4;
+        uint32_t sample_size = 8;
+    };
+
+    Header header;
+    SpoofedSerializedData payload;
+};
+
+template<typename SubMsg>
+struct SpoofedPacket
+{
+    std::array<char, 4> rtps_id{ {'R', 'T', 'P', 'S'} };
+    std::array<uint8_t, 2> protocol_version{ {2, 3} };
+    std::array<uint8_t, 2> vendor_id{ {0x01, 0x0F} };
+    GuidPrefix_t sender_prefix{};
+    SubMsg data;
+};
+
+/**
+ * Matches a DataSharing reader and writer, sends a spoofed network packet carrying
+ * the writer GUID and checks it is rejected while regular samples still arrive.
+ */
+template<typename SubMsg>
+void check_spoofed_network_data_is_not_treated_as_datasharing(
+        eprosima::fastdds::dds::ReliabilityQosPolicyKind reliability)
+{
+    SCOPED_TRACE(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS == reliability ? "RELIABLE" : "BEST_EFFORT");
+
+    PubSubReader<FixedSizedPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<FixedSizedPubSubType> writer(TEST_TOPIC_NAME);
+
+    // Force a UDP transport and a known reader locator so the spoofed datagram
+    // reaches the reader's receiver through the production RTPS path.
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+
+    Locator_t reader_locator;
+    ASSERT_TRUE(IPLocator::setIPv4(reader_locator, "127.0.0.1"));
+    reader_locator.port = 7400;
+
+    reader.disable_builtin_transport()
+            .add_user_transport_to_pparams(udp_transport)
+            .add_to_unicast_locator_list("127.0.0.1", 7400)
+            .datasharing_auto(".")
+            .reliability(reliability)
+            .init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.disable_builtin_transport()
+            .add_user_transport_to_pparams(udp_transport)
+            .datasharing_auto(".")
+            .reliability(reliability)
+            .init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // The reader must have matched the writer through DataSharing
+    ASSERT_TRUE(check_shared_file(".", writer.datawriter_guid()));
+
+    // Expect to receive nothing: the forged sample must be rejected.
+    reader.startReception(1);
+
+    UDPMessageSender fake_msg_sender;
+    {
+        auto writer_guid = writer.datawriter_guid();
+
+        SpoofedPacket<SubMsg> packet{};
+        packet.sender_prefix = writer_guid.guidPrefix;
+        packet.data.header.writer_id = writer_guid.entityId;
+        packet.data.header.reader_id = reader.datareader_guid().entityId;
+
+        CDRMessage_t msg(0);
+        uint32_t msg_len = static_cast<uint32_t>(sizeof(packet));
+        msg.init(reinterpret_cast<octet*>(&packet), msg_len);
+        msg.length = msg_len;
+        msg.pos = msg_len;
+        fake_msg_sender.send(msg, reader_locator);
+    }
+
+    // Give the reception thread time to process the datagram
+    EXPECT_FALSE(reader.wait_for_all_received(std::chrono::seconds(2), 1));
+
+    auto data = default_fixed_sized_data_generator(1);
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+    EXPECT_TRUE(reader.wait_for_all_received(std::chrono::seconds(2), 1));
+
+    reader.destroy();
+    writer.destroy();
+}
+
+} // namespace
+
+#if defined(__SANITIZE_ADDRESS__)
+/**
+ * @test Regression for a DataSharing payload-provenance spoofing issue.
+ *
+ * A reader that is matched with a DataSharing writer classifies an incoming
+ * sample as DataSharing solely from the writer GUID. An attacker could use a
+ * fake message with the same GUID to cause an OOB by treating as a DataSharing
+ * payload a non-compatible payload.
+ * Run this test under AddressSanitizer to detect the resulting invalid memory access.
+ */
+TEST(DDSDataSharing, SpoofedNetworkDataIsNotTreatedAsDataSharing)
+{
+    ASSERT_NO_FATAL_FAILURE(check_spoofed_network_data_is_not_treated_as_datasharing<SpoofedDataSubMsg>(
+                eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS));
+    ASSERT_NO_FATAL_FAILURE(check_spoofed_network_data_is_not_treated_as_datasharing<SpoofedDataSubMsg>(
+                eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS));
+}
+#endif // if defined(__SANITIZE_ADDRESS__)
+
+/**
+ * @test Same as SpoofedNetworkDataIsNotTreatedAsDataSharing, but the spoofed sample is sent
+ * as a DATA_FRAG submessage. DataSharing writers never send fragments, so the forged sample
+ * must not be delivered nor consume the sequence number of the real one.
+ * Covers both the StatelessReader (best effort) and StatefulReader (reliable).
+ */
+TEST(DDSDataSharing, SpoofedNetworkDataFragIsNotTreatedAsDataSharing)
+{
+    ASSERT_NO_FATAL_FAILURE(check_spoofed_network_data_is_not_treated_as_datasharing<SpoofedDataFragSubMsg>(
+                eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS));
+    ASSERT_NO_FATAL_FAILURE(check_spoofed_network_data_is_not_treated_as_datasharing<SpoofedDataFragSubMsg>(
+                eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS));
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

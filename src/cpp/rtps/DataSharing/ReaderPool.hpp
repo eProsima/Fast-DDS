@@ -64,8 +64,12 @@ public:
             return true;
         }
 
-        // If owner is not this, then it must be an intraprocess datasharing writer
-        assert(nullptr != dynamic_cast<DataSharingPayloadPool*>(data_owner));
+        // If owner is not this, it must be an intraprocess datasharing writer. A payload without
+        // a DataSharing owner cannot be reinterpreted as a PayloadNode and must be rejected instead.
+        if (nullptr == dynamic_cast<DataSharingPayloadPool*>(data_owner))
+        {
+            return false;
+        }
         PayloadNode* payload = PayloadNode::get_from_data(data.data);
 
         // No need to check validity, on intraprocess there is no override of payloads
