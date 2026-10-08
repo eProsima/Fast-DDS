@@ -95,8 +95,6 @@ public:
         listener.release();
         port.node_->num_listeners++;
     }
-<<<<<<< HEAD
-=======
 
     /**
      * Corrupt the allocator structures of a port segment in place.
@@ -127,7 +125,6 @@ public:
         }
     }
 
->>>>>>> d79fed2ab (Fix shared-memory segment crash on port open (#6503))
 };
 
 } // namespace rtps
