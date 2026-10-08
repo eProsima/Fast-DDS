@@ -172,9 +172,20 @@ public:
             const SequenceNumber_t& first_seq,
             const SequenceNumber_t& last_seq);
 
+    /**
+     * @brief Sends a heartbeat directly to an intraprocess reader.
+     *
+     * @param reader_proxy  Pointer to the proxy representing the reader to deliver the heartbeat to.
+     * @param liveliness    True if the heartbeat is a liveliness one.
+     * @param gap_preceded  True to send the heartbeat even when the reader has no changes pending.
+     *                      Used to position a late-joining reader (e.g. VOLATILE) before a GAP.
+     *
+     * @return True on success.
+     */
     bool intraprocess_heartbeat(
             ReaderProxy* reader_proxy,
-            bool liveliness = false);
+            bool liveliness = false,
+            bool gap_preceded = false);
 
     //!Increment the HB count.
     inline void incrementHBCount()
@@ -220,7 +231,7 @@ public:
     bool is_acked_by_all(
             const CacheChange_t* a_change) const override;
 
-    template <typename Function>
+    template<typename Function>
     Function for_each_reader_proxy(
             Function f) const
     {
