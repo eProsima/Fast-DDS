@@ -73,20 +73,28 @@ public:
      *
      * @param data The serialized payload data to be used.
      * @param cache_change The cache change to be prepared.
+     *
+     * @return true if the change was prepared, false if the payload is not a valid
+     * DataSharing payload and must be discarded.
      */
-    void get_datasharing_change(
+    bool get_datasharing_change(
             SerializedPayload_t& data,
             CacheChange_t& cache_change)
     {
         if (!get_payload(data, cache_change.serializedPayload))
         {
-            // If owner is not this, then it must be an intraprocess datasharing writer
-            assert(nullptr != dynamic_cast<DataSharingPayloadPool*>(data.payload_owner));
+            // If owner is not this, it must be an intraprocess datasharing writer. A payload without
+            // a DataSharing owner cannot be reinterpreted as a PayloadNode and must be rejected instead.
+            if (nullptr == dynamic_cast<DataSharingPayloadPool*>(data.payload_owner))
+            {
+                return false;
+            }
             PayloadNode* payload = PayloadNode::get_from_data(data.data);
 
             // No need to check validity, on intraprocess there is no override of payloads
             read_from_shared_history(cache_change, payload);
         }
+        return true;
     }
 
     bool release_payload(
