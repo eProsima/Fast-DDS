@@ -392,7 +392,8 @@ TEST_P(SHMRingBufferMultiThread, multiple_writers_listeners)
 
                         listener->pop();
 
-                    } while (cell->data().counter != elements_to_push - 1);
+                    }
+                    while (cell->data().counter != elements_to_push - 1);
 
                 }));
     }
@@ -622,7 +623,8 @@ TEST_F(SHMCondition, max_listeners)
     do
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    } while (waiting_threads.load() + wait_exception.load() < threads.size());
+    }
+    while (waiting_threads.load() + wait_exception.load() < threads.size());
 
     std::cout << waiting_threads.load() << " waiting. " << wait_exception.load() << " failed." << std::endl;
 
@@ -1461,18 +1463,18 @@ TEST_F(SHMTransportTests, port_corrupt_segment_recovers_on_open)
     shared_mem_global->remove_port(0);
 
     auto test_case = [&](uint8_t corrupt_byte)
-    {
-        auto port = shared_mem_global->open_port(0, 1, 1000);
-        ASSERT_NO_THROW(port->healthy_check());
+            {
+                auto port = shared_mem_global->open_port(0, 1, 1000);
+                ASSERT_NO_THROW(port->healthy_check());
 
-        // Damage the allocator structures the way an abruptly terminated peer can.
-        port_mocker.corrupt_segment_allocator(*port, corrupt_byte);
+                // Damage the allocator structures the way an abruptly terminated peer can.
+                port_mocker.corrupt_segment_allocator(*port, corrupt_byte);
 
-        // Opening the port again should not walk those structures.
-        auto recovered = shared_mem_global->open_port(0, 1, 1000);
-        ASSERT_TRUE(recovered != nullptr);
-        ASSERT_NO_THROW(recovered->healthy_check());
-    };
+                // Opening the port again should not walk those structures.
+                auto recovered = shared_mem_global->open_port(0, 1, 1000);
+                ASSERT_TRUE(recovered != nullptr);
+                ASSERT_NO_THROW(recovered->healthy_check());
+            };
 
     for (uint8_t corrupt_byte = 0xFF; corrupt_byte > 0x00; corrupt_byte--)
     {
