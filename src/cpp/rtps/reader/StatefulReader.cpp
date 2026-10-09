@@ -1075,11 +1075,8 @@ void StatefulReader::NotifyChanges(
         on_data_notify(proxGUID, aux_ch->sourceTimestamp);
 
         ++it;
-        do
-        {
-            next_seq = prox->next_cache_change_to_be_notified();
-        }
-        while (next_seq != c_SequenceNumber_Unknown && next_seq <= aux_ch->sequenceNumber);
+        prox->consider_all_notified_up_to(aux_ch->sequenceNumber);
+        next_seq = prox->next_cache_change_to_be_notified();
     }
     // Ensure correct state of proxy when max_seq is not present in history
     prox->consider_all_notified();

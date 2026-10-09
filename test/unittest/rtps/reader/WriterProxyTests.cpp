@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <unordered_set>
+#include <limits>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -21,7 +22,8 @@
     FRIEND_TEST(WriterProxyTests, MissingChangesUpdate); \
     FRIEND_TEST(WriterProxyTests, LostChangesUpdate); \
     FRIEND_TEST(WriterProxyTests, ReceivedChangeSet); \
-    FRIEND_TEST(WriterProxyTests, IrrelevantChangeSet);
+    FRIEND_TEST(WriterProxyTests, IrrelevantChangeSet); \
+    FRIEND_TEST(WriterProxyTests, MaliciousHeartbeatHighSN);
 
 #include <rtps/reader/WriterProxy.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
@@ -956,6 +958,37 @@ TEST(WriterProxyTests, IrrelevantChangeSet)
     ASSERT_EQ(wproxy.number_of_changes_from_writer(), 0u);
     ASSERT_EQ(wproxy.are_there_missing_changes(), false);
     ASSERT_EQ(wproxy.unknown_missing_changes_up_to(SequenceNumber_t(0, 10009)), 0u);
+}
+
+/**
+ * Regression test for GHSA-6m2p-wjv5-386v: a malicious HEARTBEAT with lastSN == INT32_MAX, UINT32_MAX-1.
+ *
+ * Designed to fail even when assertions are disabled.
+ */
+TEST(WriterProxyTests, MaliciousHeartbeatHighSN)
+{
+    const SequenceNumber_t huge_SN{ std::numeric_limits<int32_t>::max(), std::numeric_limits<uint32_t>::max() - 1 };
+
+    WriterProxyData wattr(4u, 1u);
+    StatefulReader readerMock;
+    WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig());
+    EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initialAcknackDelay)).Times(1u);
+    EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeatResponseDelay)).Times(1u);
+    EXPECT_CALL(*wproxy.initial_acknack_, restart_timer()).Times(1u);
+    EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(::testing::AnyNumber());
+    wproxy.start(wattr, SequenceNumber_t());
+
+    bool assert_liveliness = false;
+    int32_t current_sample_lost = 0;
+    wproxy.process_heartbeat(1u, huge_SN, huge_SN, false, false, false, assert_liveliness, current_sample_lost);
+
+    // Using a lower base for the set so its internal maximum value does not overflow.
+    SequenceNumberSet_t t1(huge_SN - 254UL);
+    t1.add(huge_SN);
+
+    EXPECT_EQ(huge_SN - 1, wproxy.available_changes_max());
+    EXPECT_TRUE(wproxy.are_there_missing_changes());
+    ASSERT_THAT(t1, wproxy.missing_changes());
 }
 
 } // namespace rtps

@@ -309,6 +309,19 @@ public:
     void consider_all_notified();
 
     /**
+     * @brief Marks all available sequence numbers up to the provided one as notified.
+     *
+     * Calling this function is the equivalent to calling next_cache_change_to_be_notified
+     * in a loop until it returns an invalid SequenceNumber_t or a SequenceNumber_t equal to seq_num.
+     *
+     * Does nothing if seq_num is considered already notified or not available.
+     *
+     * @param seq_num Sequence number up to which to mark as notified.
+     */
+    void consider_all_notified_up_to(
+            const SequenceNumber_t& seq_num);
+
+    /**
      * Checks whether a cache change was already received from this proxy.
      * @param[in] seq_num Sequence number of the cache change to check.
      * @return true if the cache change was received, false otherwise.

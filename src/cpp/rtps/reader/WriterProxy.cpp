@@ -517,6 +517,19 @@ void WriterProxy::consider_all_notified()
     }
 }
 
+void WriterProxy::consider_all_notified_up_to(
+        const SequenceNumber_t& seq_num)
+{
+#ifdef SHOULD_DEBUG_LINUX
+    assert(get_mutex_owner() == get_thread_id());
+#endif // SHOULD_DEBUG_LINUX
+
+    if (seq_num > last_notified_ && seq_num <= changes_from_writer_low_mark_)
+    {
+        last_notified_ = seq_num;
+    }
+}
+
 bool WriterProxy::perform_initial_ack_nack()
 {
     bool ret_value = false;
