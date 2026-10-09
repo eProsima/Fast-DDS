@@ -15,9 +15,14 @@
 set(PARTICIPANTTESTS_SOURCE ParticipantTests.cpp)
 
 add_executable(RTPSParticipantTests ${PARTICIPANTTESTS_SOURCE})
+target_include_directories(RTPSParticipantTests PRIVATE
+    ${Asio_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/test/unittest/logging/mock
+    )
 target_compile_definitions(RTPSParticipantTests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
+    $<$<BOOL:${WIN32}>:_WIN32_WINNT=0x0601>
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
