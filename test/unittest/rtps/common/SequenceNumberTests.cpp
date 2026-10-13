@@ -39,6 +39,24 @@ TEST(SequenceNumber, IncrementalOperator)
     expected_seq.low = 1;
 
     ASSERT_EQ(seq, expected_seq);
+
+    seq.high = INT32_MAX - 1;
+    seq.low = UINT32_MAX;
+
+    ++seq;
+
+    expected_seq.high = INT32_MAX;
+    expected_seq.low = 0;
+
+    ASSERT_EQ(seq, expected_seq);
+
+    seq.low = UINT32_MAX;
+
+    ++seq;
+
+    expected_seq.low = UINT32_MAX;
+
+    ASSERT_EQ(seq, expected_seq);
 }
 
 /*!
@@ -89,6 +107,14 @@ TEST(SequenceNumber, AdditionAssignmentOperator)
 
     expected_seq.high = INT32_MAX;
     expected_seq.low = (uint32_t)INT32_MAX - 2;
+
+    ASSERT_EQ(seq, expected_seq);
+
+    seq += INT_MAX;
+    seq += INT_MAX;
+
+    expected_seq.high = INT32_MAX;
+    expected_seq.low = UINT32_MAX;
 
     ASSERT_EQ(seq, expected_seq);
 }
@@ -301,6 +327,16 @@ TEST(SequenceNumber, SubtractionOperator)
     expected_seq.low = 1;
 
     ASSERT_EQ(seq, expected_seq);
+
+    seq.high = 0;
+    seq.low = 25;
+
+    seq = seq - 50;
+
+    expected_seq.high = 0;
+    expected_seq.low = 0;
+
+    ASSERT_EQ(seq, expected_seq);
 }
 
 /*!
@@ -369,6 +405,16 @@ TEST(SequenceNumber, AdditionOperator)
     expected_seq.low = UINT32_MAX;
 
     ASSERT_EQ(seq, expected_seq);
+
+    seq.high = INT32_MAX;
+    seq.low = 25;
+
+    seq = seq + UINT32_MAX;
+
+    expected_seq.high = INT32_MAX;
+    expected_seq.low = UINT32_MAX;
+
+    ASSERT_EQ(seq, expected_seq);
 }
 
 /*!
@@ -427,27 +473,45 @@ TEST(SequenceNumber, SubtractionBetweenSesOperator)
  */
 TEST(SequenceNumberSet, AddOperation)
 {
-    SequenceNumber_t seq(10, UINT32_MAX - 1);
+    {
+        SequenceNumber_t seq(10, UINT32_MAX - 1);
 
-    SequenceNumberSet_t set(seq);
+        SequenceNumberSet_t set(seq);
 
-    ASSERT_TRUE(set.add(seq));
+        ASSERT_TRUE(set.add(seq));
 
-    ++seq;
+        ++seq;
 
-    ASSERT_TRUE(set.add(seq));
+        ASSERT_TRUE(set.add(seq));
 
-    ++seq;
+        ++seq;
 
-    ASSERT_TRUE(set.add(seq));
+        ASSERT_TRUE(set.add(seq));
 
-    seq += 252;
+        seq += 252;
 
-    ASSERT_TRUE(set.add(seq));
+        ASSERT_TRUE(set.add(seq));
 
-    seq += 3;
+        seq += 3;
 
-    ASSERT_FALSE(set.add(seq));
+        ASSERT_FALSE(set.add(seq));
+    }
+
+    {
+        SequenceNumber_t seq(INT32_MAX, UINT32_MAX - 128UL);
+
+        SequenceNumberSet_t set(seq);
+
+        ASSERT_TRUE(set.add(seq));
+
+        seq += 127;
+
+        ASSERT_TRUE(set.add(seq));
+
+        seq += 1;
+
+        ASSERT_TRUE(set.add(seq));
+    }
 
 }
 
