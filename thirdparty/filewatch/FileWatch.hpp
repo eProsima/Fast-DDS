@@ -82,6 +82,22 @@ namespace filewatch {
         renamed_new
     };
 
+#ifdef _WIN32
+    /*!
+     * Converts a FILETIME to the equivalent count of 100-nanosecond intervals.
+     * Assigning the fields instead of reinterpreting the FILETIME as a ULARGE_INTEGER
+     * avoids a type-punning violation that GCC rejects under -Wstrict-aliasing.
+     */
+    inline ULARGE_INTEGER filetime_to_ularge(
+            const FILETIME& filetime)
+    {
+        ULARGE_INTEGER result;
+        result.LowPart = filetime.dwLowDateTime;
+        result.HighPart = filetime.dwHighDateTime;
+        return result;
+    }
+#endif // _WIN32
+
     /**
     * \class FileWatch
     *
@@ -404,7 +420,7 @@ namespace filewatch {
                         + std::chrono::duration<
                                 typename std::chrono::time_point<std::chrono::system_clock>::rep,
                                 std::ratio_multiply<std::hecto, typename std::chrono::nanoseconds::period>>(
-                                    reinterpret_cast<ULARGE_INTEGER*>(&att.ftLastWriteTime)->QuadPart - base_.first.QuadPart);
+                                    filetime_to_ularge(att.ftLastWriteTime).QuadPart - base_.first.QuadPart);
 
                     if (bytes_returned == 0 || ((current_time == last_write_time_) && current_size == last_size_ )) {
                         break;
@@ -605,7 +621,7 @@ namespace filewatch {
                 + std::chrono::duration<
                         typename std::chrono::time_point<std::chrono::system_clock>::rep,
                         std::ratio_multiply<std::hecto, typename std::chrono::nanoseconds::period>>(
-                            reinterpret_cast<ULARGE_INTEGER*>(&att.ftLastWriteTime)->QuadPart - base_.first.QuadPart);
+                            filetime_to_ularge(att.ftLastWriteTime).QuadPart - base_.first.QuadPart);
 
             // Initialize filesize
             last_size_ = att.nFileSizeLow;
