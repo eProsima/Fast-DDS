@@ -60,6 +60,19 @@ std::set<SenderResource*> DatagramInjectionTransportDescriptor::get_send_resourc
     return send_resource_list_;
 }
 
+void DatagramInjectionTransportDescriptor::set_datagram_mutator(
+        DatagramMutator mutator)
+{
+    std::lock_guard<std::mutex> guard(mtx_);
+    datagram_mutator_ = mutator;
+}
+
+DatagramInjectionTransportDescriptor::DatagramMutator DatagramInjectionTransportDescriptor::get_datagram_mutator()
+{
+    std::lock_guard<std::mutex> guard(mtx_);
+    return datagram_mutator_;
+}
+
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima

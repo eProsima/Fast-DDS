@@ -175,6 +175,7 @@ public:
             eprosima::fastcdr::Cdr::state& body_state,
             SecureDataTag& tag,
             uint32_t body_length,
+            uint32_t input_buffer_size,
             const std::array<uint8_t, 4>& transformation_kind,
             const std::array<uint8_t, 32>& session_key,
             const std::array<uint8_t, 12>& initialization_vector,

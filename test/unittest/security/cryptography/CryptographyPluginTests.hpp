@@ -318,7 +318,7 @@ TEST_F(CryptographyPluginTest, exchange_CDRSerializenDeserialize){
 
     std::vector<uint8_t> serialized = CryptoPlugin->keyexchange()->KeyMaterialCDRSerialize(base);
     KeyMaterial_AES_GCM_GMAC result;
-    CryptoPlugin->keyexchange()->KeyMaterialCDRDeserialize(result, &serialized);
+    ASSERT_TRUE(CryptoPlugin->keyexchange()->KeyMaterialCDRDeserialize(result, &serialized));
     ASSERT_TRUE(
         (base.transformation_kind == result.transformation_kind) &&
         (base.master_salt == result.master_salt) &&
@@ -439,6 +439,94 @@ TEST_F(CryptographyPluginTest, exchange_ParticipantCryptoTokens)
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantB, exception);
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantA_remote, exception);
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
+
+    auth_plugin.return_identity_handle(&i_handle, exception);
+    auth_plugin.return_sharedsecret_handle(secret, exception);
+    access_plugin.return_permissions_handle(&perm_handle, exception);
+}
+
+/**
+ * @test Regression for redmine issue #25674: a CryptoToken whose key length exceeds 32 bytes
+ * must be rejected, not copied into the fixed-size key arrays.
+ */
+TEST_F(CryptographyPluginTest, exchange_participant_crypto_tokens_malicious_key_material)
+{
+    using namespace eprosima::fastdds::rtps::security;
+
+    SecurityException exception;
+
+    PKIIdentityHandle& i_handle =
+            PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
+
+    AccessPermissionsHandle& perm_handle =
+            AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
+
+    eprosima::fastdds::rtps::PropertySeq prop_handle;
+    ParticipantSecurityAttributes part_sec_attr;
+
+    std::shared_ptr<SecretHandle> secret =
+            auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
+    std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
+
+    part_sec_attr.is_rtps_protected = true;
+    part_sec_attr.plugin_participant_attributes = PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED |
+            PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED;
+
+    //Fill shared secret with dummy values
+    std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
+    SharedSecret::BinaryData binary_data;
+    challenge_1.resize(32);
+    challenge_2.resize(32);
+
+    RAND_bytes(challenge_1.data(), 32);
+    binary_data.name("Challenge1");
+    binary_data.value(challenge_1);
+    (*shared_secret)->data_.push_back(binary_data);
+
+    RAND_bytes(challenge_2.data(), 32);
+    binary_data.name("Challenge2");
+    binary_data.value(challenge_2);
+    (*shared_secret)->data_.push_back(binary_data);
+
+    dummy_data.resize(32);
+    RAND_bytes(dummy_data.data(), 32);
+    binary_data.name("SharedSecret");
+    binary_data.value(dummy_data);
+    (*shared_secret)->data_.push_back(binary_data);
+
+    // One matched remote participant is enough to receive a CryptoToken.
+    std::shared_ptr<ParticipantCryptoHandle> ParticipantA =
+            CryptoPlugin->keyfactory()->register_local_participant(i_handle, perm_handle, prop_handle, part_sec_attr,
+                    exception);
+    ASSERT_TRUE(ParticipantA);
+
+    std::shared_ptr<ParticipantCryptoHandle> ParticipantA_remote =
+            CryptoPlugin->keyfactory()->register_matched_remote_participant(*ParticipantA, i_handle, perm_handle,
+                    *shared_secret, exception);
+    ASSERT_TRUE(ParticipantA_remote);
+
+    // Valid KeyMaterial except for a master_salt length of 255.
+    std::vector<uint8_t> malicious_keymat(300, 0xAA);
+    malicious_keymat[3] = 1; // transformation_kind
+    malicious_keymat[7] = 0xFF; // master_salt key_len
+
+    ParticipantCryptoTokenSeq malicious_tokens;
+    ParticipantCryptoToken token;
+    token.class_id() = std::string("DDS:Crypto:AES_GCM_GMAC");
+    eprosima::fastdds::rtps::BinaryProperty prop;
+    prop.name() = std::string("dds.cryp.keymat");
+    prop.value() = malicious_keymat;
+    prop.propagate(true);
+    token.binary_properties().push_back(std::move(prop));
+    malicious_tokens.push_back(std::move(token));
+
+    EXPECT_FALSE(
+        CryptoPlugin->keyexchange()->set_remote_participant_crypto_tokens(*ParticipantA, *ParticipantA_remote,
+        malicious_tokens, exception)
+        );
+
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantA, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantA_remote, exception);
 
     auth_plugin.return_identity_handle(&i_handle, exception);
     auth_plugin.return_sharedsecret_handle(secret, exception);

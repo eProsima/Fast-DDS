@@ -79,7 +79,7 @@ public:
     //CDR Serialization and Deserialization of KeyMaterials
     std::vector<uint8_t> KeyMaterialCDRSerialize(
             KeyMaterial_AES_GCM_GMAC& key);
-    void KeyMaterialCDRDeserialize(
+    bool KeyMaterialCDRDeserialize(
             KeyMaterial_AES_GCM_GMAC& buffer,
             std::vector<uint8_t>* CDR);
 

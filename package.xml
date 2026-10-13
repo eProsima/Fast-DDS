@@ -8,7 +8,7 @@
   </description>
   <maintainer email="raulsanchezmateos@eprosima.com">Raul Sanchez Mateos</maintainer>
   <maintainer email="miguelcompany@eprosima.com">Miguel Company</maintainer>
-  <license file="LICENSE">Apache 2.0</license>
+  <license file="LICENSE">Apache-2.0</license>
 
   <replace>fastrtps</replace>
 

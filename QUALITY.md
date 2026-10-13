@@ -180,7 +180,7 @@ More information about the supported platforms can be found in [PLATFORM_SUPPORT
 
 ## Vulnerability Disclosure Policy [7.i]
 
-*eprosima Fast DDS* vulnerability Disclosure Policy can be found [here](https://github.com/eProsima/policies/blob/main/VULNERABILITY.md)
+*eprosima Fast DDS* vulnerability Disclosure Policy can be found [here](SECURITY.md)
 
 # Current Status Summary
 

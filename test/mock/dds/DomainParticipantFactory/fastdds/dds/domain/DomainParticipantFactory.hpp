@@ -22,6 +22,8 @@
 
 #include <memory>
 
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+
 #include <rtps/domain/RTPSDomainImpl.hpp>
 
 namespace eprosima {
@@ -54,6 +56,11 @@ public:
             DomainParticipantImpl* part)
     {
         static_cast<void>(part);
+    }
+
+    const DomainParticipantQos get_default_participant_qos() const
+    {
+        return {};
     }
 
 private:

@@ -358,13 +358,13 @@ bool StatelessReader::change_received(
         }
 
         // Update Ownership strength.
-        if (dds::EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind)
+        if ((dds::EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind) && (matched_writers_.end() != writer))
         {
-            assert(matched_writers_.end() != writer);
             change->reader_info.writer_ownership_strength = writer->ownership_strength;
         }
         else
         {
+            // Non-exclusive ownership, or a change accepted from a non-matched writer. No ownership arbitration applies.
             change->reader_info.writer_ownership_strength = (std::numeric_limits<uint32_t>::max)();
         }
 
@@ -791,8 +791,11 @@ bool StatelessReader::process_data_frag_msg(
                             }
                         }
 
-                        // Pending change should be dropped. Check if it can be reused
-                        if (sampleSize <= work_change->serializedPayload.max_size)
+                        // Pending change should be dropped. Check if the new fragmentation fits the buffer
+                        uint32_t min_required_size = 0;
+                        if (CacheChange_t::calculate_required_fragmented_payload_size(
+                                    sampleSize, change_to_add->getFragmentSize(), min_required_size) &&
+                                min_required_size <= work_change->serializedPayload.max_size)
                         {
                             // Sample fits inside pending change. Reuse it.
                             work_change->copy_not_memcpy(change_to_add);
