@@ -71,6 +71,15 @@ public:
         return nullptr;
     }
 
+    /**
+     * @return number of topics with an entry in the registry.
+     */
+    size_t size()
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        return pool_map_.size();
+    }
+
 private:
 
     std::shared_ptr<TopicPayloadPoolProxy> do_get(
@@ -90,9 +99,46 @@ private:
             return existing_pool;
         }
 
-        auto new_ptr = std::make_shared<TopicPayloadPoolProxy>(topic_name, config);
+        // When the last reference to the proxy goes away, remove the entry of its
+        // topic if no other pool uses it, so that entries do not pile up for topics
+        // that are no longer in use.
+        std::weak_ptr<TopicPayloadPoolRegistry> registry = instance();
+        std::shared_ptr<TopicPayloadPoolProxy> new_ptr(
+            new TopicPayloadPoolProxy(topic_name, config),
+            [registry, topic_name](TopicPayloadPoolProxy* proxy)
+            {
+                delete proxy;
+                std::shared_ptr<TopicPayloadPoolRegistry> instance = registry.lock();
+                if (instance)
+                {
+                    instance->release(topic_name);
+                }
+            });
         ptr = new_ptr;
         return new_ptr;
+    }
+
+    /**
+     * Remove the entry of a topic when none of its pools is in use anymore.
+     *
+     * Called when the last reference to a pool of the topic is released.
+     *
+     * @param topic_name name of the topic whose pool was released.
+     */
+    void release(
+            const std::string& topic_name)
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+
+        auto it = pool_map_.find(topic_name);
+        if (it != pool_map_.end() &&
+                it->second.pool_for_preallocated.expired() &&
+                it->second.pool_for_preallocated_realloc.expired() &&
+                it->second.pool_for_dynamic.expired() &&
+                it->second.pool_for_dynamic_reusable.expired())
+        {
+            pool_map_.erase(it);
+        }
     }
 
     std::mutex mutex_;
