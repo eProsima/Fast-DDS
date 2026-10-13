@@ -83,10 +83,14 @@ namespace filewatch {
     };
 
 #ifdef _WIN32
-    /*!
-     * Converts a FILETIME to the equivalent count of 100-nanosecond intervals.
+    /**
+     * \brief Converts a FILETIME to the equivalent count of 100-nanosecond intervals.
+     *
      * Assigning the fields instead of reinterpreting the FILETIME as a ULARGE_INTEGER
      * avoids a type-punning violation that GCC rejects under -Wstrict-aliasing.
+     *
+     * \param [in] filetime FILETIME value to convert.
+     * \return A ULARGE_INTEGER whose high and low parts hold the same 100-nanosecond count.
      */
     inline ULARGE_INTEGER filetime_to_ularge(
             const FILETIME& filetime)
