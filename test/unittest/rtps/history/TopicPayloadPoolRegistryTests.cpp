@@ -17,6 +17,8 @@
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 
 #include <rtps/history/TopicPayloadPoolRegistry_impl/TopicPayloadPoolProxy.hpp>
+#include <rtps/history/TopicPayloadPoolRegistry_impl/TopicPayloadPoolRegistryEntry.hpp>
+#include <rtps/history/TopicPayloadPoolRegistry_impl/TopicPayloadPoolRegistry.hpp>
 
 using namespace eprosima::fastdds::rtps;
 using namespace ::testing;
@@ -56,4 +58,32 @@ TEST(TopicPayloadPoolRegistryTests, basic_checks)
 
     // Destructor should have been called a certain number of times
     EXPECT_EQ(detail::TopicPayloadPoolProxy::DestructorHelper::instance().get(), 2u);
+}
+
+TEST(TopicPayloadPoolRegistryTests, entries_released_with_last_pool)
+{
+    const auto& registry = detail::TopicPayloadPoolRegistry::instance();
+    const size_t initial_size = registry->size();
+
+    PoolConfig cfg{ PREALLOCATED_MEMORY_MODE, 4u, 4u, 4u };
+    auto pool_preallocated = TopicPayloadPoolRegistry::get("topic_released", cfg);
+    cfg.memory_policy = DYNAMIC_RESERVE_MEMORY_MODE;
+    auto pool_dynamic = TopicPayloadPoolRegistry::get("topic_released", cfg);
+    EXPECT_EQ(registry->size(), initial_size + 1u);
+
+    // The entry is kept while any pool of the topic is in use
+    pool_preallocated.reset();
+    EXPECT_EQ(registry->size(), initial_size + 1u);
+
+    // and removed when the last one is released
+    pool_dynamic.reset();
+    EXPECT_EQ(registry->size(), initial_size);
+
+    // Topics used once do not accumulate entries
+    for (int i = 0; i < 100; ++i)
+    {
+        auto pool = TopicPayloadPoolRegistry::get("topic_" + std::to_string(i), cfg);
+        EXPECT_TRUE(pool);
+    }
+    EXPECT_EQ(registry->size(), initial_size);
 }
