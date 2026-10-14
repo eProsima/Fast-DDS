@@ -16,6 +16,7 @@
  * @file DistinguishedName.cpp
  */
 
+#include <algorithm>
 #include <array>
 #include <cstring>
 
@@ -29,6 +30,124 @@ namespace rtps {
 namespace security {
 
 namespace detail {
+
+namespace {
+
+bool is_hex_digit(
+        char c) noexcept
+{
+    return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
+}
+
+int hex_value(
+        char c) noexcept
+{
+    if (c >= '0' && c <= '9')
+    {
+        return c - '0';
+    }
+    if (c >= 'a' && c <= 'f')
+    {
+        return c - 'a' + 10;
+    }
+    return c - 'A' + 10;
+}
+
+// Special chars that can follow a backslash
+bool is_escapable(
+        char c) noexcept
+{
+    return c != '\0' && std::strchr(",=+<>#;\\\" ", c) != nullptr;
+}
+
+// Returns the chars of a value once unescaped, following RFC 2253
+class ValueDecoder
+{
+public:
+
+    enum class Result
+    {
+        CHARACTER,
+        END,
+        MALFORMED,
+    };
+
+    explicit ValueDecoder(
+            const Attribute& att) noexcept
+        : value_(att.value)
+        , length_(att.length)
+    {
+        if (length_ > 0 && value_[0] == '"')
+        {
+            quoted_ = true;
+            index_ = 1;
+        }
+    }
+
+    Result next(
+            char& c) noexcept
+    {
+        if (closed_)
+        {
+            // Nothing can follow the closing quote
+            return index_ == length_ ? Result::END : Result::MALFORMED;
+        }
+
+        if (index_ == length_)
+        {
+            return quoted_ ? Result::MALFORMED : Result::END;
+        }
+
+        char current = value_[index_++];
+
+        if (current == '"')
+        {
+            if (!quoted_)
+            {
+                return Result::MALFORMED;
+            }
+            closed_ = true;
+            return index_ == length_ ? Result::END : Result::MALFORMED;
+        }
+
+        if (current != '\\')
+        {
+            c = current;
+            return Result::CHARACTER;
+        }
+
+        if (index_ == length_)
+        {
+            return Result::MALFORMED;
+        }
+
+        char escaped = value_[index_++];
+
+        if (is_hex_digit(escaped) && index_ < length_ && is_hex_digit(value_[index_]))
+        {
+            c = static_cast<char>(hex_value(escaped) * 16 + hex_value(value_[index_++]));
+            return Result::CHARACTER;
+        }
+
+        if (is_escapable(escaped))
+        {
+            c = escaped;
+            return Result::CHARACTER;
+        }
+
+        return Result::MALFORMED;
+    }
+
+private:
+
+    const char* value_ {nullptr};
+    size_t length_ {0};
+    size_t index_ {0};
+    bool quoted_ {false};
+    bool closed_ {false};
+};
+
+} // namespace
 
 Attribute::Attribute(
         const DistinguishedName& name)
@@ -102,6 +221,16 @@ size_t Attribute::trim_back_blank_spaces()
     // NOTE: using -1 because size_t cannot be lower than 0, so comparison i >= 0 make no sense
     while (i > 0 && value[i - 1] == ' ')
     {
+        // If preceded by an odd number of backslashes the space is escaped, so keep it
+        size_t backslashes = 0;
+        while (backslashes < i - 1 && value[i - 2 - backslashes] == '\\')
+        {
+            backslashes++;
+        }
+        if (backslashes % 2 == 1)
+        {
+            break;
+        }
         i--;
     }
     return cut(0, i);
@@ -160,42 +289,35 @@ bool Attribute::found(
 bool Attribute::operator ==(
         const Attribute& other) const noexcept
 {
-    // Compare char to char
-    // scaped chars with \ must be taken into account, and " must be ignored
-    size_t index_this = 0;
-    size_t index_other = 0;
+    // Compare char to char once unescaped
+    ValueDecoder this_decoder(*this);
+    ValueDecoder other_decoder(other);
     while (true)
     {
-        while (
-            index_this < this->length
-            && (this->value[index_this] == '\\' || this->value[index_this] == '"'))
+        char this_char = 0;
+        char other_char = 0;
+        ValueDecoder::Result this_result = this_decoder.next(this_char);
+        ValueDecoder::Result other_result = other_decoder.next(other_char);
+
+        // Malformed values never match
+        if (this_result == ValueDecoder::Result::MALFORMED || other_result == ValueDecoder::Result::MALFORMED)
         {
-            index_this++;
+            return false;
         }
 
-        while (
-            index_other < other.length
-            && (other.value[index_other] == '\\' || other.value[index_other] == '"'))
+        if (this_result != other_result)
         {
-            index_other++;
+            return false;
         }
 
-        if (index_this == this->length && index_other == other.length)
+        if (this_result == ValueDecoder::Result::END)
         {
             return true;
         }
 
-        if (
-            !(index_this < this->length)
-            || !(index_other < other.length)
-            || (this->value[index_this] != other.value[index_other]))
+        if (this_char != other_char)
         {
             return false;
-        }
-        else
-        {
-            index_this++;
-            index_other++;
         }
     }
 }
@@ -295,8 +417,9 @@ DistinguishedNameSpecialized::ErrorCase DistinguishedNameSpecialized::find_and_a
     rest.cut(index + 1);
 
     //////////////////////////////////////////
-    // Find first ,
-    index = rest.find(',', found);
+    // RFC 2253 also separates with ; and with + inside multi-valued RDNs
+    index = std::min({rest.find(','), rest.find(';'), rest.find('+')});
+    found = rest.found(index);
     if (!found)
     {
         // Last element found, add it and finish

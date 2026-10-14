@@ -37,6 +37,8 @@
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
+#include <rtps/resources/TimedEvent.h>
+#include <rtps/security/authentication/Authentication.h>
 #include <rtps/security/exceptions/SecurityException.h>
 #include <security/accesscontrol/AccessPermissionsHandle.h>
 #include <security/accesscontrol/DistinguishedName.h>
@@ -815,12 +817,14 @@ static bool generate_credentials_token(
 }
 
 PermissionsHandle* Permissions::validate_local_permissions(
-        Authentication&,
+        Authentication& auth_plugin,
         const IdentityHandle& identity,
         const uint32_t domain_id,
         const PropertyPolicy& part_props,
         SecurityException& exception)
 {
+    drain_expired_timers();
+
     PropertyPolicy access_properties = PropertyPolicyHelper::get_properties_with_prefix(part_props,
                     "dds.sec.access.builtin.Access-Permissions.");
 
@@ -884,6 +888,7 @@ PermissionsHandle* Permissions::validate_local_permissions(
                     {
                         if (generate_credentials_token(*ah, *permissions, exception))
                         {
+                            (*ah)->identity_expiration_ = auth_plugin.get_identity_expiration(identity);
                             return ah;
                         }
                     }
@@ -977,7 +982,7 @@ bool Permissions::return_permissions_handle(
 }
 
 PermissionsHandle* Permissions::validate_remote_permissions(
-        Authentication&,
+        Authentication& auth_plugin,
         const IdentityHandle& local_identity_handle,
         const PermissionsHandle& local_permissions_handle,
         const IdentityHandle& remote_identity_handle,
@@ -985,6 +990,8 @@ PermissionsHandle* Permissions::validate_remote_permissions(
         const PermissionsCredentialToken& remote_credential_token,
         SecurityException& exception)
 {
+    drain_expired_timers();
+
     const PKIIdentityHandle& lih = PKIIdentityHandle::narrow(local_identity_handle);
     const AccessPermissionsHandle& lph = AccessPermissionsHandle::narrow(local_permissions_handle);
     const PKIIdentityHandle& rih = PKIIdentityHandle::narrow(remote_identity_handle);
@@ -1064,6 +1071,8 @@ PermissionsHandle* Permissions::validate_remote_permissions(
     (*handle)->grant = std::move(remote_grant);
     (*handle)->governance_rule_ = lph->governance_rule_;
     (*handle)->governance_topic_rules_ = lph->governance_topic_rules_;
+
+    (*handle)->identity_expiration_ = auth_plugin.get_identity_expiration(remote_identity_handle);
 
     return handle;
 }
@@ -1178,6 +1187,13 @@ bool Permissions::check_create_datawriter(
         return false;
     }
 
+    if (!is_validation_in_time(lah->grant.validity))
+    {
+        exception = _SecurityException_("Grant is not valid at this time");
+        EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
+        return false;
+    }
+
     // Search topic
     for (auto rule : lah->grant.rules)
     {
@@ -1229,6 +1245,13 @@ bool Permissions::check_create_datareader(
     else
     {
         exception = _SecurityException_("Not found topic access rule for topic " + topic_name);
+        EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
+        return false;
+    }
+
+    if (!is_validation_in_time(lah->grant.validity))
+    {
+        exception = _SecurityException_("Grant is not valid at this time");
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
         return false;
     }
@@ -1454,6 +1477,77 @@ bool Permissions::get_datareader_sec_attributes(
     }
 
     return false;
+}
+
+bool Permissions::set_listener(
+        AccessControlListener* listener,
+        SecurityException& /*exception*/)
+{
+    std::lock_guard<std::mutex> lock(listener_mtx_);
+    listener_ = listener;
+    return true;
+}
+
+void Permissions::set_event_resource(
+        eprosima::fastdds::rtps::ResourceEvent& service)
+{
+    event_resource_ = &service;
+}
+
+void Permissions::drain_expired_timers()
+{
+    std::vector<std::unique_ptr<eprosima::fastdds::rtps::TimedEvent>> reaped;
+    {
+        std::lock_guard<std::mutex> lock(expired_timers_mtx_);
+        reaped.swap(expired_timers_);
+    }
+}
+
+void Permissions::arm_permissions_expiry(
+        PermissionsHandle& permissions_handle)
+{
+    AccessPermissionsHandle& handle = AccessPermissionsHandle::narrow(permissions_handle);
+
+    if (event_resource_ == nullptr || handle.nil())
+    {
+        return;
+    }
+
+    const auto expiry = std::chrono::system_clock::from_time_t(handle->grant.validity.not_after);
+    const auto& identity_expiration = handle->identity_expiration_;
+    if (identity_expiration != std::chrono::system_clock::time_point{} && identity_expiration <= expiry)
+    {
+        return;
+    }
+
+    const auto now = std::chrono::system_clock::now();
+    const auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(expiry - now).count();
+    const double interval_ms = (ms <= 0) ? 1.0 : static_cast<double>(ms);
+
+    AccessPermissionsHandle* phandle = &handle;
+    handle->expiry_event_.reset(new eprosima::fastdds::rtps::TimedEvent(
+                *event_resource_,
+                [this, phandle]() -> bool
+                {
+                    // Revocation deletes the handle, keep this timer alive until it returns
+                    {
+                        std::lock_guard<std::mutex> g(expired_timers_mtx_);
+                        if ((*phandle)->expiry_event_)
+                        {
+                            expired_timers_.push_back(std::move((*phandle)->expiry_event_));
+                        }
+                    }
+
+                    std::lock_guard<std::mutex> l(listener_mtx_);
+                    if (listener_ != nullptr)
+                    {
+                        SecurityException ex;
+                        listener_->on_revoke_permissions(*this, *phandle, ex);
+                    }
+                    return false;
+                },
+                interval_ms));
+    handle->expiry_event_->restart_timer();
 }
 
 } // namespace rtps
