@@ -57,6 +57,7 @@ class ReaderHistory;
 class WriterListener;
 class ReaderListener;
 class PDPSimple;
+class WLP;
 struct EntityId_t;
 class ReaderProxyData;
 class WriterProxyData;
@@ -292,6 +293,8 @@ public:
     MOCK_METHOD0(pdp, PDP * ());
 
     MOCK_METHOD0(pdpsimple, PDPSimple * ());
+
+    MOCK_METHOD0(wlp, WLP * ());
 
     MockParticipantListener* getListener()
     {

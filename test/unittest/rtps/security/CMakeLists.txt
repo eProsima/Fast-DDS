@@ -92,6 +92,7 @@ target_include_directories(SecurityAuthentication PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/PDP
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/PDPSimple
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/EDP
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/WLP
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderProxyData
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyData
