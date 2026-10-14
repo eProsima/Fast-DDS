@@ -18,15 +18,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profile.xml
 
 set(TOPICTESTS_SOURCE TopicTests.cpp)
 
-if(WIN32)
-    add_definitions(-D_WIN32_WINNT=0x0601)
-endif()
-
 add_executable(TopicTests ${TOPICTESTS_SOURCE})
-target_compile_definitions(TopicTests PRIVATE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(TopicTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
