@@ -21,6 +21,7 @@
 
 #include <rtps/history/TopicPayloadPool.hpp>
 
+#include <atomic>
 #include <memory>
 #include <string>
 
@@ -48,17 +49,17 @@ public:
 
         void increment()
         {
-            ++num_objects_destroyed;
+            num_objects_destroyed.fetch_add(1u);
         }
 
         size_t get()
         {
-            return num_objects_destroyed;
+            return num_objects_destroyed.load();
         }
 
     private:
 
-        size_t num_objects_destroyed = 0u;
+        std::atomic<size_t> num_objects_destroyed {0u};
     };
 
     TopicPayloadPoolProxy(
