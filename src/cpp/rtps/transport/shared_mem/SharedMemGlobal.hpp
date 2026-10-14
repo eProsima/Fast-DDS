@@ -1090,8 +1090,29 @@ private:
             }
 
             // Try to open
-            auto port_segment = std::shared_ptr<SharedMemSegment>(
-                new SharedMemSegment(boost::interprocess::open_only, port_segment_name.c_str()));
+            std::shared_ptr<SharedMemSegment> port_segment;
+            try
+            {
+                port_segment = std::shared_ptr<SharedMemSegment>(
+                    new SharedMemSegment(boost::interprocess::open_only, port_segment_name.c_str()));
+            }
+            catch (const boost::interprocess::interprocess_exception& e)
+            {
+                if (e.get_error_code() != boost::interprocess::not_found_error)
+                {
+                    // Its creator held the port mutex we hold now, so it died before initializing the segment
+                    EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, THREADID << "Port "
+                                                                      << port_id << " Couldn't open segment: "
+                                                                      << e.what());
+
+                    SharedMemSegment::remove(port_segment_name.c_str());
+
+                    EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, THREADID << "Port "
+                                                                      << port_id << " Removed.");
+                }
+
+                throw;
+            }
 
             SharedMemGlobal::PortNode* port_node;
 
