@@ -29,6 +29,12 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
 #include <fastdds/fastdds_dll.hpp>
 
+#if defined(MINGW_COMPILER) || defined(__MINGW32__)
+#define FASTDDS_TYPESUPPORT_VIRTUAL
+#else
+#define FASTDDS_TYPESUPPORT_VIRTUAL virtual
+#endif // if defined(MINGW_COMPILER) || defined(__MINGW32__)
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -106,7 +112,7 @@ public:
      * @return RETCODE_BAD_PARAMETER if the type name is empty, RETCODE_PRECONDITION_NOT_MET if there is another type with
      * the same name registered on the DomainParticipant and RETCODE_OK if it is registered correctly
      */
-    FASTDDS_EXPORTED_API virtual ReturnCode_t register_type(
+    FASTDDS_EXPORTED_API FASTDDS_TYPESUPPORT_VIRTUAL ReturnCode_t register_type(
             DomainParticipant* participant) const;
 
     /**
@@ -117,7 +123,7 @@ public:
      * @return RETCODE_BAD_PARAMETER if the type name is empty, RETCODE_PRECONDITION_NOT_MET if there is another type with
      * the same name registered on the DomainParticipant and RETCODE_OK if it is registered correctly
      */
-    FASTDDS_EXPORTED_API virtual ReturnCode_t register_type(
+    FASTDDS_EXPORTED_API FASTDDS_TYPESUPPORT_VIRTUAL ReturnCode_t register_type(
             DomainParticipant* participant,
             std::string type_name) const;
 
@@ -126,7 +132,7 @@ public:
      *
      * @return name of the data type
      */
-    FASTDDS_EXPORTED_API virtual const std::string& get_type_name() const
+    FASTDDS_EXPORTED_API FASTDDS_TYPESUPPORT_VIRTUAL const std::string& get_type_name() const
     {
         return get()->get_name();
     }
@@ -139,7 +145,7 @@ public:
      * @param [in] data_representation Representation that should be used to encode the data into the payload.
      * @return true if it is serialized correctly, false if not
      */
-    FASTDDS_EXPORTED_API virtual bool serialize(
+    FASTDDS_EXPORTED_API FASTDDS_TYPESUPPORT_VIRTUAL bool serialize(
             const void* const data,
             fastdds::rtps::SerializedPayload_t& payload,
             DataRepresentationId_t data_representation);
@@ -151,7 +157,7 @@ public:
      * @param data Pointer to data
      * @return true if it is deserialized correctly, false if not
      */
-    FASTDDS_EXPORTED_API virtual bool deserialize(
+    FASTDDS_EXPORTED_API FASTDDS_TYPESUPPORT_VIRTUAL bool deserialize(
             fastdds::rtps::SerializedPayload_t& payload,
             void* data);
 
@@ -162,7 +168,7 @@ public:
      * @param [in] data_representation Representation that should be used for calculating the serialized size.
      * @return Functor which calculates the serialized size of the data.
      */
-    FASTDDS_EXPORTED_API virtual uint32_t calculate_serialized_size(
+    FASTDDS_EXPORTED_API FASTDDS_TYPESUPPORT_VIRTUAL uint32_t calculate_serialized_size(
             const void* const data,
             DataRepresentationId_t data_representation)
     {
@@ -174,7 +180,7 @@ public:
      *
      * @return Pointer to the data
      */
-    FASTDDS_EXPORTED_API virtual void* create_data()
+    FASTDDS_EXPORTED_API FASTDDS_TYPESUPPORT_VIRTUAL void* create_data()
     {
         return get()->create_data();
     }
@@ -184,7 +190,7 @@ public:
      *
      * @param data Pointer to the data to delete
      */
-    FASTDDS_EXPORTED_API virtual void delete_data(
+    FASTDDS_EXPORTED_API FASTDDS_TYPESUPPORT_VIRTUAL void delete_data(
             void* data)
     {
         return get()->delete_data(data);
@@ -198,7 +204,7 @@ public:
      * @param force_md5 boolean to force md5 (default: false)
      * @return true if the key is returned, false if not
      */
-    FASTDDS_EXPORTED_API virtual bool compute_key(
+    FASTDDS_EXPORTED_API FASTDDS_TYPESUPPORT_VIRTUAL bool compute_key(
             const void* const data,
             InstanceHandle_t& i_handle,
             bool force_md5 = false)
@@ -214,7 +220,7 @@ public:
      * @param force_md5 boolean to force md5 (default: false)
      * @return true if the key is returned, false if not
      */
-    FASTDDS_EXPORTED_API virtual bool compute_key(
+    FASTDDS_EXPORTED_API FASTDDS_TYPESUPPORT_VIRTUAL bool compute_key(
             fastdds::rtps::SerializedPayload_t& payload,
             InstanceHandle_t& i_handle,
             bool force_md5 = false)
@@ -222,7 +228,7 @@ public:
         return get()->compute_key(payload, i_handle, force_md5);
     }
 
-    FASTDDS_EXPORTED_API virtual bool operator ==(
+    FASTDDS_EXPORTED_API FASTDDS_TYPESUPPORT_VIRTUAL bool operator ==(
             const TypeSupport& type_support)
     {
         return get()->max_serialized_type_size == type_support->max_serialized_type_size
@@ -244,7 +250,7 @@ public:
     /**
      * Checks if the type is bounded.
      */
-    FASTDDS_EXPORTED_API virtual inline bool is_bounded() const
+    FASTDDS_EXPORTED_API FASTDDS_TYPESUPPORT_VIRTUAL inline bool is_bounded() const
     {
         return get()->is_bounded();
     }
@@ -252,7 +258,7 @@ public:
     /**
      * Checks if the type is plain when using a specific encoding.
      */
-    FASTDDS_EXPORTED_API virtual inline bool is_plain(
+    FASTDDS_EXPORTED_API FASTDDS_TYPESUPPORT_VIRTUAL inline bool is_plain(
             DataRepresentationId_t data_representation) const
     {
         return get()->is_plain(data_representation);
@@ -275,5 +281,7 @@ public:
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
+
+#undef FASTDDS_TYPESUPPORT_VIRTUAL
 
 #endif // FASTDDS_DDS_TOPIC__TYPESUPPORT_HPP
