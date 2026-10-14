@@ -27,6 +27,7 @@
 #include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/security/authentication/Handshake.h>
 
+#include <chrono>
 #include <cstdint>
 
 namespace eprosima {
@@ -284,6 +285,18 @@ public:
     {
         static_cast<void>(handle);
         return GUID_t::unknown();
+    }
+
+    /**
+     * Returns the expiration time of the certificate associated to an identity handle.
+     * @param handle Identity Handle to query
+     * @return the expiration time, or a default-constructed time_point if it has none
+     */
+    virtual std::chrono::system_clock::time_point get_identity_expiration(
+            const IdentityHandle& handle) const
+    {
+        static_cast<void>(handle);
+        return std::chrono::system_clock::time_point{};
     }
 
     /**

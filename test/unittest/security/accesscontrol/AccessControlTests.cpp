@@ -23,6 +23,7 @@
 #include <security/authentication/PKIIdentityHandle.h>
 #include <security/authentication/PKIHandshakeHandle.h>
 #include <security/accesscontrol/Permissions.h>
+#include <security/accesscontrol/PermissionsParser.h>
 #include <security/accesscontrol/AccessPermissionsHandle.h>
 
 #include <gtest/gtest.h>
@@ -558,6 +559,106 @@ TEST_F(AccessControlTest, participant_creation_fail_with_empty_topic_expression_
     PermissionsHandle* access_handle;
     get_access_handle(subscriber_participant_attr, &access_handle, false);
 
+}
+
+static void set_time_zone(
+        const char* time_zone)
+{
+#ifdef _WIN32
+    _putenv_s("TZ", time_zone);
+    _tzset();
+#else
+    if (*time_zone == '\0')
+    {
+        unsetenv("TZ");
+    }
+    else
+    {
+        setenv("TZ", time_zone, 1);
+    }
+    tzset();
+#endif // _WIN32
+}
+
+// Restores TZ even if the test fails
+struct TimeZoneRestorer
+{
+    ~TimeZoneRestorer()
+    {
+        set_time_zone(previous.c_str());
+    }
+
+    const std::string previous = std::getenv("TZ") != nullptr ? std::getenv("TZ") : "";
+};
+
+static std::string permissions_with_validity(
+        const std::string& not_before,
+        const std::string& not_after)
+{
+    return
+        "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+        "<dds>"
+        "<permissions>"
+        "<grant name=\"Grant\">"
+        "<subject_name>CN=Main Subscriber</subject_name>"
+        "<validity>"
+        "<not_before>" + not_before + "</not_before>"
+        "<not_after>" + not_after + "</not_after>"
+        "</validity>"
+        "<allow_rule>"
+        "<domains><id>0</id></domains>"
+        "<subscribe><topics><topic>*</topic></topics></subscribe>"
+        "</allow_rule>"
+        "<default>DENY</default>"
+        "</grant>"
+        "</permissions>"
+        "</dds>";
+}
+
+TEST(PermissionsParserTest, validity_without_time_zone_is_utc)
+{
+    // Otherwise a UTC machine would pass even when parsing as local time
+    TimeZoneRestorer restorer;
+    set_time_zone("CET-1");
+
+    const std::string xml = permissions_with_validity("2020-01-01T00:00:00", "2030-01-01T00:00:00");
+
+    PermissionsParser parser;
+    ASSERT_TRUE(parser.parse_stream(xml.c_str(), xml.size()));
+
+    PermissionsData data;
+    parser.swap(data);
+    ASSERT_EQ(data.grants.size(), 1u);
+    EXPECT_EQ(data.grants[0].validity.not_before, static_cast<std::time_t>(1577836800));
+    EXPECT_EQ(data.grants[0].validity.not_after, static_cast<std::time_t>(1893456000));
+}
+
+TEST(PermissionsParserTest, validity_time_zone_is_applied)
+{
+    TimeZoneRestorer restorer;
+    set_time_zone("CET-1");
+
+    const std::string xml = permissions_with_validity("2020-01-01T00:00:00.500Z", "2030-01-01T02:00:00+02:00");
+
+    PermissionsParser parser;
+    ASSERT_TRUE(parser.parse_stream(xml.c_str(), xml.size()));
+
+    PermissionsData data;
+    parser.swap(data);
+    ASSERT_EQ(data.grants.size(), 1u);
+    EXPECT_EQ(data.grants[0].validity.not_before, static_cast<std::time_t>(1577836800));
+    EXPECT_EQ(data.grants[0].validity.not_after, static_cast<std::time_t>(1893456000));
+}
+
+TEST(PermissionsParserTest, validity_with_invalid_time_zone_fails)
+{
+    for (const char* not_after : {"2030-01-01T00:00:00+0200", "2030-01-01T00:00:00+15:00", "2030-01-01T00:00:00 UTC"})
+    {
+        const std::string xml = permissions_with_validity("2020-01-01T00:00:00", not_after);
+
+        PermissionsParser parser;
+        EXPECT_FALSE(parser.parse_stream(xml.c_str(), xml.size())) << not_after;
+    }
 }
 
 int main(

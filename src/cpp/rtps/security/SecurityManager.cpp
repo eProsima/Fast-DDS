@@ -30,6 +30,7 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/messages/CDRMessage.h>
@@ -251,6 +252,10 @@ bool SecurityManager::init(
                 if (access_plugin_ != nullptr)
                 {
                     access_plugin_->set_logger(logging_plugin_, exception);
+                    access_plugin_->set_listener(this, exception);
+
+                    // Before validate_local_permissions, so the local grant timer can be armed
+                    access_plugin_->set_event_resource(participant_->getEventResource());
 
                     local_permissions_handle_ = access_plugin_->validate_local_permissions(
                         *authentication_plugin_, *local_identity_handle_,
@@ -361,6 +366,11 @@ bool SecurityManager::init(
                 if ((access_plugin_ == nullptr || local_permissions_handle_ != nullptr) &&
                         (crypto_plugin_ == nullptr || local_participant_crypto_handle_))
                 {
+                    if (access_plugin_ != nullptr)
+                    {
+                        access_plugin_->arm_permissions_expiry(*local_permissions_handle_);
+                    }
+
                     // Should be activated here, to enable encription buffer on created entities
                     throw true;
                 }
@@ -641,6 +651,11 @@ bool SecurityManager::discovered_participant(
 {
     auto sentry = is_security_manager_initialized();
     if (!sentry)
+    {
+        return false;
+    }
+
+    if (local_revoked_)
     {
         return false;
     }
@@ -933,6 +948,11 @@ bool SecurityManager::on_process_handshake(
 {
     auto sentry = is_security_manager_initialized();
     if (!sentry)
+    {
+        return false;
+    }
+
+    if (local_revoked_)
     {
         return false;
     }
@@ -1788,6 +1808,11 @@ void SecurityManager::process_participant_volatile_message_secure(
 
     auto sentry = is_security_manager_initialized();
     if (!sentry)
+    {
+        return;
+    }
+
+    if (local_revoked_)
     {
         return;
     }
@@ -2670,6 +2695,11 @@ bool SecurityManager::get_datawriter_sec_attributes(
         return false;
     }
 
+    if (local_revoked_)
+    {
+        return false;
+    }
+
     bool returned_value = true;
     SecurityException exception;
 
@@ -2848,6 +2878,11 @@ bool SecurityManager::get_datareader_sec_attributes(
 {
     auto sentry = is_security_manager_initialized();
     if (!sentry)
+    {
+        return false;
+    }
+
+    if (local_revoked_)
     {
         return false;
     }
@@ -3052,6 +3087,11 @@ bool SecurityManager::discovered_reader(
 {
     auto sentry = is_security_manager_initialized();
     if (!sentry)
+    {
+        return false;
+    }
+
+    if (local_revoked_)
     {
         return false;
     }
@@ -3421,6 +3461,11 @@ bool SecurityManager::discovered_writer(
 {
     auto sentry = is_security_manager_initialized();
     if (!sentry)
+    {
+        return false;
+    }
+
+    if (local_revoked_)
     {
         return false;
     }
@@ -4121,6 +4166,11 @@ bool SecurityManager::participant_authorized(
         return false;
     }
 
+    if (local_revoked_)
+    {
+        return false;
+    }
+
     EPROSIMA_LOG_INFO(SECURITY, "Authorized participant " << participant_data.m_guid);
 
     SecurityException exception;
@@ -4250,6 +4300,10 @@ bool SecurityManager::participant_authorized(
                     dp_it->second->set_participant_crypto(participant_crypto_handle);
                     dp_it->second->set_shared_secret(shared_secret_handle);
                     dp_it->second->set_permissions_handle(remote_permissions);
+                    if (remote_permissions != nullptr)
+                    {
+                        access_plugin_->arm_permissions_expiry(*remote_permissions);
+                    }
                 }
                 else
                 {
@@ -4280,6 +4334,10 @@ bool SecurityManager::participant_authorized(
                 {
                     dp_it->second->set_shared_secret(shared_secret_handle);
                     dp_it->second->set_permissions_handle(remote_permissions);
+                    if (remote_permissions != nullptr)
+                    {
+                        access_plugin_->arm_permissions_expiry(*remote_permissions);
+                    }
                 }
             }
 
@@ -4525,178 +4583,186 @@ bool SecurityManager::on_revoke_identity(
         EPROSIMA_LOG_WARNING(SECURITY,
                 "Local identity certificate has expired. Participant is no longer authorized.");
 
-        std::vector<GUID_t> remote_guids;
+        return revoke_local_participant(exception);
+    }
+
+    GUID_t revoked_guid = plugin.get_participant_guid(handle);
+
+    if (revoked_guid == GUID_t::unknown())
+    {
+        EPROSIMA_LOG_ERROR(SECURITY, "on_revoke_identity: cannot resolve GUID from handle.");
+        exception = SecurityException("Cannot resolve participant GUID from revoked handle");
+        return false;
+    }
+
+    return revoke_remote_participant(revoked_guid, exception);
+}
+
+bool SecurityManager::on_revoke_permissions(
+        AccessControl& /*plugin*/,
+        const PermissionsHandle& handle,
+        SecurityException& exception)
+{
+    const bool is_local = (local_permissions_handle_ != nullptr && &handle == local_permissions_handle_);
+
+    if (is_local)
+    {
+        EPROSIMA_LOG_WARNING(SECURITY,
+                "Local permissions grant has expired. Participant is no longer authorized.");
+
+        return revoke_local_participant(exception);
+    }
+
+    GUID_t revoked_guid = GUID_t::unknown();
+    {
+        shared_lock<shared_mutex> sl(mutex_);
+        for (auto& dp_it : discovered_participants_)
         {
-            shared_lock<shared_mutex> sl(mutex_);
-            remote_guids.reserve(discovered_participants_.size());
-            for (auto& dp_it : discovered_participants_)
+            if (dp_it.second->get_permissions_handle() == &handle)
             {
-                remote_guids.push_back(dp_it.first);
+                revoked_guid = dp_it.first;
+                break;
             }
-        }
-
-        bool teardown_ok = true;
-        for (const GUID_t& remote_guid : remote_guids)
-        {
-            std::unique_ptr<ParticipantProxyData> proxy_snapshot;
-            {
-                shared_lock<shared_mutex> sl(mutex_);
-                auto dp_it = discovered_participants_.find(remote_guid);
-                if (dp_it != discovered_participants_.end())
-                {
-                    proxy_snapshot.reset(new ParticipantProxyData(dp_it->second->participant_data()));
-                }
-            }
-            if (proxy_snapshot)
-            {
-                unmatch_builtin_endpoints(*proxy_snapshot);
-
-                auto* edp = participant_->pdp()->getEDP();
-                if (edp != nullptr)
-                {
-                    std::vector<GUID_t> remote_readers, remote_writers;
-                    {
-                        shared_lock<shared_mutex> sl(mutex_);
-                        for (auto& wh : writer_handles_)
-                        {
-                            for (auto& ar : wh.second.associated_readers)
-                            {
-                                if (ar.first.guidPrefix == remote_guid.guidPrefix)
-                                {
-                                    remote_readers.push_back(ar.first);
-                                }
-                            }
-                        }
-                        for (auto& rh : reader_handles_)
-                        {
-                            for (auto& aw : rh.second.associated_writers)
-                            {
-                                if (aw.first.guidPrefix == remote_guid.guidPrefix)
-                                {
-                                    remote_writers.push_back(aw.first);
-                                }
-                            }
-                        }
-                    }
-                    for (const GUID_t& reader_guid : remote_readers)
-                    {
-                        edp->unpairReaderProxy(remote_guid, reader_guid);
-                    }
-                    for (const GUID_t& writer_guid : remote_writers)
-                    {
-                        edp->unpairWriterProxy(remote_guid, writer_guid, false);
-                    }
-                }
-            }
-
-            SecurityException remote_exception;
-            if (!remove_participant_unlocked(remote_guid, remote_exception))
-            {
-                EPROSIMA_LOG_ERROR(SECURITY, "Error tearing down remote " << remote_guid
-                                                                          << " during local expiry: "
-                                                                          << remote_exception.what());
-                if (teardown_ok)
-                {
-                    // Preserve the first failure as the primary exception.
-                    exception = remote_exception;
-                    teardown_ok = false;
-                }
-            }
-        }
-
-        // Return the local participant crypto handle and permissions handle.
-        {
-            std::lock_guard<shared_mutex> _(mutex_);
-
-            writer_handles_.clear();
-            reader_handles_.clear();
-
-            SecurityException local_exception;
-
-            if (local_participant_crypto_handle_ && crypto_plugin_ != nullptr)
-            {
-                if (!crypto_plugin_->cryptokeyfactory()->unregister_participant(
-                            local_participant_crypto_handle_, local_exception))
-                {
-                    EPROSIMA_LOG_ERROR(SECURITY, "Failed to unregister local participant crypto: "
-                            << local_exception.what());
-                    if (teardown_ok)
-                    {
-                        exception = local_exception;
-                        teardown_ok = false;
-                    }
-                }
-                local_participant_crypto_handle_ = nullptr;
-            }
-
-            if (local_permissions_handle_ != nullptr && access_plugin_ != nullptr)
-            {
-                if (!access_plugin_->return_permissions_handle(local_permissions_handle_, local_exception))
-                {
-                    EPROSIMA_LOG_ERROR(SECURITY, "Failed to return local permissions handle: "
-                            << local_exception.what());
-                    if (teardown_ok)
-                    {
-                        exception = local_exception;
-                        teardown_ok = false;
-                    }
-                }
-                local_permissions_handle_ = nullptr;
-            }
-
-            if (local_identity_handle_ != nullptr)
-            {
-                if (!plugin.return_identity_handle(local_identity_handle_, local_exception))
-                {
-                    EPROSIMA_LOG_ERROR(SECURITY, "Failed to return local identity handle: "
-                            << local_exception.what());
-                    if (teardown_ok)
-                    {
-                        exception = local_exception;
-                        teardown_ok = false;
-                    }
-                }
-                local_identity_handle_ = nullptr;
-            }
-        }
-
-        if (participant_->getListener() != nullptr)
-        {
-            {
-                ParticipantAuthenticationInfo info;
-                info.status = ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT;
-                info.guid = participant_->getGuid();
-                participant_->getListener()->onParticipantAuthentication(
-                    participant_->getUserRTPSParticipant(), std::move(info));
-            }
-
-            for (const GUID_t& remote_guid : remote_guids)
-            {
-                ParticipantAuthenticationInfo info;
-                info.status = ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT;
-                info.guid = remote_guid;
-                participant_->getListener()->onParticipantAuthentication(
-                    participant_->getUserRTPSParticipant(), std::move(info));
-            }
-        }
-
-        if (!teardown_ok)
-        {
-            return false;
         }
     }
-    else
-    {
-        GUID_t revoked_guid = plugin.get_participant_guid(handle);
 
-        if (revoked_guid == GUID_t::unknown())
+    if (revoked_guid == GUID_t::unknown())
+    {
+        return true;
+    }
+
+    return revoke_remote_participant(revoked_guid, exception);
+}
+
+bool SecurityManager::revoke_local_participant(
+        SecurityException& exception)
+{
+    if (local_revoked_.exchange(true))
+    {
+        return true;
+    }
+
+    std::vector<GUID_t> remote_guids;
+    {
+        shared_lock<shared_mutex> sl(mutex_);
+        remote_guids.reserve(discovered_participants_.size());
+        for (auto& dp_it : discovered_participants_)
         {
-            EPROSIMA_LOG_ERROR(SECURITY, "on_revoke_identity: cannot resolve GUID from handle.");
-            exception = SecurityException("Cannot resolve participant GUID from revoked handle");
-            return false;
+            remote_guids.push_back(dp_it.first);
+        }
+    }
+
+    bool teardown_ok = true;
+    for (const GUID_t& remote_guid : remote_guids)
+    {
+        std::unique_ptr<ParticipantProxyData> proxy_snapshot;
+        {
+            shared_lock<shared_mutex> sl(mutex_);
+            auto dp_it = discovered_participants_.find(remote_guid);
+            if (dp_it != discovered_participants_.end())
+            {
+                proxy_snapshot.reset(new ParticipantProxyData(dp_it->second->participant_data()));
+            }
+        }
+        if (proxy_snapshot)
+        {
+            unmatch_builtin_endpoints(*proxy_snapshot);
+
+            auto* edp = participant_->pdp()->getEDP();
+            if (edp != nullptr)
+            {
+                std::vector<GUID_t> remote_readers, remote_writers;
+                {
+                    shared_lock<shared_mutex> sl(mutex_);
+                    for (auto& wh : writer_handles_)
+                    {
+                        for (auto& ar : wh.second.associated_readers)
+                        {
+                            if (ar.first.guidPrefix == remote_guid.guidPrefix)
+                            {
+                                remote_readers.push_back(ar.first);
+                            }
+                        }
+                    }
+                    for (auto& rh : reader_handles_)
+                    {
+                        for (auto& aw : rh.second.associated_writers)
+                        {
+                            if (aw.first.guidPrefix == remote_guid.guidPrefix)
+                            {
+                                remote_writers.push_back(aw.first);
+                            }
+                        }
+                    }
+                }
+                for (const GUID_t& reader_guid : remote_readers)
+                {
+                    edp->unpairReaderProxy(remote_guid, reader_guid);
+                }
+                for (const GUID_t& writer_guid : remote_writers)
+                {
+                    edp->unpairWriterProxy(remote_guid, writer_guid, false);
+                }
+
+                // Builtin discovery endpoints too, while their crypto is still registered
+                edp->removeRemoteEndpoints(proxy_snapshot.get());
+            }
+
+            auto* wlp = participant_->wlp();
+            if (wlp != nullptr)
+            {
+                wlp->removeRemoteEndpoints(proxy_snapshot.get());
+            }
+
+            participant_->pdp()->removeRemoteEndpoints(proxy_snapshot.get());
         }
 
-        return revoke_remote_participant(revoked_guid, exception);
+        SecurityException remote_exception;
+        if (!remove_participant_unlocked(remote_guid, remote_exception))
+        {
+            EPROSIMA_LOG_ERROR(SECURITY, "Error tearing down remote " << remote_guid
+                                                                      << " during local expiry: "
+                                                                      << remote_exception.what());
+            if (teardown_ok)
+            {
+                // Preserve the first failure as the primary exception.
+                exception = remote_exception;
+                teardown_ok = false;
+            }
+        }
+    }
+
+    // Local handles are kept until destroy, other threads may still be using them
+    {
+        std::lock_guard<shared_mutex> _(mutex_);
+
+        writer_handles_.clear();
+        reader_handles_.clear();
+    }
+
+    if (participant_->getListener() != nullptr)
+    {
+        {
+            ParticipantAuthenticationInfo info;
+            info.status = ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT;
+            info.guid = participant_->getGuid();
+            participant_->getListener()->onParticipantAuthentication(
+                participant_->getUserRTPSParticipant(), std::move(info));
+        }
+
+        for (const GUID_t& remote_guid : remote_guids)
+        {
+            ParticipantAuthenticationInfo info;
+            info.status = ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT;
+            info.guid = remote_guid;
+            participant_->getListener()->onParticipantAuthentication(
+                participant_->getUserRTPSParticipant(), std::move(info));
+        }
+    }
+
+    if (!teardown_ok)
+    {
+        return false;
     }
 
     return true;
@@ -4715,7 +4781,7 @@ bool SecurityManager::revoke_remote_participant(
     }
 
     EPROSIMA_LOG_WARNING(SECURITY, "Remote participant " << remote_guid
-                                                         << " identity revoked. Terminating communications.");
+                                                         << " revoked. Terminating communications.");
 
     {
         std::unique_ptr<ParticipantProxyData> proxy_snapshot;
@@ -4766,7 +4832,18 @@ bool SecurityManager::revoke_remote_participant(
                 {
                     edp->unpairWriterProxy(remote_guid, writer_guid, false);
                 }
+
+                // Builtin discovery endpoints too, while their crypto is still registered
+                edp->removeRemoteEndpoints(proxy_snapshot.get());
             }
+
+            auto* wlp = participant_->wlp();
+            if (wlp != nullptr)
+            {
+                wlp->removeRemoteEndpoints(proxy_snapshot.get());
+            }
+
+            participant_->pdp()->removeRemoteEndpoints(proxy_snapshot.get());
         }
     }
 

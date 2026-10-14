@@ -15,11 +15,106 @@
 #include <security/accesscontrol/PermissionsParser.h>
 #include <fastdds/dds/log/Log.hpp>
 
+#include <cctype>
 #include <cstring>
 #include <cassert>
+#include <ctime>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <string>
+
+namespace {
+
+std::time_t utc_to_time_t(
+        std::tm* time)
+{
+#ifdef _WIN32
+    return _mkgmtime(time);
+#else
+    return timegm(time);
+#endif // _WIN32
+}
+
+bool two_digits(
+        const std::string& text,
+        size_t pos,
+        int& value)
+{
+    if (!std::isdigit(static_cast<unsigned char>(text[pos])) ||
+            !std::isdigit(static_cast<unsigned char>(text[pos + 1])))
+    {
+        return false;
+    }
+    value = (text[pos] - '0') * 10 + (text[pos + 1] - '0');
+    return true;
+}
+
+// Parses what follows the seconds of an xs:dateTime, UTC if there is no time zone
+bool finish_date_time(
+        std::istream& stream,
+        std::tm& time,
+        std::time_t& result)
+{
+    if (stream.fail())
+    {
+        return false;
+    }
+
+    std::string rest;
+    std::getline(stream, rest);
+    size_t i = 0;
+
+    if (i < rest.size() && rest[i] == '.')
+    {
+        size_t first_digit = ++i;
+        while (i < rest.size() && std::isdigit(static_cast<unsigned char>(rest[i])))
+        {
+            ++i;
+        }
+        if (i == first_digit)
+        {
+            return false;
+        }
+    }
+
+    std::time_t offset = 0;
+    if (i < rest.size() && rest[i] == 'Z')
+    {
+        ++i;
+    }
+    else if (i < rest.size() && (rest[i] == '+' || rest[i] == '-'))
+    {
+        int hours = 0;
+        int minutes = 0;
+        if (rest.size() - i < 6 || !two_digits(rest, i + 1, hours) || rest[i + 3] != ':' ||
+                !two_digits(rest, i + 4, minutes) || minutes > 59 || hours * 60 + minutes > 14 * 60)
+        {
+            return false;
+        }
+        offset = static_cast<std::time_t>(hours * 60 + minutes) * 60;
+        if (rest[i] == '-')
+        {
+            offset = -offset;
+        }
+        i += 6;
+    }
+
+    while (i < rest.size() && std::isspace(static_cast<unsigned char>(rest[i])))
+    {
+        ++i;
+    }
+    if (i != rest.size())
+    {
+        return false;
+    }
+
+    // +hh:mm is ahead of UTC
+    result = utc_to_time_t(&time) - offset;
+    return true;
+}
+
+} // namespace
 
 #if TIXML2_MAJOR_VERSION >= 6
 #define PRINTLINE(node) node->GetLineNum()
@@ -336,9 +431,8 @@ bool PermissionsParser::parse_validity(
                 std::istringstream stream(node->GetText());
                 stream >> std::get_time(&time, "%Y-%m-%dT%T");
 
-                if (!stream.fail())
+                if (finish_date_time(stream, time, validity.not_before))
                 {
-                    validity.not_before = std::mktime(&time);
 #endif // if _MSC_VER != 1800
 
                 tinyxml2::XMLElement* old_node = node;
@@ -357,9 +451,8 @@ bool PermissionsParser::parse_validity(
                             stream.clear();
                             stream >> std::get_time(&time, "%Y-%m-%dT%T");
 
-                            if (!stream.fail())
+                            if (finish_date_time(stream, time, validity.not_after))
                             {
-                                validity.not_after = std::mktime(&time);
 #endif // if _MSC_VER != 1800
                             returned_value = true;
                         }
