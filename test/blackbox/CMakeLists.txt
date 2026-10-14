@@ -355,6 +355,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/partitions.xml
     ${CMAKE_CURRENT_BINARY_DIR}/partitions.xml)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/utils/generate_expiring_ca.py
     ${CMAKE_CURRENT_BINARY_DIR}/generate_expiring_ca.py)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/utils/generate_expiring_permissions.py
+    ${CMAKE_CURRENT_BINARY_DIR}/generate_expiring_permissions.py)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/builtin_transports_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/builtin_transports_profile.xml)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/auth_handshake_props_profile.xml

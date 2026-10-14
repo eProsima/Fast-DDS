@@ -29,6 +29,7 @@ class RTPSParticipantAttributes;
 class ParticipantProxyData;
 class WriterProxyData;
 class ReaderProxyData;
+class ResourceEvent;
 
 namespace security {
 
@@ -37,6 +38,19 @@ class SecurityException;
 struct ParticipantSecurityAttributes;
 struct EndpointSecurityAttributes;
 class Logging;
+class AccessControl;
+
+class AccessControlListener
+{
+public:
+
+    virtual ~AccessControlListener() = default;
+
+    virtual bool on_revoke_permissions(
+            AccessControl& plugin,
+            const PermissionsHandle& handle,
+            SecurityException& exception) = 0;
+};
 
 class AccessControl
 {
@@ -155,6 +169,32 @@ public:
             const std::vector<std::string>& partitions,
             EndpointSecurityAttributes& attributes,
             SecurityException& exception) = 0;
+
+    virtual bool set_listener(
+            AccessControlListener* listener,
+            SecurityException& exception)
+    {
+        static_cast<void>(listener);
+        static_cast<void>(exception);
+        return true;
+    }
+
+    virtual void set_event_resource(
+            ResourceEvent& service)
+    {
+        static_cast<void>(service);
+    }
+
+    /*!
+     * @brief Starts tracking the grant expiration of a Permissions handle. Must be called once the handle is
+     * stored, so the AccessControlListener can find it when the grant expires.
+     * @param handle A handle returned by a prior call to validate_local_permissions or validate_remote_permissions.
+     */
+    virtual void arm_permissions_expiry(
+            PermissionsHandle& handle)
+    {
+        static_cast<void>(handle);
+    }
 
     bool set_logger(
             Logging* logger,

@@ -32,6 +32,7 @@ namespace fastrtps {
 namespace rtps {
 
 class BuiltinProtocols;
+class ParticipantProxyData;
 
 /**
  * Class WLP that implements the Writer Liveliness Protocol described in the RTPS specification.
@@ -61,6 +62,8 @@ public:
                 GUID_t writer,
                 LivelinessQosPolicyKind kind,
                 Duration_t lease_duration));
+
+    MOCK_METHOD1(removeRemoteEndpoints, void(ParticipantProxyData * pdata));
 };
 
 } /* namespace rtps */

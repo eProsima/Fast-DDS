@@ -51,6 +51,12 @@ public:
         return true;
     }
 
+    virtual void removeRemoteEndpoints(
+            ParticipantProxyData*)
+    {
+
+    }
+
     bool unpairWriterProxy(
             const GUID_t& participant_guid,
             const GUID_t& writer_guid,

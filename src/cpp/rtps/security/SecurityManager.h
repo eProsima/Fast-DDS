@@ -37,6 +37,7 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
+#include <fastdds/rtps/security/accesscontrol/AccessControl.h>
 #include <fastdds/rtps/security/authentication/Authentication.h>
 #include <fastdds/rtps/security/authentication/Handshake.h>
 #include <fastdds/rtps/security/common/ParticipantGenericMessage.h>
@@ -71,7 +72,7 @@ struct EndpointSecurityAttributes;
  *
  * @ingroup SECURITY_MODULE
  */
-class SecurityManager : private WriterListener, public AuthenticationListener
+class SecurityManager : private WriterListener, public AuthenticationListener, public AccessControlListener
 {
 public:
 
@@ -655,7 +656,7 @@ private:
             SecurityException& exception);
 
     /**
-     * Revokes the identity of a remote participant.
+     * Revokes the identity or permissions of a remote participant.
      *
      * @param remote_guid The GUID of the participant to revoke.
      * @param exception SecurityException& reference to the exception object.
@@ -663,6 +664,15 @@ private:
      */
     bool revoke_remote_participant(
             const GUID_t& remote_guid,
+            SecurityException& exception);
+
+    /**
+     * Revokes the local participant, tearing down every remote participant.
+     *
+     * @param exception SecurityException& reference to the exception object.
+     * @return true if the teardown succeeded, false otherwise.
+     */
+    bool revoke_local_participant(
             SecurityException& exception);
 
     /**
@@ -859,6 +869,11 @@ private:
             const IdentityHandle& handle,
             SecurityException& exception) override;
 
+    bool on_revoke_permissions(
+            AccessControl& plugin,
+            const PermissionsHandle& handle,
+            SecurityException& exception) override;
+
     RTPSParticipantImpl* participant_;
     StatelessWriter* participant_stateless_message_writer_;
     WriterHistory* participant_stateless_message_writer_history_;
@@ -957,6 +972,8 @@ private:
      * @li (bool)*ready_state_ -> security active
      */
     std::shared_ptr<bool> ready_state_;
+
+    std::atomic<bool> local_revoked_ {false};
 
     mutable shared_mutex mutex_;
 
