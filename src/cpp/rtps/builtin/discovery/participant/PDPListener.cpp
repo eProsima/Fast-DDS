@@ -115,11 +115,13 @@ void PDPListener::on_new_cache_change_added(
 
             if (part->is_participant_ignored(guid.guidPrefix))
             {
+                parent_pdp_->builtin_endpoints_->remove_from_pdp_reader_history(change);
                 return;
             }
 
             if (!check_discovery_conditions(temp_participant_data_))
             {
+                parent_pdp_->builtin_endpoints_->remove_from_pdp_reader_history(change);
                 return;
             }
 
