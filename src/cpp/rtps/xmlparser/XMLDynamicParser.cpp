@@ -868,17 +868,24 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(
     if (p_element != nullptr)
     {
         const char* disc = p_element->Attribute(TYPE);
-        p_dynamictypebuilder_t discriminator = getDiscriminatorTypeBuilder(disc);
-        if (discriminator == nullptr)
+        if (disc == nullptr)
         {
-            logError(XMLPARSER,
-                    "Error parsing union discriminator: Only primitive types allowed (found type " << disc << ").");
+            logError(XMLPARSER, "Error parsing union discriminator: 'type' attribute not found.");
             ret = XMLP_ret::XML_ERROR;
         }
         else
         {
-            p_dynamictypebuilder_t typeBuilder = types::DynamicTypeBuilderFactory::get_instance()->create_union_builder(
-                discriminator);
+            p_dynamictypebuilder_t discriminator = getDiscriminatorTypeBuilder(disc);
+            if (discriminator == nullptr)
+            {
+                logError(XMLPARSER,
+                        "Error parsing union discriminator: Only primitive types allowed (found type " << disc << ").");
+                ret = XMLP_ret::XML_ERROR;
+            }
+            else
+            {
+                p_dynamictypebuilder_t typeBuilder = types::DynamicTypeBuilderFactory::get_instance()->create_union_builder(
+                    discriminator);
             typeBuilder->set_name(name);
 
             uint32_t mId = 0;
@@ -931,6 +938,7 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(
             {
                 types::DynamicTypeBuilderFactory::get_instance()->delete_builder(typeBuilder);
                 ret = XMLP_ret::XML_ERROR;
+            }
             }
         }
     }
