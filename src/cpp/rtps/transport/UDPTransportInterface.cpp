@@ -15,6 +15,7 @@
 #include <rtps/transport/UDPTransportInterface.h>
 
 #include <algorithm>
+#include <cerrno>
 #include <chrono>
 #include <cstring>
 #include <limits>
@@ -603,10 +604,13 @@ bool UDPTransportInterface::send(
             (void)timeout;
 #ifndef _WIN32
             struct timeval timeStruct;
-            timeStruct.tv_sec = 0;
-            timeStruct.tv_usec = timeout.count() > 0 ? timeout.count() : 0;
-            setsockopt(getSocketPtr(socket)->native_handle(), SOL_SOCKET, SO_SNDTIMEO,
-                    reinterpret_cast<const char*>(&timeStruct), sizeof(timeStruct));
+            asio_helpers::duration_to_timeval(timeout, timeStruct);
+            if (0 != setsockopt(getSocketPtr(socket)->native_handle(), SOL_SOCKET, SO_SNDTIMEO,
+                    reinterpret_cast<const char*>(&timeStruct), sizeof(timeStruct)))
+            {
+                EPROSIMA_LOG_WARNING(TRANSPORT_UDP,
+                        "Failed to set UDP send timeout: " << std::strerror(errno));
+            }
 #endif // ifndef _WIN32
 
             asio::error_code ec;
