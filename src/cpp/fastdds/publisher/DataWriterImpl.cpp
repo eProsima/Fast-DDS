@@ -2369,7 +2369,8 @@ std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
         else
         {
             payload_pool_ = TopicPayloadPoolRegistry::get(topic_->get_name(), pool_config_);
-            if (!std::static_pointer_cast<ITopicPayloadPool>(payload_pool_)->reserve_history(pool_config_, false))
+            if (!payload_pool_ ||
+                    !std::static_pointer_cast<ITopicPayloadPool>(payload_pool_)->reserve_history(pool_config_, false))
             {
                 payload_pool_.reset();
             }
