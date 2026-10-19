@@ -631,9 +631,6 @@ static bool check_subject_name(
             {
                 if (rfc2253_string_compare(grant.subject_name, lih->cert_sn_rfc2253_))
                 {
-                    ah->grant = std::move(grant);
-                    returned_value = true;
-
                     // Remove rules not apply to my domain
                     auto iterator = grant.rules.begin();
                     while (iterator != grant.rules.end())
@@ -647,6 +644,10 @@ static bool check_subject_name(
                             ++iterator;
                         }
                     }
+
+                    // Store the grant only once it holds this domain's rules alone
+                    ah->grant = std::move(grant);
+                    returned_value = true;
 
                     break;
                 }
