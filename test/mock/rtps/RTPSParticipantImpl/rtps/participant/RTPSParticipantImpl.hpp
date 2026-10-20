@@ -40,6 +40,9 @@
 #include <rtps/network/NetworkFactory.hpp>
 #include <rtps/reader/BaseReader.hpp>
 #include <rtps/resources/ResourceEvent.h>
+#ifdef FASTDDS_STATISTICS
+#include <statistics/rtps/monitor-service/interfaces/IConnectionsObserver.hpp>
+#endif // ifdef FASTDDS_STATISTICS
 #if HAVE_SECURITY
 #include <rtps/security/SecurityManager.h>
 #endif // if HAVE_SECURITY
@@ -134,7 +137,7 @@ public:
 
     MOCK_CONST_METHOD0(getGuid, const GUID_t& ());
 
-    const NetworkFactory& network_factory()
+    NetworkFactory& network_factory()
     {
         return network_factory_;
     }
@@ -379,6 +382,19 @@ public:
     MOCK_METHOD(bool, should_match_local_endpoints, ());
 
     MOCK_METHOD(bool, ignore_participant, (const GuidPrefix_t&));
+
+    bool is_participant_ignored(
+            const GuidPrefix_t&)
+    {
+        return false;
+    }
+
+#ifdef FASTDDS_STATISTICS
+    const fastdds::statistics::rtps::IConnectionsObserver* get_connections_observer()
+    {
+        return nullptr;
+    }
+#endif // ifdef FASTDDS_STATISTICS
 
     MOCK_METHOD(bool, update_removed_participant, (rtps::LocatorList_t&));
 
