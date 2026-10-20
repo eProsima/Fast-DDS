@@ -53,6 +53,9 @@ public:
 
     CLIParser() = delete;
 
+    //! History depth (per instance) used when no samples limit is given through the CLI
+    static constexpr int32_t DEFAULT_HISTORY_DEPTH = 400;
+
     //! Shape direction enumeration
     enum class ShapeDirection : uint8_t
     {
