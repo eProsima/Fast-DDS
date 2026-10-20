@@ -1465,6 +1465,28 @@ TEST_F(SHMTransportTests, port_not_ok_listener_recover)
     thread_listener.join();
 }
 
+//! Regression test for https://github.com/eProsima/Fast-DDS/issues/6485
+TEST_F(SHMTransportTests, recover_blocked_processing_clears_state)
+{
+    auto shared_mem_manager = SharedMemManager::create(domain_name);
+    SharedMemGlobal* shared_mem_global = shared_mem_manager->global_segment();
+
+    auto port = shared_mem_global->open_port(0, 1, 1000);
+    uint32_t listener_index;
+    auto listener = port->create_listener(&listener_index);
+
+    SharedMemSegment::Id segment_id;
+    segment_id.generate();
+    SharedMemGlobal::BufferDescriptor buffer = { segment_id, 0, 0 };
+    port->listener_processing_start(listener_index, buffer);
+
+    SharedMemGlobal::BufferDescriptor recovered;
+    // retrieve listener
+    ASSERT_TRUE(port->get_and_remove_blocked_processing(recovered));
+    // confirm listener was cleared
+    ASSERT_FALSE(port->get_and_remove_blocked_processing(recovered));
+}
+
 //! This test has been updated to avoid flakiness #20993
 TEST_F(SHMTransportTests, buffer_recover)
 {
