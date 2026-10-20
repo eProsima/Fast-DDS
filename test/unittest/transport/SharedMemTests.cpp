@@ -2215,6 +2215,40 @@ TEST_F(SHMTransportTests, named_mutex_concurrent_open_create)
     thread_get_port.join();
 }
 
+TEST_F(SHMTransportTests, named_mutex_preserves_exclusion_after_port_recreation)
+{
+    auto shared_mem_manager = SharedMemManager::create(domain_name);
+    SharedMemGlobal* shared_mem_global = shared_mem_manager->global_segment();
+    const auto mutex_name = domain_name + "_port0_mutex";
+
+    {
+        auto port = shared_mem_global->open_port(0, 1, 1000);
+        // An opener may retain a handle while the last Port reference is released.
+        auto old_mutex = SharedMemSegment::open_named_mutex(mutex_name);
+        port.reset();
+
+        port = shared_mem_global->open_port(0, 1, 1000);
+        std::unique_lock<SharedMemSegment::named_mutex> lock(*old_mutex);
+
+        bool acquired = false;
+        std::thread opener([&]
+                {
+                    // Use another thread because named mutexes are recursive on Windows.
+                    auto new_mutex = SharedMemSegment::open_named_mutex(mutex_name);
+                    acquired = new_mutex->try_lock();
+                    if (acquired)
+                    {
+                        new_mutex->unlock();
+                    }
+                });
+        opener.join();
+
+        EXPECT_FALSE(acquired);
+    }
+
+    SharedMemSegment::named_mutex::remove(mutex_name.c_str());
+}
+
 TEST_F(SHMTransportTests, named_mutex_concurrent_open)
 {
     auto shared_mem_manager = SharedMemManager::create(domain_name);
