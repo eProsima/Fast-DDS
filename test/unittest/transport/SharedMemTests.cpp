@@ -907,6 +907,41 @@ TEST_F(SHMTransportTests, port_mutex_deadlock_recover)
     thread_locker.join();
 }
 
+TEST_F(SHMTransportTests, port_segment_left_uninitialized_recover)
+{
+    auto shared_mem_manager = SharedMemManager::create(domain_name);
+    SharedMemGlobal* shared_mem_global = shared_mem_manager->global_segment();
+
+    // What a process killed while creating a port segment leaves behind, with no lock files:
+    // no size yet, or a size and Boost's header word still Uninitialized (0) or Initializing (1).
+    struct DeadCreator
+    {
+        uint32_t size;
+        uint32_t header;
+    };
+    uint32_t port_id = 10;
+    for (const DeadCreator& dead_creator : {DeadCreator{0, 0}, DeadCreator{4096, 0}, DeadCreator{4096, 1}})
+    {
+        std::string port_segment_name = domain_name + "_port" + std::to_string(port_id);
+        {
+            boost::interprocess::shared_memory_object segment(boost::interprocess::create_only,
+                    port_segment_name.c_str(), boost::interprocess::read_write);
+            if (dead_creator.size > 0)
+            {
+                segment.truncate(dead_creator.size);
+                boost::interprocess::mapped_region header(segment, boost::interprocess::read_write);
+                *static_cast<uint32_t*>(header.get_address()) = dead_creator.header;
+            }
+        }
+
+        auto port = shared_mem_global->open_port(port_id, 1, 1000);
+        ASSERT_NO_THROW(port->healthy_check());
+
+        port.reset();
+        shared_mem_global->remove_port(port_id++);
+    }
+}
+
 TEST_F(SHMTransportTests, port_lock_read_exclusive)
 {
     auto shared_mem_manager = SharedMemManager::create(domain_name);
