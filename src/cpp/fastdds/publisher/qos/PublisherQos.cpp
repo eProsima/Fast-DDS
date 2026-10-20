@@ -24,7 +24,11 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+#if defined(MINGW_COMPILER) || defined(__MINGW32__)
+const PublisherQos PUBLISHER_QOS_DEFAULT;
+#else
 FASTDDS_EXPORTED_API const PublisherQos PUBLISHER_QOS_DEFAULT;
+#endif // if defined(MINGW_COMPILER) || defined(__MINGW32__)
 
 
 } /* namespace dds */
