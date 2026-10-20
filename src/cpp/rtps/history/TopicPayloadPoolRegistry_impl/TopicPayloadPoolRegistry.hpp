@@ -78,14 +78,21 @@ private:
             const std::string& topic_name,
             const BasicPoolConfig& config)
     {
-        if (ptr.expired())
+        // Lock first: expired() followed by lock() is a race by construction, because the
+        // owners of a proxy release their references without holding mutex_. A proxy whose
+        // last owner is being destroyed right here would answer 'alive' to expired() and
+        // then hand out an empty pointer. Replacing such a proxy with a fresh one is
+        // harmless: two pools for the same topic coexist only for as long as it takes the
+        // old one to finish dying, and every proxy is self-contained.
+        std::shared_ptr<TopicPayloadPoolProxy> existing_pool = ptr.lock();
+        if (existing_pool)
         {
-            auto new_ptr = std::make_shared<TopicPayloadPoolProxy>(topic_name, config);
-            ptr = new_ptr;
-            return new_ptr;
+            return existing_pool;
         }
 
-        return ptr.lock();
+        auto new_ptr = std::make_shared<TopicPayloadPoolProxy>(topic_name, config);
+        ptr = new_ptr;
+        return new_ptr;
     }
 
     std::mutex mutex_;
