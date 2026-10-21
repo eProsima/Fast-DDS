@@ -379,6 +379,13 @@ TypeLookup_getTypeDependencies_Out TypeLookupRequestListener::prepare_get_type_d
         if (!continuation_point.empty())
         {
             start_index = calculate_continuation_point(continuation_point) * MAX_DEPENDENCIES_PER_REPLY;
+            // Clamp start_index so an attacker-controlled continuation_point cannot
+            // advance iterators out of bounds. An out-of-range continuation point
+            // yields an empty page and ends the pagination.
+            if (start_index >= type_dependencies.size())
+            {
+                start_index = type_dependencies.size();
+            }
         }
 
         // Copy the dependencies within the specified range directly to out
