@@ -14,9 +14,15 @@
 
 #include <gtest/gtest.h>
 
+#include <atomic>
+#include <thread>
+#include <vector>
+
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 
 #include <rtps/history/TopicPayloadPoolRegistry_impl/TopicPayloadPoolProxy.hpp>
+#include <rtps/history/TopicPayloadPoolRegistry_impl/TopicPayloadPoolRegistryEntry.hpp>
+#include <rtps/history/TopicPayloadPoolRegistry_impl/TopicPayloadPoolRegistry.hpp>
 
 using namespace eprosima::fastdds::rtps;
 using namespace ::testing;
@@ -56,4 +62,68 @@ TEST(TopicPayloadPoolRegistryTests, basic_checks)
 
     // Destructor should have been called a certain number of times
     EXPECT_EQ(detail::TopicPayloadPoolProxy::DestructorHelper::instance().get(), 2u);
+}
+
+// get() used to answer an empty pool when the last reference to the proxy of the topic
+// was released on another thread between expired() and lock().
+TEST(TopicPayloadPoolRegistryTests, get_while_another_thread_releases_the_pool)
+{
+    static constexpr uint32_t num_threads = 4u;
+    static constexpr uint32_t gets_per_thread = 5000u;
+
+    PoolConfig cfg{ PREALLOCATED_MEMORY_MODE, 4u, 4u, 4u };
+
+    // Each thread drops its reference on every iteration, so the proxy is created and
+    // destroyed continuously and the race window is walked often enough to be seen.
+    std::vector<std::thread> threads;
+    std::atomic<uint32_t> empty_results(0u);
+
+    for (uint32_t i = 0; i < num_threads; i++)
+    {
+        threads.emplace_back([&]
+                {
+                    for (uint32_t j = 0; j < gets_per_thread; j++)
+                    {
+                        if (!TopicPayloadPoolRegistry::get("race_topic", cfg))
+                        {
+                            empty_results.fetch_add(1);
+                        }
+                    }
+                });
+    }
+
+    for (std::thread& thread : threads)
+    {
+        thread.join();
+    }
+
+    EXPECT_EQ(empty_results.load(), 0u);
+}
+
+TEST(TopicPayloadPoolRegistryTests, entries_released_with_last_pool)
+{
+    const auto& registry = detail::TopicPayloadPoolRegistry::instance();
+    const size_t initial_size = registry->size();
+
+    PoolConfig cfg{ PREALLOCATED_MEMORY_MODE, 4u, 4u, 4u };
+    auto pool_preallocated = TopicPayloadPoolRegistry::get("topic_released", cfg);
+    cfg.memory_policy = DYNAMIC_RESERVE_MEMORY_MODE;
+    auto pool_dynamic = TopicPayloadPoolRegistry::get("topic_released", cfg);
+    EXPECT_EQ(registry->size(), initial_size + 1u);
+
+    // The entry is kept while any pool of the topic is in use
+    pool_preallocated.reset();
+    EXPECT_EQ(registry->size(), initial_size + 1u);
+
+    // and removed when the last one is released
+    pool_dynamic.reset();
+    EXPECT_EQ(registry->size(), initial_size);
+
+    // Topics used once do not accumulate entries
+    for (int i = 0; i < 100; ++i)
+    {
+        auto pool = TopicPayloadPoolRegistry::get("topic_" + std::to_string(i), cfg);
+        EXPECT_TRUE(pool);
+    }
+    EXPECT_EQ(registry->size(), initial_size);
 }

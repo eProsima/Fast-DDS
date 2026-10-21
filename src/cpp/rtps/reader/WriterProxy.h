@@ -147,69 +147,20 @@ public:
     /**
      * Process a gap received from the writer.
      *
-     * @param gap_start  Sequence number as received in the GAP message.
-     * @param gap_list   Sequence number set as received in the GAP message.
-     * @param remove_fn  Function to be called for each irrelevant change found.
+     * Acts as a filter for the GAP message, removing any sequence number that should not be processed by the reader.
+     *
+     * @param gap_start           Sequence number as received in the GAP message.
+     * @param gap_list            Sequence number set as received in the GAP message.
+     * @param validated_start     First sequence number that should be processed by the caller.
+     * @param validated_gap_list  Sequence number set with the sequence numbers that should be processed by the caller.
+     *
+     * @return true if the gap was processed successfully, false otherwise.
      */
-    template<typename Func>
-    inline void process_gap(
+    bool process_gap(
             const SequenceNumber_t& gap_start,
             const SequenceNumberSet_t& gap_list,
-            Func&& remove_fn)
-    {
-        // First sequence number that can be considered for GAP processing
-        SequenceNumber_t first_allowed_gap = changes_from_writer_low_mark_ + 1u;
-
-        // Cap start sequence number
-        SequenceNumber_t initial_seq = std::max(gap_start, first_allowed_gap);
-
-        // Cap the GAP to the maximum sequence number the writer has announced through a
-        // Heartbeat, which is is guaranteed to precede every GAP.
-        // If no Heartbeat has been processed yet, max_sequence_number_ equals
-        // changes_from_writer_low_mark_, so initial_seq >= max_allowed_gap and nothing is
-        // processed (the GAP is ignored until a Heartbeat sets the range).
-        SequenceNumber_t max_allowed_gap = max_sequence_number_ + 1u;
-
-        if (initial_seq == first_allowed_gap)
-        {
-            // Special case for datasharing where no GAP is emitted from the writer's side,
-            // but created locally by the reader for initial positioning
-            max_allowed_gap = std::max(max_allowed_gap, gap_list.base());
-        }
-
-        // Early exit if gap_start is beyond the announced range
-        if (gap_start > max_allowed_gap)
-        {
-            return;
-        }
-
-        // Iterate through all sequence numbers in [initial_seq, final_seq)
-        SequenceNumber_t auxSN;
-        SequenceNumber_t finalSN = std::min(gap_list.base(), max_allowed_gap);
-        for (auxSN = initial_seq; auxSN < finalSN; auxSN++)
-        {
-            if (irrelevant_change_set(auxSN))
-            {
-                remove_fn(auxSN);
-            }
-        }
-
-        // Early exit if the entire gap_list is beyond the announced range
-        if (gap_list.base() > max_allowed_gap)
-        {
-            return;
-        }
-
-        // Iterate through all sequence numbers in the gap_list
-        gap_list.for_each(
-            [&](SequenceNumber_t it)
-            {
-                if ((it < max_allowed_gap) && irrelevant_change_set(it))
-                {
-                    remove_fn(it);
-                }
-            });
-    }
+            SequenceNumber_t& validated_start,
+            SequenceNumberSet_t& validated_gap_list);
 
     /**
      * Check if this proxy has any missing change.
@@ -300,6 +251,19 @@ public:
      * in a loop until it returns an invalid SequenceNumber_t.
      */
     void consider_all_notified();
+
+    /**
+     * @brief Marks all available sequence numbers up to the provided one as notified.
+     *
+     * Calling this function is the equivalent to calling next_cache_change_to_be_notified
+     * in a loop until it returns an invalid SequenceNumber_t or a SequenceNumber_t equal to seq_num.
+     *
+     * Does nothing if seq_num is considered already notified or not available.
+     *
+     * @param seq_num Sequence number up to which to mark as notified.
+     */
+    void consider_all_notified_up_to(
+            const SequenceNumber_t& seq_num);
 
     /**
      * Checks whether a cache change was already received from this proxy.

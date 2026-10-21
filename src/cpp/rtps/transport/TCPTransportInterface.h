@@ -103,6 +103,8 @@ protected:
     mutable std::mutex sockets_map_mutex_;
     // Mutex to control access to unbound_channel_resources_
     mutable std::mutex unbound_map_mutex_;
+    // Mutex to control access to receiver_resources_ and their ReceiverInUseCV
+    mutable std::mutex receiver_resources_mutex_;
 
     std::map<Locator, std::shared_ptr<TCPChannelResource>> channel_resources_; // The key is the "Physical locator"
     std::vector<std::shared_ptr<TCPChannelResource>> unbound_channel_resources_;
@@ -112,6 +114,10 @@ protected:
     std::vector<std::pair<TCPChannelResource*, uint64_t>> sockets_timestamp_;
 
     std::map<Locator, std::shared_ptr<TCPAcceptor>> acceptors_;
+
+    // Whether socket buffer sizes are left to OS autotuning (no size configured by the user)
+    bool autotune_send_buffer_ = false;
+    bool autotune_receive_buffer_ = false;
 
     eprosima::fastdds::statistics::rtps::OutputTrafficManager statistics_info_;
 
@@ -525,6 +531,18 @@ public:
     virtual const TCPTransportDescriptor* configuration() const = 0;
 
     virtual TCPTransportDescriptor* configuration() = 0;
+
+    //! Whether the send buffer size of channel sockets is left to OS autotuning
+    bool autotune_send_buffer() const
+    {
+        return autotune_send_buffer_;
+    }
+
+    //! Whether the receive buffer size of channel sockets is left to OS autotuning
+    bool autotune_receive_buffer() const
+    {
+        return autotune_receive_buffer_;
+    }
 
     void update_network_interfaces() override;
 
