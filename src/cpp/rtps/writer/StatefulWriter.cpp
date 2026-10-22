@@ -783,7 +783,9 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
         {
             if (should_be_sent)
             {
-                uint32_t last_processed = 0;
+                // Charge only the bytes this delivery adds: asynchronous flow controllers reuse one
+                // message group across deliveries, so its byte count is cumulative.
+                uint32_t last_processed = group.get_current_bytes_processed();
                 if (!m_separateSendingEnabled)
                 {
                     size_t num_locators = locator_selector.locator_selector.selected_size();
