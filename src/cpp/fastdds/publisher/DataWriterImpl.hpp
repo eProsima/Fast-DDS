@@ -380,7 +380,12 @@ protected:
                 const fastrtps::rtps::GUID_t& reader_guid,
                 const fastrtps::rtps::ReaderProxyData* reader_info) override;
 
+    private:
+
         DataWriterImpl* data_writer_;
+
+        //! Serializes the update and notification of the publication matched status
+        std::mutex matching_info_mutex_;
 
     private:
 

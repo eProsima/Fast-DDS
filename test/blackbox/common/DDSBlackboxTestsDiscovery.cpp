@@ -22,6 +22,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <thread>
 #include <vector>
 
 #include <gtest/gtest.h>
@@ -596,6 +597,274 @@ TEST(DDSDiscovery, UpdateMatchedStatus)
     datareader_2.destroy();
     datawriter_1.destroy();
     datawriter_2.destroy();
+}
+
+/*
+ * This is a regression test for redmine issue 21355.
+ *
+ * In order to check that the on_publication_matched() and on_subscription_matched() callbacks are always called with
+ * either +1 or -1 as the current_count_change, this test creates and destroys multiple DataReaders and DataWriters in
+ * different threads, with a listener that counts the number of times on_publication_matched() and
+ * on_subscription_matched() are called with current_count_change different than 1 or -1.
+ *
+ * The test fails if any of the calls to on_publication_matched() or on_subscription_matched() is made with a
+ * current_count_change different than 1 or -1.
+ */
+TEST(DDSDiscovery, MatchedCallbackListenerMultithread)
+{
+    constexpr size_t NUM_THREADS = 25;
+
+    struct TestListener
+        : public eprosima::fastdds::dds::DataReaderListener
+        , public eprosima::fastdds::dds::DataWriterListener
+    {
+        std::atomic<uint32_t> reader_other_calls{ 0 };
+        std::atomic<uint32_t> writer_other_calls{ 0 };
+
+        void on_publication_matched(
+                eprosima::fastdds::dds::DataWriter*,
+                const eprosima::fastdds::dds::PublicationMatchedStatus& info) override
+        {
+            if ((info.current_count_change != 1) && (info.current_count_change != -1))
+            {
+                ++writer_other_calls;
+            }
+        }
+
+        void on_subscription_matched(
+                eprosima::fastdds::dds::DataReader*,
+                const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override
+        {
+            if ((info.current_count_change != 1) && (info.current_count_change != -1))
+            {
+                ++reader_other_calls;
+            }
+        }
+
+    };
+
+    std::ostringstream t;
+    t << TEST_TOPIC_NAME << "_" << asio::ip::host_name() << "_" << GET_PID();
+    std::string topic_name = t.str();
+    TestListener listener;
+    eprosima::fastdds::dds::TypeSupport type(new HelloWorldPubSubType());
+
+    auto create_entities = [&listener, &topic_name, &type]()
+            {
+                using namespace eprosima::fastdds::dds;
+
+                uint32_t domain_id = static_cast<uint32_t>(GET_PID()) % 100;
+                auto factory = DomainParticipantFactory::get_instance();
+                DomainParticipantQos participant_qos;
+                factory->get_default_participant_qos(participant_qos);
+                participant_qos.setup_transports(eprosima::fastdds::rtps::BuiltinTransports::UDPv4);
+                participant_qos.wire_protocol().builtin.discovery_config.leaseDuration.seconds = 0;
+                participant_qos.wire_protocol().builtin.discovery_config.leaseDuration.nanosec = 100000000;
+                participant_qos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod.seconds = 0;
+                participant_qos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod.nanosec =
+                        50000000;
+
+                auto participant = factory->create_participant(domain_id, participant_qos);
+                ASSERT_NE(participant, nullptr);
+
+                type.register_type(participant);
+                auto topic = participant->create_topic(topic_name, type.get_type_name(), TOPIC_QOS_DEFAULT);
+                ASSERT_NE(topic, nullptr);
+
+                auto publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+                ASSERT_NE(publisher, nullptr);
+
+                DataWriterQos datawriter_qos;
+                publisher->get_default_datawriter_qos(datawriter_qos);
+                datawriter_qos.data_sharing().off();
+                auto datawriter = publisher->create_datawriter(topic, datawriter_qos, &listener);
+                ASSERT_NE(datawriter, nullptr);
+
+                auto subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+                ASSERT_NE(subscriber, nullptr);
+
+                DataReaderQos datareader_qos;
+                subscriber->get_default_datareader_qos(datareader_qos);
+                datareader_qos.data_sharing().off();
+                auto datareader = subscriber->create_datareader(topic, datareader_qos, &listener);
+                ASSERT_NE(datareader, nullptr);
+
+                HelloWorld msg;
+                msg.index(1);
+                datawriter->write(&msg);
+
+                SampleInfo info;
+                datareader->take_next_sample(&msg, &info);
+
+                participant->delete_contained_entities();
+                factory->delete_participant(participant);
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(200));
+            };
+
+    std::vector<std::thread> threads;
+    threads.reserve(NUM_THREADS);
+    for (size_t i = 0; i < NUM_THREADS; ++i)
+    {
+        threads.emplace_back(create_entities);
+    }
+
+    for (auto& thread : threads)
+    {
+        thread.join();
+    }
+
+    EXPECT_EQ(listener.reader_other_calls.load(), 0u);
+    EXPECT_EQ(listener.writer_other_calls.load(), 0u);
+}
+
+/*
+ * Regression test for a DataReader being deleted while the discovery code notifies it about the removal of a matched
+ * remote DataWriter (see eProsima/Fast-DDS#3303).
+ *
+ * The notification used to check the reader listener and then read it again. Deleting the DataReader clears that
+ * listener (DataReaderImpl::disable()), so a deletion running in between made the notification dereference a null
+ * listener.
+ *
+ * Each iteration matches several DataReaders of one participant with a DataWriter of another participant, checks that
+ * all of them are matched, and then deletes the DataWriter and the DataReaders at the same time from two threads.
+ * Reliable and best-effort DataReaders are used, as StatefulReader and StatelessReader remove matched writers on their
+ * own.
+ */
+TEST(DDSDiscovery, DataReaderDeletionWhileRemoteWriterIsRemoved)
+{
+    using namespace eprosima::fastdds::dds;
+
+    constexpr size_t NUM_READERS = 8;
+    constexpr size_t NUM_ITERATIONS = 200;
+    constexpr std::chrono::seconds MATCH_TIMEOUT(5);
+
+    struct MatchListener : public DataReaderListener
+    {
+        void on_subscription_matched(
+                DataReader*,
+                const SubscriptionMatchedStatus& info) override
+        {
+            if (0 < info.current_count_change)
+            {
+                std::lock_guard<std::mutex> lock(mtx);
+                ++matched;
+                cv.notify_all();
+            }
+        }
+
+        bool wait_matched(
+                size_t expected,
+                std::chrono::seconds timeout)
+        {
+            std::unique_lock<std::mutex> lock(mtx);
+            return cv.wait_for(lock, timeout, [&]()
+                           {
+                               return matched >= expected;
+                           });
+        }
+
+        std::mutex mtx;
+        std::condition_variable cv;
+        size_t matched = 0;
+    };
+
+    std::ostringstream t;
+    t << TEST_TOPIC_NAME << "_" << asio::ip::host_name() << "_" << GET_PID();
+    const std::string topic_name = t.str();
+
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+    const uint32_t domain_id = static_cast<uint32_t>(GET_PID()) % 230;
+
+    DomainParticipant* reader_participant = factory->create_participant(domain_id, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, reader_participant);
+    DomainParticipant* writer_participant = factory->create_participant(domain_id, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, writer_participant);
+
+    TypeSupport type(new HelloWorldPubSubType());
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, type.register_type(reader_participant));
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, type.register_type(writer_participant));
+
+    Topic* reader_topic = reader_participant->create_topic(topic_name, type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(nullptr, reader_topic);
+    Topic* writer_topic = writer_participant->create_topic(topic_name, type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(nullptr, writer_topic);
+
+    Subscriber* subscriber = reader_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, subscriber);
+    Publisher* publisher = writer_participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, publisher);
+
+    size_t total_matched = 0;
+    for (size_t iteration = 0; iteration < NUM_ITERATIONS; ++iteration)
+    {
+        MatchListener listener;
+
+        DataWriter* writer = publisher->create_datawriter(writer_topic, DATAWRITER_QOS_DEFAULT);
+        EXPECT_NE(nullptr, writer);
+        if (nullptr == writer)
+        {
+            break;
+        }
+
+        std::vector<DataReader*> readers;
+        for (size_t i = 0; i < NUM_READERS; ++i)
+        {
+            DataReaderQos reader_qos = subscriber->get_default_datareader_qos();
+            reader_qos.reliability().kind = (0 == i % 2) ? RELIABLE_RELIABILITY_QOS : BEST_EFFORT_RELIABILITY_QOS;
+
+            DataReader* reader = subscriber->create_datareader(reader_topic, reader_qos, &listener);
+            EXPECT_NE(nullptr, reader);
+            if (nullptr == reader)
+            {
+                break;
+            }
+            readers.push_back(reader);
+        }
+
+        // The race only exists when every DataReader is matched with the DataWriter.
+        bool all_matched = (NUM_READERS == readers.size()) && listener.wait_matched(NUM_READERS, MATCH_TIMEOUT);
+        EXPECT_TRUE(all_matched) << "iteration " << iteration;
+        if (!all_matched)
+        {
+            // Delete the entities while the listener they use is still alive.
+            for (DataReader* reader : readers)
+            {
+                EXPECT_EQ(ReturnCode_t::RETCODE_OK, subscriber->delete_datareader(reader));
+            }
+            EXPECT_EQ(ReturnCode_t::RETCODE_OK, publisher->delete_datawriter(writer));
+            break;
+        }
+        total_matched += NUM_READERS;
+
+        std::promise<void> start_promise;
+        std::shared_future<void> start = start_promise.get_future().share();
+
+        std::thread writer_thread([&]()
+                {
+                    start.wait();
+                    EXPECT_EQ(ReturnCode_t::RETCODE_OK, publisher->delete_datawriter(writer));
+                });
+        std::thread reader_thread([&]()
+                {
+                    start.wait();
+                    for (DataReader* reader : readers)
+                    {
+                        EXPECT_EQ(ReturnCode_t::RETCODE_OK, subscriber->delete_datareader(reader));
+                    }
+                });
+
+        start_promise.set_value();
+        writer_thread.join();
+        reader_thread.join();
+    }
+
+    EXPECT_EQ(NUM_READERS * NUM_ITERATIONS, total_matched);
+
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, writer_participant->delete_contained_entities());
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, reader_participant->delete_contained_entities());
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, factory->delete_participant(writer_participant));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, factory->delete_participant(reader_participant));
 }
 
 /**

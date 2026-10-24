@@ -352,6 +352,7 @@ protected:
 
     //!Listener
     DataReaderListener* listener_ = nullptr;
+    mutable std::mutex listener_mutex_;
 
     fastrtps::rtps::GUID_t guid_;
 
@@ -389,7 +390,12 @@ protected:
                 fastrtps::rtps::RTPSReader* reader,
                 int32_t sample_lost_since_last_update) override;
 
+    private:
+
         DataReaderImpl* data_reader_;
+
+        //! Serializes the update and notification of the subscription matched status
+        std::mutex matching_info_mutex_;
 
     private:
 

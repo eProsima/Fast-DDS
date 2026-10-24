@@ -853,6 +853,8 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
         RTPSReader* /*reader*/,
         const SubscriptionMatchedStatus& info)
 {
+    std::lock_guard<std::mutex> scoped_lock(matching_info_mutex_);
+
     data_reader_->update_subscription_matched_status(info);
 }
 
@@ -1138,12 +1140,14 @@ bool DataReaderImpl::lifespan_expired()
 ReturnCode_t DataReaderImpl::set_listener(
         DataReaderListener* listener)
 {
+    std::lock_guard<std::mutex> _(listener_mutex_);
     listener_ = listener;
     return ReturnCode_t::RETCODE_OK;
 }
 
 const DataReaderListener* DataReaderImpl::get_listener() const
 {
+    std::lock_guard<std::mutex> _(listener_mutex_);
     return listener_;
 }
 
@@ -1589,11 +1593,16 @@ fastrtps::TopicAttributes DataReaderImpl::topic_attributes() const
 DataReaderListener* DataReaderImpl::get_listener_for(
         const StatusMask& status)
 {
-    if (listener_ != nullptr &&
-            user_datareader_->get_status_mask().is_active(status))
     {
-        return listener_;
+        std::lock_guard<std::mutex> _(listener_mutex_);
+
+        if (listener_ != nullptr &&
+                user_datareader_->get_status_mask().is_active(status))
+        {
+            return listener_;
+        }
     }
+
     return subscriber_->get_listener_for(status);
 }
 
