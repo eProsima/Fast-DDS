@@ -8,6 +8,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
+// *INDENT-OFF*  Vendored boost code: keep the upstream formatting
+
 #ifndef BOOST_INTERPROCESS_MEM_ALGO_RBTREE_BEST_FIT_HPP
 #define BOOST_INTERPROCESS_MEM_ALGO_RBTREE_BEST_FIT_HPP
 

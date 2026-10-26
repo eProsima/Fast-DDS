@@ -8,6 +8,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
+// *INDENT-OFF*  Vendored boost code: keep the upstream formatting
+
 #ifndef BOOST_INTERPROCESS_MANAGED_OPEN_OR_CREATE_IMPL
 #define BOOST_INTERPROCESS_MANAGED_OPEN_OR_CREATE_IMPL
 

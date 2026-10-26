@@ -8,11 +8,11 @@
 
 #ifndef BOOST_CONFIG_HPP
 #  include <boost/config.hpp>
-#endif
+#endif // ifndef BOOST_CONFIG_HPP
 #
 #if defined(BOOST_HAS_PRAGMA_ONCE)
 #  pragma once
-#endif
+#endif // if defined(BOOST_HAS_PRAGMA_ONCE)
 
 #include <boost/interprocess/detail/config_begin.hpp>
 #include <boost/interprocess/detail/workaround.hpp>
