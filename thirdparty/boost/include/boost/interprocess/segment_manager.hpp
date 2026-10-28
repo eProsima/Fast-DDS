@@ -8,8 +8,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-// *INDENT-OFF*  Vendored boost code: keep the upstream formatting
-
 #ifndef BOOST_INTERPROCESS_SEGMENT_MANAGER_HPP
 #define BOOST_INTERPROCESS_SEGMENT_MANAGER_HPP
 
