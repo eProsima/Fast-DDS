@@ -12,9 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+<<<<<<< HEAD
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/log/Log.h>
+=======
+#include <cstring>
+#include <fstream>
+#include <memory>
+#include <stdexcept>
+#include <sstream>
+#include <streambuf>
+#include <string>
+#include <thread>
+
+#include <gtest/gtest.h>
+
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/utils/IPLocator.hpp>
+
+#include <utils/Semaphore.hpp>
+
+#include "../../../src/cpp/rtps/transport/shared_mem/MultiProducerConsumerRingBuffer.hpp"
+#include "../../../src/cpp/rtps/transport/shared_mem/SharedMemGlobal.hpp"
+#include "../../../src/cpp/rtps/transport/shared_mem/SharedMemManager.hpp"
+#include "../../../src/cpp/rtps/transport/shared_mem/SharedMemSenderResource.hpp"
+#include <boost/interprocess/detail/tree_sanity.hpp>
+#include <boost/intrusive/set.hpp>
+
+>>>>>>> 24141ed (Validate shared-memory index links and check segment creation (#6598))
 #include <MockReceiverResource.h>
 #include <SharedMemGlobalMock.hpp>
 #include "../../../src/cpp/rtps/transport/shared_mem/SharedMemSenderResource.hpp"
@@ -1396,6 +1422,145 @@ TEST_F(SHMTransportTests, port_corrupt_segment_recovers_on_open)
         test_case(corrupt_byte);
     }
     test_case(0x00);
+}
+
+// check_sanity() must not only validate the allocator: the named-object index is
+// an intrusive tree of offset pointers inside the segment too, and open_port_internal
+// walks it right after check_sanity() succeeds (find<PortNode>). Damage only the index
+// node of a named object and expect check_sanity() to report it instead of passing and
+// letting the lookup fault on a wild pointer.
+TEST_F(SHMTransportTests, segment_corrupt_named_index_fails_sanity_check)
+{
+    const std::string segment_name = domain_name + "_index_sanity";
+    SharedMemSegment::remove(segment_name.c_str());
+
+    {
+        SharedMemSegment segment(boost::interprocess::create_only, segment_name.c_str(), 4096);
+        auto* victim = segment.get().construct<uint32_t>("victim")(7u);
+        ASSERT_TRUE(segment.check_sanity());
+
+        // The index hook (parent/left/right offsets) is the first thing in the allocation and is
+        // followed by the block header of the named object. Leave the block header alone.
+        using BlockHeader = boost::interprocess::ipcdetail::block_header<SharedSegmentBase::Offset>;
+        auto* header = BlockHeader::block_header_from_value(victim);
+        constexpr size_t hook_bytes = 3 * sizeof(SharedSegmentBase::Offset);
+        std::memset(reinterpret_cast<char*>(header) - hook_bytes, 0xEF, hook_bytes);
+
+        EXPECT_FALSE(segment.check_sanity());
+    }
+
+    SharedMemSegment::remove(segment_name.c_str());
+}
+
+namespace {
+
+struct SanityNode : public boost::intrusive::set_base_hook<boost::intrusive::link_mode<boost::intrusive::normal_link>>
+{
+    int key = 0;
+
+    bool operator <(
+            const SanityNode& other) const
+    {
+        return key < other.key;
+    }
+
+};
+
+using SanityTree = boost::intrusive::set<SanityNode>;
+using SanityTraits = SanityTree::node_traits;
+
+// Tree header and nodes share one block, as the index and its nodes share a segment
+struct SanityRegion
+{
+    SanityTree tree;
+    SanityNode nodes[8];
+};
+
+} // namespace
+
+class TreeSanityTests : public ::testing::Test
+{
+protected:
+
+    void fill(
+            size_t count)
+    {
+        for (size_t i = 0; i < count; ++i)
+        {
+            region_.nodes[i].key = static_cast<int>(i);
+            region_.tree.insert(region_.nodes[i]);
+        }
+    }
+
+    bool sane()
+    {
+        return boost::interprocess::ipcdetail::tree_links_in_range(
+            region_.tree, &region_, &region_ + 1);
+    }
+
+    SanityTraits::node_ptr node_of(
+            SanityNode& node)
+    {
+        return region_.tree.iterator_to(node).pointed_node();
+    }
+
+    // First node that has a left child (a tree of 8 nodes has several)
+    SanityNode& parent_with_left_child()
+    {
+        for (SanityNode& node : region_.nodes)
+        {
+            if (SanityTraits::get_left(node_of(node)))
+            {
+                return node;
+            }
+        }
+        throw std::logic_error("no node with a left child");
+    }
+
+    SanityRegion region_;
+    SanityNode outside_;
+};
+
+TEST_F(TreeSanityTests, empty_and_valid_trees_pass)
+{
+    EXPECT_TRUE(sane());
+    fill(8);
+    EXPECT_TRUE(sane());
+}
+
+TEST_F(TreeSanityTests, link_outside_range_fails)
+{
+    fill(8);
+    SanityNode& parent = parent_with_left_child();
+    SanityTraits::set_left(node_of(parent), region_.tree.iterator_to(outside_).pointed_node());
+    EXPECT_FALSE(sane());
+}
+
+TEST_F(TreeSanityTests, misaligned_link_fails)
+{
+    fill(8);
+    SanityNode& parent = parent_with_left_child();
+    auto child = SanityTraits::get_left(node_of(parent));
+    SanityTraits::set_left(node_of(parent),
+            reinterpret_cast<SanityTraits::node_ptr>(reinterpret_cast<char*>(child) + 1));
+    EXPECT_FALSE(sane());
+}
+
+TEST_F(TreeSanityTests, inconsistent_parent_link_fails)
+{
+    fill(8);
+    SanityNode& parent = parent_with_left_child();
+    // A link back to itself stays in range but its parent link does not point back
+    SanityTraits::set_left(node_of(parent), node_of(parent));
+    EXPECT_FALSE(sane());
+}
+
+TEST_F(TreeSanityTests, root_outside_range_fails)
+{
+    fill(8);
+    SanityTraits::set_parent(region_.tree.end().pointed_node(),
+            region_.tree.iterator_to(outside_).pointed_node());
+    EXPECT_FALSE(sane());
 }
 
 TEST_F(SHMTransportTests, port_not_ok_listener_recover)

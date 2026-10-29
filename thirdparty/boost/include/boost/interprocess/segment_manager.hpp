@@ -32,6 +32,7 @@
 #include <boost/interprocess/detail/segment_manager_helper.hpp>
 #include <boost/interprocess/detail/named_proxy.hpp>
 #include <boost/interprocess/detail/utilities.hpp>
+#include <boost/interprocess/detail/tree_sanity.hpp>
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/interprocess/indexes/iset_index.hpp>
 #include <boost/interprocess/exceptions.hpp>
@@ -386,6 +387,14 @@ class segment_manager
    #endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
 
    typedef typename segment_manager_base_t::mutex_family       mutex_family;
+
+   //!Returns the result of "check_sanity()" function of the used memory
+   //!algorithm, and additionally verifies that the named and unique indexes
+   //!can be traversed safely
+   bool check_sanity()
+   {
+      return segment_manager_base_t::check_sanity() && priv_check_indexes_sanity(is_intrusive_t());
+   }
 
    typedef transform_iterator
       <typename named_index_t::const_iterator, named_transform> const_named_iterator;
@@ -1315,6 +1324,39 @@ class segment_manager
          local.lock();
       }
       return scoped_lock<rmutex>(boost::move(local));
+   }
+
+   //!Intrusive indexes keep their nodes inside the segment, so a damaged segment
+   //!can make a lookup follow a link out of it. Validate before anything does.
+   bool priv_check_indexes_sanity(ipcdetail::bool_<true>)
+   {
+      scoped_lock<rmutex> guard(m_header);
+      const char *low  = reinterpret_cast<const char*>(this);
+      const char *high = low + segment_manager_base_t::get_size();
+      return priv_check_index_sanity(m_header.m_named_index, low, high)
+         &&  priv_check_index_sanity(m_header.m_unique_index, low, high);
+   }
+
+   bool priv_check_indexes_sanity(ipcdetail::bool_<false>)
+   {  return true;   }
+
+   template<class Index>
+   static bool priv_check_index_sanity(const Index &index, const char *low, const char *high)
+   {
+      if(!ipcdetail::tree_links_in_range(index, low, high)){
+         return false;
+      }
+
+      //The links are now known to stay inside the segment, so the nodes can be read
+      typedef typename Index::const_iterator index_it;
+      for(index_it it(index.begin()), itend(index.end()); it != itend; ++it){
+         const char *name = reinterpret_cast<const char*>(it->name());
+         const char *name_end = name + std::size_t(it->name_length())*sizeof(*it->name());
+         if(name < low || name_end > high || name_end < name){
+            return false;
+         }
+      }
+      return true;
    }
 
    //!This struct includes needed data and derives from
