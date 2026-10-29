@@ -29,6 +29,21 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
 #include <fastdds/fastdds_dll.hpp>
 
+// MinGW only exports the vtable and RTTI of a class when the class itself is
+// marked with __declspec(dllexport); marking individual member functions is not
+// enough. TypeSupport has out-of-line virtual functions (so its vtable is
+// emitted only in TypeSupport.cpp), while its constructors are inline, meaning
+// every user translation unit that constructs a TypeSupport references that
+// vtable. Exporting the whole class on MinGW shared builds makes GCC emit the
+// export directives for the vtable and typeinfo as well. MSVC is not affected
+// because it imports the inline constructors instead of expanding them locally.
+#if defined(_WIN32) && (defined(MINGW_COMPILER) || defined(__MINGW32__)) \
+    && defined(FASTDDS_DYN_LINK) && defined(fastdds_EXPORTS)
+#define FASTDDS_TYPESUPPORT_CLASS_API __declspec( dllexport )
+#else
+#define FASTDDS_TYPESUPPORT_CLASS_API
+#endif // if defined(_WIN32) && MinGW shared library build
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -43,7 +58,7 @@ class DomainParticipant;
  * where Serialize and deserialize methods MUST be implemented.
  * @ingroup FASTDDS_MODULE
  */
-class TypeSupport : public std::shared_ptr<TopicDataType>
+class FASTDDS_TYPESUPPORT_CLASS_API TypeSupport : public std::shared_ptr<TopicDataType>
 {
 public:
 
@@ -275,5 +290,7 @@ public:
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
+
+#undef FASTDDS_TYPESUPPORT_CLASS_API
 
 #endif // FASTDDS_DDS_TOPIC__TYPESUPPORT_HPP
