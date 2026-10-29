@@ -18,34 +18,12 @@ if(SQLITE3_SUPPORT)
 
     set(PERSISTENCETESTS_SOURCE
         PersistenceTests.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/CacheChangePool.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/network.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/sqlite3.c
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/SQLite3PersistenceService.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterfaceWithFilter.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/utils/Host.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
         )
 
     add_executable(PersistenceTests ${PERSISTENCETESTS_SOURCE})
-    target_compile_definitions(PersistenceTests PRIVATE
-        BOOST_ASIO_STANDALONE
-        ASIO_STANDALONE
-        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-        )
     target_include_directories(PersistenceTests PRIVATE
         ${Asio_INCLUDE_DIR}
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterHistory
@@ -54,12 +32,20 @@ if(SQLITE3_SUPPORT)
         )
     target_link_libraries(PersistenceTests
         fastcdr
-        fastdds::log
         foonathan_memory
         GTest::gmock
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
         ${CMAKE_DL_LIBS}
         )
+    fastdds_target_link_object_groups(PersistenceTests
+        fastdds::log
+        fastdds::rtps::host-net
+        fastdds::rtps::net-interface
+        fastdds::time
+        fastdds::rtps::netmask-filter
+        fastdds::rtps::persistence
+        )
+
     gtest_discover_tests(PersistenceTests)
 
 endif(SQLITE3_SUPPORT)

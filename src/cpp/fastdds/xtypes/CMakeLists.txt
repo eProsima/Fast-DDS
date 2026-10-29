@@ -45,6 +45,20 @@ target_sources(fastdds-xtypes-dynamic-types-api INTERFACE
     dynamic_types/DynamicTypeBuilderFactory.cpp
     )
 
+# Settings this group's code is sensitive to. See cmake/common/reusable_objects.cmake.
+fastdds_declare_object_group(fastdds-xtypes-dynamic-types-api
+    MOCKS
+        dds/QosPolicies
+        rtps/Log
+        rtps/RTPSParticipantAttributes
+    DEFINES
+        ENABLE_OLD_LOG_MACROS_
+        FASTDDS_ENFORCE_LOG_INFO
+        HAVE_LOG_NO_ERROR
+        HAVE_LOG_NO_INFO
+        HAVE_LOG_NO_WARNING
+    )
+
 #}}}
 
 #{{{ Implementation
@@ -89,6 +103,36 @@ target_sources(fastdds-xtypes-dynamic-types-impl INTERFACE
 
 target_link_libraries(fastdds-xtypes-dynamic-types-impl INTERFACE fastdds-xtypes-dynamic-types-api)
 
+# Settings this group's code is sensitive to. See cmake/common/reusable_objects.cmake.
+fastdds_declare_object_group(fastdds-xtypes-dynamic-types-impl
+    MOCKS
+        dds/QosPolicies
+        rtps/Endpoint
+        rtps/Log
+        rtps/MessageReceiver
+        rtps/NetworkFactory
+        rtps/ParticipantProxyData
+        rtps/PDP
+        rtps/ReaderHistory
+        rtps/ReaderProxyData
+        rtps/ReceiverResource
+        rtps/RTPSDomain
+        rtps/RTPSDomainImpl
+        rtps/RTPSParticipantAttributes
+        rtps/RTPSReader
+        rtps/RTPSWriter
+        rtps/WriterProxyData
+        xtypes/TypeObjectRegistry
+        xtypes/TypeObjectUtils
+    DEFINES
+        ENABLE_OLD_LOG_MACROS_
+        FASTDDS_ENFORCE_LOG_INFO
+        HAVE_LOG_NO_ERROR
+        HAVE_LOG_NO_INFO
+        HAVE_LOG_NO_WARNING
+    )
+
+
 #}}}
 
 #}}}
@@ -118,6 +162,35 @@ target_sources(fastdds-xtypes-type-representation INTERFACE
     type_representation/TypeObjectRegistry.cpp
     type_representation/TypeObjectRegistry.hpp
     type_representation/TypeObjectUtils.cpp
+    )
+
+# Settings this group's code is sensitive to. See cmake/common/reusable_objects.cmake.
+fastdds_declare_object_group(fastdds-xtypes-type-representation
+    MOCKS
+        dds/QosPolicies
+        rtps/Endpoint
+        rtps/Log
+        rtps/MessageReceiver
+        rtps/NetworkFactory
+        rtps/ParticipantProxyData
+        rtps/PDP
+        rtps/ReaderHistory
+        rtps/ReaderProxyData
+        rtps/ReceiverResource
+        rtps/RTPSDomain
+        rtps/RTPSDomainImpl
+        rtps/RTPSParticipantAttributes
+        rtps/RTPSReader
+        rtps/RTPSWriter
+        rtps/WriterProxyData
+        xtypes/TypeObjectRegistry
+        xtypes/TypeObjectUtils
+    DEFINES
+        ENABLE_OLD_LOG_MACROS_
+        FASTDDS_ENFORCE_LOG_INFO
+        HAVE_LOG_NO_ERROR
+        HAVE_LOG_NO_INFO
+        HAVE_LOG_NO_WARNING
     )
 
 #}}}

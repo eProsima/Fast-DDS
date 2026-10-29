@@ -428,6 +428,11 @@ endif()
 option(FASTDDS_STATISTICS "Enable Fast DDS Statistics Module" ON)
 
 ###############################################################################
+# Reusable OBJECT libraries for the unit test suites
+###############################################################################
+include(${PROJECT_SOURCE_DIR}/cmake/common/reusable_objects.cmake)
+
+###############################################################################
 # Compile library.
 ###############################################################################
 add_subdirectory(src/cpp)

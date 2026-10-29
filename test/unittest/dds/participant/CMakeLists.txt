@@ -28,10 +28,6 @@ set(PARTICIPANTTESTS_SOURCE
         ParticipantTests.cpp
     )
 
-if(WIN32)
-    add_definitions(-D_WIN32_WINNT=0x0601)
-endif()
-
 if(ANDROID)
     if (ANDROID_NATIVE_API_LEVEL LESS 24)
         list(APPEND PARTICIPANTTESTS_SOURCE
@@ -42,10 +38,6 @@ endif()
 
 
 add_executable(ParticipantTests ${PARTICIPANTTESTS_SOURCE})
-target_compile_definitions(ParticipantTests PRIVATE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(ParticipantTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
