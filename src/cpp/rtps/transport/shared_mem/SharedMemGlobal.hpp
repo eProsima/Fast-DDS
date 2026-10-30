@@ -594,25 +594,35 @@ public:
 
                 do
                 {
+                    // Keep the fast path: a buffer that is already available must not
+                    // wait for a notification.
+                    if (is_listener_closed.load() || listener.head() != nullptr)
+                    {
+                        break; // Condition met, Break the while
+                    }
+
                     boost::system_time const timeout =
                             boost::get_system_time() + boost::posix_time::milliseconds(node_->port_wait_timeout_ms);
 
-                    if (node_->empty_cv.timed_wait(lock, timeout, [&]
-                            {
-                                return is_listener_closed.load() || listener.head() != nullptr;
-                            }))
-                    {
-                        break; // Codition met, Break the while
-                    }
-                    else // Timeout
-                    {
-                        if (!node_->is_port_ok)
-                        {
-                            throw std::runtime_error("port marked as not ok");
-                        }
+                    // Wait without a predicate. A notification that does not carry a buffer,
+                    // as the heartbeat requested by healthy_check(), must wake this listener
+                    // too, so that it can refresh its counter and prove that it is still
+                    // alive.
+                    node_->empty_cv.timed_wait(lock, timeout);
 
-                        status.counter = status.last_verified_counter + 1;
+                    if (is_listener_closed.load() || listener.head() != nullptr)
+                    {
+                        break; // Condition met, Break the while
                     }
+
+                    // Timeout, or a notification without data: refresh the counter so that
+                    // the health checks know that this listener is still running.
+                    if (!node_->is_port_ok)
+                    {
+                        throw std::runtime_error("port marked as not ok");
+                    }
+
+                    status.counter = status.last_verified_counter + 1;
                 }
                 while (1);
 
@@ -891,7 +901,12 @@ public:
 
                 if (!is_check_ok)
                 {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(node_->port_wait_timeout_ms));
+                    // A waiting listener is only known to be alive once its counter moves,
+                    // and it only moves the counter when it wakes up. Ask for a heartbeat
+                    // instead of waiting for its next timeout, which would cost
+                    // port_wait_timeout_ms.
+                    node_->empty_cv.notify_all();
+                    std::this_thread::sleep_for(std::chrono::milliseconds(1));
                 }
             }
 
