@@ -21,6 +21,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <thread>
 #include <vector>
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
@@ -2775,4 +2776,142 @@ TEST(DDSDiscovery, static_edp_malformed_entity_id_property)
     /* Clean up */
     factory->delete_participant(attacker);
     factory->delete_participant(victim);
+}
+
+/*!
+ * @test Regression test for a deadlock between the PDP mutex and the temporary proxy pools of the PDP.
+ *
+ * Creating a local endpoint goes through EDP::pairing_*_proxy_with_any_local_*, which takes a temporary
+ * proxy from a fixed-size pool for each local endpoint of the opposite kind and then looks it up in the PDP.
+ * The EDP listeners call the same methods while holding the PDP mutex. If the PDP mutex is not taken
+ * before the pool, several application threads creating endpoints at once can hold all the pool entries
+ * while waiting for the PDP mutex, and a thread processing a remote endpoint announcement can hold the PDP
+ * mutex while waiting for a pool entry, so that no thread makes progress.
+ *
+ * The test creates and deletes endpoints from more threads than pool entries on one participant, which
+ * also has long-lived endpoints of the opposite kind, while another participant keeps creating and
+ * deleting endpoints, so remote announcements are processed at the same time. It hangs if the deadlock is
+ * present.
+ */
+static void concurrent_local_endpoint_creation_while_discovering_remote_endpoints(
+        bool create_readers)
+{
+    using namespace eprosima::fastdds;
+    using namespace eprosima::fastdds::dds;
+
+    constexpr size_t NUM_LOCAL_THREADS = 8;
+    constexpr size_t NUM_REMOTE_THREADS = 4;
+    constexpr size_t NUM_FIXED_ENDPOINTS = 16;
+    constexpr auto TEST_DURATION = std::chrono::seconds(3);
+
+    // Process the announcements of the remote participant on the reception threads
+    LibrarySettings settings;
+    DomainParticipantFactory::get_instance()->get_library_settings(settings);
+    auto prev_intraprocess_delivery = settings.intraprocess_delivery;
+    settings.intraprocess_delivery = INTRAPROCESS_OFF;
+    DomainParticipantFactory::get_instance()->set_library_settings(settings);
+
+    auto factory = DomainParticipantFactory::get_instance();
+    const uint32_t domain_id = static_cast<uint32_t>(GET_PID()) % 230;
+
+    DomainParticipant* local = factory->create_participant(domain_id, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, local);
+    DomainParticipant* remote = factory->create_participant(domain_id, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, remote);
+
+    TypeSupport type(new HelloWorldPubSubType());
+    ASSERT_EQ(RETCODE_OK, type.register_type(local));
+    ASSERT_EQ(RETCODE_OK, type.register_type(remote));
+
+    // One topic per thread, so endpoints of the same topic are never created concurrently on a participant
+    auto create_topics = [&type](DomainParticipant* participant, size_t num_topics)
+            {
+                std::vector<Topic*> topics;
+                for (size_t i = 0; i < num_topics; ++i)
+                {
+                    topics.push_back(participant->create_topic(TEST_TOPIC_NAME + "_" + std::to_string(i),
+                            type.get_type_name(), TOPIC_QOS_DEFAULT));
+                    EXPECT_NE(nullptr, topics.back());
+                }
+                return topics;
+            };
+    std::vector<Topic*> local_topics = create_topics(local, NUM_LOCAL_THREADS);
+    std::vector<Topic*> remote_topics = create_topics(remote, NUM_REMOTE_THREADS);
+
+    // Long-lived local endpoints of the opposite kind, so creating an endpoint uses the temporary proxy pool
+    Publisher* fixed_publisher = local->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, fixed_publisher);
+    Subscriber* fixed_subscriber = local->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, fixed_subscriber);
+    for (size_t i = 0; i < NUM_FIXED_ENDPOINTS; ++i)
+    {
+        Topic* topic = local_topics[i % local_topics.size()];
+        if (create_readers)
+        {
+            ASSERT_NE(nullptr, fixed_publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT));
+        }
+        else
+        {
+            ASSERT_NE(nullptr, fixed_subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT));
+        }
+    }
+
+    std::atomic<bool> stop{false};
+    auto churn = [&stop, create_readers](DomainParticipant* participant, Topic* topic)
+            {
+                Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+                Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+                ASSERT_NE(nullptr, publisher);
+                ASSERT_NE(nullptr, subscriber);
+                while (!stop.load())
+                {
+                    if (create_readers)
+                    {
+                        DataReader* reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
+                        ASSERT_NE(nullptr, reader);
+                        ASSERT_EQ(RETCODE_OK, subscriber->delete_datareader(reader));
+                    }
+                    else
+                    {
+                        DataWriter* writer = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+                        ASSERT_NE(nullptr, writer);
+                        ASSERT_EQ(RETCODE_OK, publisher->delete_datawriter(writer));
+                    }
+                }
+            };
+
+    std::vector<std::thread> threads;
+    for (size_t i = 0; i < NUM_REMOTE_THREADS; ++i)
+    {
+        threads.emplace_back(churn, remote, remote_topics[i]);
+    }
+    for (size_t i = 0; i < NUM_LOCAL_THREADS; ++i)
+    {
+        threads.emplace_back(churn, local, local_topics[i]);
+    }
+
+    std::this_thread::sleep_for(TEST_DURATION);
+    stop.store(true);
+    for (auto& thread : threads)
+    {
+        thread.join();
+    }
+
+    EXPECT_EQ(RETCODE_OK, remote->delete_contained_entities());
+    EXPECT_EQ(RETCODE_OK, factory->delete_participant(remote));
+    EXPECT_EQ(RETCODE_OK, local->delete_contained_entities());
+    EXPECT_EQ(RETCODE_OK, factory->delete_participant(local));
+
+    settings.intraprocess_delivery = prev_intraprocess_delivery;
+    DomainParticipantFactory::get_instance()->set_library_settings(settings);
+}
+
+TEST(DDSDiscovery, concurrent_local_reader_creation_while_discovering_remote_readers_does_not_deadlock)
+{
+    concurrent_local_endpoint_creation_while_discovering_remote_endpoints(true);
+}
+
+TEST(DDSDiscovery, concurrent_local_writer_creation_while_discovering_remote_writers_does_not_deadlock)
+{
+    concurrent_local_endpoint_creation_while_discovering_remote_endpoints(false);
 }
