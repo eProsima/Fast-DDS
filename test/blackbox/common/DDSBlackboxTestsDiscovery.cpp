@@ -2776,3 +2776,111 @@ TEST(DDSDiscovery, static_edp_malformed_entity_id_property)
     factory->delete_participant(attacker);
     factory->delete_participant(victim);
 }
+
+//! Regression test for issue 6595.
+//! A participant using STATIC EDP parses entity ID properties from discovered participants.
+//! If an octet in the property is outside the valid range [0, 255] (e.g., 300.0.0.4, 0.0.1.256,
+//! -1.0.0.4, 999999) or uses invalid delimiters, it must be rejected instead of being silently
+//! truncated modulo 256. Check that the victim participant safely handles these out-of-range
+//! properties in both EDS_ and legacy eProsimaEDPStatic formats, and continues operating normally.
+TEST(DDSDiscovery, static_edp_out_of_range_entity_id_property)
+{
+    using namespace eprosima::fastdds::dds;
+    using namespace eprosima::fastdds::rtps;
+
+    /* Victim listener: keeps track of participant discovery */
+    class DiscoveryListener : public DomainParticipantListener
+    {
+    public:
+
+        void on_participant_discovery(
+                DomainParticipant*,
+                ParticipantDiscoveryStatus status,
+                const ParticipantBuiltinTopicData&,
+                bool& should_be_ignored) override
+        {
+            should_be_ignored = false;
+            if (ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT == status)
+            {
+                std::lock_guard<std::mutex> lock(mtx_);
+                participant_discovered_ = true;
+                cv_.notify_all();
+            }
+        }
+
+        bool wait_participant_discovery()
+        {
+            std::unique_lock<std::mutex> lock(mtx_);
+            return cv_.wait_for(lock, std::chrono::seconds(5), [this]()
+                           {
+                               return participant_discovered_;
+                           });
+        }
+
+    private:
+
+        using DomainParticipantListener::on_participant_discovery;
+
+        std::mutex mtx_;
+        std::condition_variable cv_;
+        bool participant_discovered_ = false;
+    };
+
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+    uint32_t domain_id = (uint32_t)GET_PID() % 230;
+
+    /* Victim: uses STATIC EDP with an empty configuration, so it will try to parse 'EDS_*'
+     * and 'eProsimaEDPStatic_*' properties advertised by any discovered participant. */
+    DomainParticipantQos victim_qos = PARTICIPANT_QOS_DEFAULT;
+    victim_qos.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = false;
+    victim_qos.wire_protocol().builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol = true;
+    victim_qos.wire_protocol().builtin.discovery_config.static_edp_xml_config(
+        "data://<staticdiscovery></staticdiscovery>");
+
+    DiscoveryListener victim_listener;
+    DomainParticipant* victim = factory->create_participant(domain_id, victim_qos, &victim_listener);
+    ASSERT_NE(nullptr, victim);
+
+    /* Attacker: announces out-of-range entity ID properties in both EDS_ and legacy formats. */
+    DomainParticipantQos attacker_qos = PARTICIPANT_QOS_DEFAULT;
+    auto add_property = [&attacker_qos](const std::string& name, const std::string& val)
+            {
+                Property prop;
+                prop.name(name);
+                prop.value(val);
+                prop.propagate(true);
+                attacker_qos.properties().properties().push_back(prop);
+            };
+
+    // EDS_ properties with out-of-range octets and invalid formats
+    add_property("EDS_RA_1", "300.0.0.4");
+    add_property("EDS_RA_2", "0.0.1.256");
+    add_property("EDS_RA_3", "0.0.1.-1");
+    add_property("EDS_RA_4", "0.0.1.999999");
+    add_property("EDS_WA_5", "300");
+    add_property("EDS_WA_6", "-1");
+
+    // Legacy eProsimaEDPStatic properties with out-of-range octets and invalid delimiters
+    add_property("eProsimaEDPStatic_Reader_ALIVE_ID_10", "300.0.0.4");
+    add_property("eProsimaEDPStatic_Reader_ALIVE_ID_11", "0.0.1.256");
+    add_property("eProsimaEDPStatic_Reader_ALIVE_ID_12", "0.0.1.-1");
+    add_property("eProsimaEDPStatic_Reader_ALIVE_ID_13", "0.0.1.999999");
+    add_property("eProsimaEDPStatic_Writer_ALIVE_ID_14", "1.2.3.4.5");
+    add_property("eProsimaEDPStatic_Writer_ALIVE_ID_15", "1-2-3-4");
+
+    // Also include valid properties so we ensure valid entries still parse properly
+    add_property("EDS_RA_20", "0.0.0.4");
+    add_property("eProsimaEDPStatic_Writer_ALIVE_ID_21", "0.0.0.5");
+
+    DiscoveryListener attacker_listener;
+    DomainParticipant* attacker = factory->create_participant(domain_id, attacker_qos, &attacker_listener);
+    ASSERT_NE(nullptr, attacker);
+
+    /* Check that both participants stay alive and discover each other normally. */
+    ASSERT_TRUE(victim_listener.wait_participant_discovery());
+    ASSERT_TRUE(attacker_listener.wait_participant_discovery());
+
+    /* Clean up */
+    factory->delete_participant(attacker);
+    factory->delete_participant(victim);
+}
