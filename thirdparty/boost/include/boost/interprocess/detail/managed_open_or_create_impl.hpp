@@ -33,6 +33,9 @@
 #include <boost/interprocess/permissions.hpp>
 #include <boost/container/detail/type_traits.hpp>  //alignment_of, aligned_storage
 #include <boost/interprocess/sync/spin/wait.hpp>
+#if defined(BOOST_FASTDDS_PATCHES)
+#include <boost/interprocess/detail/posix_time_types_wrk.hpp>
+#endif
 #include <boost/move/move.hpp>
 #include <boost/cstdint.hpp>
 
@@ -442,6 +445,11 @@ class managed_open_or_create_impl
          }
       }
       else{
+#if defined(BOOST_FASTDDS_PATCHES)
+         //A creator that died before initializing the segment never will: give up, as Boost 1.78 does
+         const boost::posix_time::ptime initialize_deadline = microsec_clock::universal_time()
+            + boost::posix_time::seconds(BOOST_INTERPROCESS_MANAGED_OPEN_OR_CREATE_INITIALIZE_TIMEOUT_SEC);
+#endif
          if(FileBased){
             offset_t filesize = 0;
             spin_wait swait;
@@ -450,6 +458,11 @@ class managed_open_or_create_impl
                   error_info err = system_error_code();
                   throw interprocess_exception(err);
                }
+#if defined(BOOST_FASTDDS_PATCHES)
+               if(filesize == 0 && microsec_clock::universal_time() > initialize_deadline){
+                  throw interprocess_exception(error_info(corrupted_error));
+               }
+#endif
                swait.yield();
             }
             if(filesize == 1){
@@ -464,6 +477,11 @@ class managed_open_or_create_impl
 
          spin_wait swait;
          while(value == InitializingSegment || value == UninitializedSegment){
+#if defined(BOOST_FASTDDS_PATCHES)
+            if(microsec_clock::universal_time() > initialize_deadline){
+               throw interprocess_exception(error_info(corrupted_error));
+            }
+#endif
             swait.yield();
             value = atomic_read32(patomic_word);
          }
