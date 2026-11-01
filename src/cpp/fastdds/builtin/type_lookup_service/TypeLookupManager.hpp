@@ -244,14 +244,6 @@ protected:
             const xtypes::TypeIdentfierWithSize& type_identifier_with_size );
 
     /**
-     * Removes a TypeIdentfierWithSize from the async_get_type_callbacks_.
-     * @param type_identifier_with_size[in] TypeIdentfierWithSize to be removed.
-     * @return true if removed, false otherwise.
-     */
-    bool remove_async_get_type_callback(
-            const xtypes::TypeIdentfierWithSize& type_identifier_with_size);
-
-    /**
      * Removes a SampleIdentity from the async_get_type_callbacks_.
      * @param request[in] SampleIdentity to be removed.
      * @return true if removed, false otherwise.
@@ -429,6 +421,8 @@ protected:
     fastdds::rtps::WriterProxyData* temp_writer_proxy_data_ = nullptr;
 
     mutable fastdds::rtps::SequenceNumber_t request_seq_number_;
+    //! Mutex to protect the request sequence number shared by concurrent discovery threads.
+    mutable std::mutex request_seq_mutex_;
     mutable TypeLookup_RequestPubSubType request_type_;
     mutable TypeLookup_ReplyPubSubType reply_type_;
 

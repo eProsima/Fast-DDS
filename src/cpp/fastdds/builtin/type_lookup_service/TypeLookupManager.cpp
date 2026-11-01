@@ -20,6 +20,7 @@
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 
 #include <algorithm>
+#include <utility>
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
@@ -388,19 +389,16 @@ ReturnCode_t TypeLookupManager::check_type_identifier_received(
         return RETCODE_OK;
     }
 
+    // Keep request submission and registration atomic with respect to reply processing.
+    // A reply may arrive as soon as the request is sent.
+    std::lock_guard<std::mutex> lock(async_get_types_mutex_);
+    auto it = async_get_type_callbacks.find(type_identifier_with_size);
+    if (it != async_get_type_callbacks.end())
     {
-        // Check if TypeIdentfierWithSize already exists in the map
-        std::lock_guard<std::mutex> lock(async_get_types_mutex_);
-        auto it = async_get_type_callbacks.find(type_identifier_with_size);
-        if (it != async_get_type_callbacks.end())
-        {
-            // TypeIdentfierWithSize exists, add the callback
-            // Make a copy of the proxy to free the EDP pool
-            ProxyType* temp_proxy_data_copy(new ProxyType(*temp_proxy_data));
-            it->second.push_back(std::make_pair(temp_proxy_data_copy, callback));
-            // Return without sending new request
-            return RETCODE_NO_DATA;
-        }
+        // Make a copy of the proxy to free the EDP pool.
+        ProxyType* temp_proxy_data_copy(new ProxyType(*temp_proxy_data));
+        it->second.push_back(std::make_pair(temp_proxy_data_copy, callback));
+        return RETCODE_NO_DATA;
     }
 
     // TypeIdentfierWithSize doesn't exist, create a new entry
@@ -409,7 +407,7 @@ ReturnCode_t TypeLookupManager::check_type_identifier_received(
     if (INVALID_SAMPLE_IDENTITY != get_type_dependencies_request)
     {
         // Store the sent requests and callback
-        add_async_get_type_request(get_type_dependencies_request, type_identifier_with_size);
+        async_get_type_requests_.emplace(get_type_dependencies_request, type_identifier_with_size);
         std::vector<std::pair<ProxyType*, AsyncCallback>> types;
         // Make a copy of the proxy to free the EDP pool
         ProxyType* temp_proxy_data_copy(new ProxyType(*temp_proxy_data));
@@ -430,32 +428,36 @@ void TypeLookupManager::notify_callbacks(
         ReturnCode_t request_ret_status,
         const xtypes::TypeIdentfierWithSize& type_identifier_with_size)
 {
-    bool removed = false;
-    // Check that type is pending to be resolved
-    auto writer_callbacks_it = async_get_type_writer_callbacks_.find(type_identifier_with_size);
-    if (writer_callbacks_it != async_get_type_writer_callbacks_.end())
+    decltype(async_get_type_writer_callbacks_)::mapped_type writer_callbacks;
+    decltype(async_get_type_reader_callbacks_)::mapped_type reader_callbacks;
+
     {
-        for (auto& proxy_callback_pair : writer_callbacks_it->second)
+        std::lock_guard<std::mutex> lock(async_get_types_mutex_);
+        auto writer_it = async_get_type_writer_callbacks_.find(type_identifier_with_size);
+        if (writer_it != async_get_type_writer_callbacks_.end())
         {
-            proxy_callback_pair.second(request_ret_status, proxy_callback_pair.first);
+            writer_callbacks = std::move(writer_it->second);
+            async_get_type_writer_callbacks_.erase(writer_it);
         }
-        removed = true;
+
+        auto reader_it = async_get_type_reader_callbacks_.find(type_identifier_with_size);
+        if (reader_it != async_get_type_reader_callbacks_.end())
+        {
+            reader_callbacks = std::move(reader_it->second);
+            async_get_type_reader_callbacks_.erase(reader_it);
+        }
     }
 
-    auto reader_callbacks_it = async_get_type_reader_callbacks_.find(type_identifier_with_size);
-    if (reader_callbacks_it != async_get_type_reader_callbacks_.end())
+    // Callbacks may re-enter discovery, so invoke them without holding the map mutex.
+    for (auto& proxy_callback_pair : writer_callbacks)
     {
-        for (auto& proxy_callback_pair : reader_callbacks_it->second)
-        {
-            proxy_callback_pair.second(request_ret_status, proxy_callback_pair.first);
-        }
-        removed = true;
+        proxy_callback_pair.second(request_ret_status, proxy_callback_pair.first);
+        delete proxy_callback_pair.first;
     }
-
-    if (removed)
+    for (auto& proxy_callback_pair : reader_callbacks)
     {
-        // Erase the solved TypeIdentfierWithSize
-        remove_async_get_type_callback(type_identifier_with_size);
+        proxy_callback_pair.second(request_ret_status, proxy_callback_pair.first);
+        delete proxy_callback_pair.first;
     }
 }
 
@@ -473,57 +475,6 @@ bool TypeLookupManager::add_async_get_type_request(
     {
         EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE,
                 "Error in TypeLookupManager::add_async_get_type_request: " << e.what());
-        return false;
-    }
-
-}
-
-bool TypeLookupManager::remove_async_get_type_callback(
-        const xtypes::TypeIdentfierWithSize& type_identifier_with_size)
-{
-    std::lock_guard<std::mutex> lock(async_get_types_mutex_);
-    try
-    {
-        bool removed = false;
-
-        // Check if the key is in the writer map
-        auto writer_it = async_get_type_writer_callbacks_.find(type_identifier_with_size);
-        if (writer_it != async_get_type_writer_callbacks_.end())
-        {
-            // Delete the proxies and remove the entry
-            for (auto& proxy_callback_pair : writer_it->second)
-            {
-                delete proxy_callback_pair.first;
-            }
-            async_get_type_writer_callbacks_.erase(writer_it);
-            removed = true;
-        }
-        // Check if the key is in the reader map
-        auto reader_it = async_get_type_reader_callbacks_.find(type_identifier_with_size);
-        if (reader_it != async_get_type_reader_callbacks_.end())
-        {
-            // Delete the proxies and remove the entry
-            for (auto& proxy_callback_pair : reader_it->second)
-            {
-                delete proxy_callback_pair.first;
-            }
-            async_get_type_reader_callbacks_.erase(reader_it);
-            removed = true;
-        }
-
-        if (!removed)
-        {
-            // If not found in either map, log an error
-            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE,
-                    "Error in TypeLookupManager::remove_async_get_type_callback: Key not found");
-        }
-        return removed;
-    }
-    catch (const std::exception& e)
-    {
-        // Log any exception that might occur during erasure
-        EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE,
-                "Error in TypeLookupManager::remove_async_get_type_callback: " << e.what());
         return false;
     }
 
@@ -703,8 +654,11 @@ TypeLookup_Request* TypeLookupManager::create_request(
     TypeLookup_Request* request = static_cast<TypeLookup_Request*>(pupsubtype.create_data());
     request->header().instanceName() = get_instance_name(type_server);
     request->header().requestId().writer_guid(guid_rtps_2_dds(builtin_request_writer_->getGuid()));
-    request->header().requestId().sequence_number(sequence_number_rtps_2_dds(request_seq_number_));
-    request_seq_number_++;
+    {
+        std::lock_guard<std::mutex> lock(request_seq_mutex_);
+        request->header().requestId().sequence_number(sequence_number_rtps_2_dds(request_seq_number_));
+        request_seq_number_++;
+    }
     return request;
 }
 

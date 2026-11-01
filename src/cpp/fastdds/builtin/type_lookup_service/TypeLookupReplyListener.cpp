@@ -103,10 +103,19 @@ void TypeLookupReplyListener::process_reply()
 
             // Check if the received reply SampleIdentity corresponds to an outstanding request
             auto& request_id {reply.header().relatedRequestId()};
-            auto request_it = typelookup_manager_->async_get_type_requests_.find(request_id);
-            if (request_it != typelookup_manager_->async_get_type_requests_.end())
+            xtypes::TypeIdentfierWithSize type_id;
+            bool request_found = false;
             {
-                xtypes::TypeIdentfierWithSize type_id {request_it->second};
+                std::lock_guard<std::mutex> lock(typelookup_manager_->async_get_types_mutex_);
+                auto request_it = typelookup_manager_->async_get_type_requests_.find(request_id);
+                if (request_it != typelookup_manager_->async_get_type_requests_.end())
+                {
+                    type_id = request_it->second;
+                    request_found = true;
+                }
+            }
+            if (request_found)
+            {
                 // Process the TypeLookup_Reply based on its type
                 switch (reply.return_value()._d())
                 {
