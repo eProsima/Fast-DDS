@@ -22,6 +22,7 @@ import time
 
 
 def main():
+    """Run independent discovery roles and reject failures in either child process."""
     executable = sys.argv[1]
     # Keep UDP RTPS ports in range and avoid a fixed domain across concurrent tests.
     domain = str(100 + os.getpid() % 40)

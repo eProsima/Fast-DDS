@@ -26,6 +26,7 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
 
 #include <atomic>
@@ -39,6 +40,11 @@ using namespace eprosima::fastdds::dds;
 
 namespace {
 
+constexpr unsigned expected_remote_writers = 200;
+
+/**
+ * @brief Track remote writer discovery and verify successful remote TypeObject resolution.
+ */
 class DiscoveryListener : public DomainParticipantListener
 {
 public:
@@ -46,19 +52,37 @@ public:
     void on_data_writer_discovery(
             DomainParticipant*,
             eprosima::fastdds::rtps::WriterDiscoveryStatus reason,
-            const PublicationBuiltinTopicData&,
+            const PublicationBuiltinTopicData& info,
             bool& should_be_ignored) override
     {
         should_be_ignored = false;
         if (reason == eprosima::fastdds::rtps::WriterDiscoveryStatus::DISCOVERED_WRITER)
         {
             ++discovered_writers_;
+            if (info.type_information.assigned())
+            {
+                xtypes::TypeObject type_object;
+                if (RETCODE_OK == DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
+                            info.type_information.type_information.complete().typeid_with_size().type_id(),
+                            type_object))
+                {
+                    ++resolved_types_;
+                }
+            }
         }
     }
 
+    //! Number of remote writer announcements processed.
     std::atomic<unsigned> discovered_writers_ {0};
+    //! Number of remote complete TypeObjects found in the local registry after resolution.
+    std::atomic<unsigned> resolved_types_ {0};
 };
 
+/**
+ * @brief Build a unique dynamically registered structure to require a remote TypeLookup request.
+ * @param index Unique type index within the test workload.
+ * @return The built dynamic type.
+ */
 DynamicType::_ref_type make_type(
         int index)
 {
@@ -76,6 +100,12 @@ DynamicType::_ref_type make_type(
 
 } // namespace
 
+/**
+ * @brief Run one isolated role of the two-process TypeLookup regression.
+ * @param argc Number of command-line arguments.
+ * @param argv Role (announce or discover) and DDS domain ID.
+ * @return Zero only when the role completes all of its checks.
+ */
 int main(
         int argc,
         char** argv)
@@ -103,7 +133,7 @@ int main(
     {
         Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
         successful = publisher != nullptr;
-        for (int index = 0; successful && index < 200; ++index)
+        for (unsigned index = 0; successful && index < expected_remote_writers; ++index)
         {
             TypeSupport type(new DynamicPubSubType(make_type(index)));
             successful = type.register_type(participant) == RETCODE_OK;
@@ -119,10 +149,17 @@ int main(
     // Keep the announcing participant alive while the other participant
     // concurrently requests the type objects for the discovered writers.
     std::this_thread::sleep_for(std::chrono::seconds(15));
-    if (!announce && listener.discovered_writers_ == 0)
+    if (!announce && (listener.discovered_writers_ != expected_remote_writers ||
+            listener.resolved_types_ != expected_remote_writers))
     {
-        std::cerr << "No remote writers discovered; type lookup was not exercised\n";
+        std::cerr << "Expected " << expected_remote_writers
+                  << " remote writers and successfully resolved type objects\n";
         successful = false;
+    }
+    if (!announce)
+    {
+        std::cout << "TypeLookup discovery: " << listener.discovered_writers_ << " writers, "
+                  << listener.resolved_types_ << " type objects resolved" << std::endl;
     }
     successful = participant->delete_contained_entities() == RETCODE_OK && successful;
     successful = factory->delete_participant(participant) == RETCODE_OK && successful;

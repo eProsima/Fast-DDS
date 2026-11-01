@@ -225,7 +225,9 @@ protected:
             AsyncCallback>>>& async_get_type_callbacks);
 
     /**
-     *  Notifies callbacks for a given TypeIdentfierWithSize.
+     * Notifies and removes callbacks for a given TypeIdentfierWithSize.
+     * Callbacks are invoked after releasing async_get_types_mutex_, and their proxy copies are released afterwards.
+     * @param request_ret_status[in] Result of the TypeLookup request.
      * @param type_identifier_with_size[in] TypeIdentfierWithSize of the callbacks to notify.
      */
     void notify_callbacks(
