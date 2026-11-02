@@ -641,6 +641,7 @@ protected:
             bool trigger_value);
 
     void update_subscription_matched_status(
+            fastdds::rtps::RTPSReader* reader,
             const fastdds::rtps::MatchingInfo& status);
 
     bool on_data_available(
