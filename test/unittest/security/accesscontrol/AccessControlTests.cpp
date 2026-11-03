@@ -558,6 +558,73 @@ TEST_F(AccessControlTest, participant_creation_fail_with_empty_topic_expression_
 
 }
 
+/**
+ * @test Regression test for local grant domain filtering.
+ *
+ * The local grant must only keep the rules applying to the participant's domain.
+ * Permissions file only allows domains [0, 230], so creating a participant on domain 231 should fail.
+ */
+TEST_F(AccessControlTest, participant_creation_fail_on_domain_not_in_grant)
+{
+    RTPSParticipantAttributes subscriber_participant_attr;
+    fill_subscriber_participant_security_attributes(subscriber_participant_attr);
+
+    SecurityException exception;
+    PermissionsHandle* access_handle = nullptr;
+
+    // Domain allowed by the grant
+    domain_id = 0;
+    get_access_handle(subscriber_participant_attr, &access_handle);
+    ASSERT_NE(access_handle, nullptr);
+    EXPECT_TRUE(access_plugin.check_create_participant(*access_handle, domain_id, exception)) << exception.what();
+    ASSERT_TRUE(access_plugin.return_permissions_handle(access_handle, exception)) << exception.what();
+
+    // Domain not allowed by the grant
+    domain_id = 231;
+    access_handle = nullptr;
+    get_access_handle(subscriber_participant_attr, &access_handle);
+    ASSERT_NE(access_handle, nullptr);
+    EXPECT_FALSE(access_plugin.check_create_participant(*access_handle, domain_id, exception));
+    ASSERT_TRUE(access_plugin.return_permissions_handle(access_handle, exception)) << exception.what();
+}
+
+/**
+ * @test Regression test for local grant domain filtering.
+ *
+ * Permissions allow each topic in a single domain: HelloWorldTopic_domain_5 on domain 5 and
+ * HelloWorldTopic_domain_10 on domain 10. Local endpoints must only be created on the topic
+ * allowed in the participant's domain.
+ */
+TEST_F(AccessControlTest, validate_topic_access_fail_on_topic_allowed_in_other_domain)
+{
+    permissions_file = "permissions_domain_filtered_grant.smime";
+
+    RTPSParticipantAttributes subscriber_participant_attr;
+    fill_subscriber_participant_security_attributes(subscriber_participant_attr);
+    RTPSParticipantAttributes publisher_participant_attr;
+    fill_publisher_participant_security_attributes(publisher_participant_attr);
+
+    domain_id = 10;
+
+    topic_name = "HelloWorldTopic_domain_10";
+    check_local_datareader(subscriber_participant_attr, true);
+    check_local_datawriter(publisher_participant_attr, true);
+
+    topic_name = "HelloWorldTopic_domain_5";
+    check_local_datareader(subscriber_participant_attr, false);
+    check_local_datawriter(publisher_participant_attr, false);
+
+    domain_id = 5;
+
+    topic_name = "HelloWorldTopic_domain_5";
+    check_local_datareader(subscriber_participant_attr, true);
+    check_local_datawriter(publisher_participant_attr, true);
+
+    topic_name = "HelloWorldTopic_domain_10";
+    check_local_datareader(subscriber_participant_attr, false);
+    check_local_datawriter(publisher_participant_attr, false);
+}
+
 int main(
         int argc,
         char** argv)
