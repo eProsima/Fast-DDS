@@ -34,6 +34,7 @@
 #include <boost/interprocess/detail/math_functions.hpp>
 #include <boost/interprocess/detail/type_traits.hpp>
 #include <boost/interprocess/detail/utilities.hpp>
+#include <boost/interprocess/detail/tree_sanity.hpp>
 // container
 #include <boost/container/detail/multiallocation_chain.hpp>
 // container/detail
@@ -637,6 +638,12 @@ bool rbtree_best_fit<MutexFamily, VoidPointer, MemAlignment>::
 
    //Check allocated bytes are less than size
    if(m_header.m_allocated > m_header.m_size){
+      return false;
+   }
+
+   //Make sure the free-block tree links stay inside the segment before following them
+   const char *segment_low = reinterpret_cast<const char*>(this);
+   if(!ipcdetail::tree_links_in_range(m_header.m_imultiset, segment_low, segment_low + m_header.m_size)){
       return false;
    }
 
