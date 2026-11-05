@@ -2030,6 +2030,12 @@ bool RTPSParticipantImpl::createReceiverResources(
 
         if (ret)
         {
+            if (loc != *it_loc)
+            {
+                EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT,
+                        "Requested receiver locator '" << *it_loc << "' could not be opened. Listening on '"
+                                                       << loc << "' instead.");
+            }
             Locator_list.push_back(loc);
         }
         else if (log_when_creation_fails)
