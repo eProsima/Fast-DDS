@@ -22,12 +22,8 @@
 
 #include <cstdint>
 
-<<<<<<< HEAD
-#include <asio/ssl.hpp>
-=======
-#include "../network/asio.hpp"
+#include <asio.hpp>
 #include <asio/ssl/context.hpp>
->>>>>>> 4c06c89 (Fix FTBFS against OpenSSL 4.0 (#6487))
 #include <rtps/transport/TCPAcceptor.h>
 #include <rtps/transport/TCPChannelResourceSecure.h>
 
