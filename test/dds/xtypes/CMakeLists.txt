@@ -101,6 +101,20 @@ target_link_libraries(DDSXtypesCommunication
     ${CMAKE_DL_LIBS}
     )
 
+# Exercise concurrent type discovery across distinct TypeObjectRegistry instances.
+if(Python3_Interpreter_FOUND)
+    add_executable(TypeLookupConcurrencyReproducer TypeLookupConcurrencyReproducer.cpp)
+    target_link_libraries(TypeLookupConcurrencyReproducer fastdds fastcdr foonathan_memory)
+
+    add_test(
+        NAME DDSXtypes_TypeLookupConcurrency
+        COMMAND ${Python3_EXECUTABLE}
+            ${CMAKE_CURRENT_SOURCE_DIR}/type_lookup_concurrency.py
+            $<TARGET_FILE:TypeLookupConcurrencyReproducer>
+        )
+    set_tests_properties(DDSXtypes_TypeLookupConcurrency PROPERTIES TIMEOUT 90)
+endif()
+
 ###############################################################################
 # Tests specification
 ###############################################################################
