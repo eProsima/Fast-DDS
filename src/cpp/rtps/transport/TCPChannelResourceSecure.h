@@ -20,8 +20,16 @@
 #endif // ifdef OPENSSL_API_COMPAT
 #define OPENSSL_API_COMPAT 10101
 
+<<<<<<< HEAD
 #include <asio.hpp>
 #include <asio/ssl.hpp>
+=======
+#include <memory>
+
+#include "../network/asio.hpp"
+#include <asio/ssl/context.hpp>
+#include <asio/ssl/stream.hpp>
+>>>>>>> 4c06c89 (Fix FTBFS against OpenSSL 4.0 (#6487))
 #include <asio/strand.hpp>
 #include <rtps/transport/TCPChannelResource.h>
 
