@@ -19,7 +19,7 @@
  * reply writer history of the type server fills up.
  */
 
-#include "TypeLookupServiceManyTypes.hpp"
+#include "TypeLookupServiceManyTypes.h"
 
 #include <atomic>
 #include <chrono>
@@ -215,6 +215,6 @@ int run_many_types_subscriber(
     return all_resolved ? 0 : -1;
 }
 
-} // namespace dds
-} // namespace fastdds
-} // namespace eprosima
+} // dds
+} // fastdds
+} // eprosima

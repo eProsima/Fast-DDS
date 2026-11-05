@@ -192,7 +192,7 @@ protected:
     std::queue<std::pair<TypeLookup_Request, rtps::VendorId_t>> requests_queue_;
     std::mutex request_processor_cv_mutex_;
     std::condition_variable request_processor_cv_;
-    std::atomic<bool> processing_{false};
+    std::atomic<bool> processing_ {false};
     rtps::ThreadSettings request_processor_thread_settings_;
 };
 

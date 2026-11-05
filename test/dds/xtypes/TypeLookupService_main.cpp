@@ -19,7 +19,7 @@
 
 #include "TypeLookupServicePublisher.h"
 #include "TypeLookupServiceSubscriber.h"
-#include "TypeLookupServiceManyTypes.hpp"
+#include "TypeLookupServiceManyTypes.h"
 
 #include <iostream>
 #include <sstream>

@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file TypeLookupServiceManyTypes.hpp
+ * @file TypeLookupServiceManyTypes.h
  *
  */
 
-#ifndef TEST_DDS_XTYPES__TYPELOOKUPSERVICEMANYTYPES_HPP
-#define TEST_DDS_XTYPES__TYPELOOKUPSERVICEMANYTYPES_HPP
+#ifndef _TEST_DDS_XTYPES_TYPELOOKUPSERVICETEST_MANYTYPES_H_
+#define _TEST_DDS_XTYPES_TYPELOOKUPSERVICETEST_MANYTYPES_H_
 
 #include <cstdint>
 
@@ -46,8 +46,8 @@ int run_many_types_subscriber(
         uint32_t num_types,
         uint32_t timeout_s);
 
-} // namespace dds
-} // namespace fastdds
-} // namespace eprosima
+} // dds
+} // fastdds
+} // eprosima
 
-#endif // TEST_DDS_XTYPES__TYPELOOKUPSERVICEMANYTYPES_HPP
+#endif /* _TEST_DDS_XTYPES_TYPELOOKUPSERVICETEST_MANYTYPES_H_ */
