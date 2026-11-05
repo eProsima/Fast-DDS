@@ -120,7 +120,7 @@ PublisherApp::PublisherApp(
     DataWriterQos wfqos = DATAWRITER_QOS_DEFAULT;
 
     // Retrieve default QoS, in case they have been previously set through an XML file
-    publisher_->get_default_datawriter_qos(wsqos);
+    publisher_->get_default_datawriter_qos(wfqos);
     wfqos.publish_mode().kind = ASYNCHRONOUS_PUBLISH_MODE;
 
     // Disable Data Sharing to be consistent with the Slow Writer
