@@ -20,6 +20,7 @@
 #ifndef FASTDDS_FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE__TYPELOOKUPMANAGER_HPP
 #define FASTDDS_FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE__TYPELOOKUPMANAGER_HPP
 
+#include <chrono>
 #include <cstdint>
 #include <mutex>
 #include <unordered_map>
@@ -283,6 +284,13 @@ protected:
      */
     bool send(
             TypeLookup_Reply& reply) const;
+
+    /**
+     * Waits until the reply history has room for a new reply, or until the given time has passed.
+     * @param max_wait[in] Maximum time to wait.
+     */
+    void wait_for_reply_writer_space(
+            std::chrono::milliseconds max_wait) const;
 
     /**
      * Implementation for the send methods.

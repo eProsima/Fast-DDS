@@ -730,6 +730,19 @@ bool TypeLookupManager::send(
     return true;
 }
 
+void TypeLookupManager::wait_for_reply_writer_space(
+        std::chrono::milliseconds max_wait) const
+{
+    std::unique_lock<RecursiveTimedMutex> lock(*builtin_reply_writer_history_->getMutex());
+    if (builtin_reply_writer_history_->getHistorySize() <
+            static_cast<size_t>(builtin_reply_writer_history_->m_att.maximumReservedCaches))
+    {
+        return;
+    }
+    // Replies are removed from the history once acknowledged by every reader
+    builtin_reply_writer_->try_remove_change(std::chrono::steady_clock::now() + max_wait, lock);
+}
+
 template<typename Type, typename PubSubType>
 bool TypeLookupManager::send_impl(
         Type& msg,
