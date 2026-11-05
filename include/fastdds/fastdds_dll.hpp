@@ -45,7 +45,7 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_ALL_DYN_LINK) || defined(FASTDDS_DYN_LINK)
-#if defined(MINGW_COMPILER)
+#if defined(MINGW_COMPILER) || defined(__MINGW32__)
     #if defined(fastdds_EXPORTS)
     #define FASTDDS_EXPORTED_API __declspec( dllexport )
     #else
