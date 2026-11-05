@@ -16,19 +16,7 @@ set(SHMSEGMENTTESTS_SOURCE SHMSegmentTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/DataSharing/DataSharingPayloadPool.cpp
     )
 
-if(WIN32)
-    add_definitions(-D_WIN32_WINNT=0x0601)
-endif()
-
 add_executable(SHMSegmentTests ${SHMSEGMENTTESTS_SOURCE})
-target_compile_definitions(SHMSegmentTests PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    $<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
-    $<$<BOOL:${MSVC}>:NOMINMAX> # avoid conflict with std::min & std::max in visual studio
-    )
 target_include_directories(SHMSegmentTests PRIVATE
     ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemSegment
