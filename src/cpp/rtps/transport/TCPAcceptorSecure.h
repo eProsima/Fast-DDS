@@ -22,7 +22,8 @@
 
 #include <cstdint>
 
-#include <asio/ssl.hpp>
+#include <asio.hpp>
+#include <asio/ssl/context.hpp>
 #include <rtps/transport/TCPAcceptor.h>
 #include <rtps/transport/TCPChannelResourceSecure.h>
 
