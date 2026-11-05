@@ -1,0 +1,13 @@
+typedef double Covariance[9];
+
+typedef double Matrix[2][3];
+
+typedef Covariance CovarianceAlias;
+
+@extensibility(APPENDABLE)
+struct ArrayDeclarations
+{
+    Covariance covariance;
+    Matrix matrix;
+    CovarianceAlias alias;
+};
