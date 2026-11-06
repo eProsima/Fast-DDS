@@ -23,7 +23,6 @@
 #include <condition_variable>
 #include <mutex>
 #include <queue>
-#include <unordered_map>
 #include <unordered_set>
 #include <utility>
 
@@ -35,27 +34,6 @@
 
 #include <utils/thread.hpp>
 #include <utils/threading.hpp>
-
-namespace std {
-
-template <> struct hash<eprosima::fastdds::dds::xtypes::TypeIdentifierSeq>
-{
-    std::size_t operator ()(
-            const eprosima::fastdds::dds::xtypes::TypeIdentifierSeq& k) const
-    {
-        std::size_t hash_value = 0;
-        for (const auto& id : k)
-        {
-            hash_value ^= (static_cast<size_t>(id.equivalence_hash()[0]) << 16) |
-                    (static_cast<size_t>(id.equivalence_hash()[1]) << 8) |
-                    (static_cast<size_t>(id.equivalence_hash()[2]));
-        }
-        return hash_value;
-    }
-
-};
-
-} // namespace std
 
 namespace eprosima {
 namespace fastdds {
@@ -77,6 +55,8 @@ class TypeLookupManager;
  */
 class TypeLookupRequestListener : public fastdds::rtps::ReaderListener, public fastdds::rtps::WriterListener
 {
+    friend class TypeLookupManager;
+
 public:
 
     /**
@@ -130,16 +110,15 @@ protected:
 
     /**
      * @brief Creates a TypeLookup_getTypeDependencies_Out using continuation points to manage size.
-     * @param id_seq[in] Sequence of TypeIdentifiers for which dependencies are needed.
      * @param type_dependencies[in] The full list of dependencies of the type.
      * @param continuation_point[in] The continuation point of the previous request.
-     * @return The reply containing the dependent types.
+     * @param out[out] The reply containing the dependent types.
+     * @return false if the continuation point is invalid, true otherwise.
      */
-    TypeLookup_getTypeDependencies_Out
-    prepare_get_type_dependencies_response(
-            const xtypes::TypeIdentifierSeq& id_seq,
+    bool prepare_get_type_dependencies_response(
             const std::unordered_set<xtypes::TypeIdentfierWithSize>& type_dependencies,
-            const std::vector<uint8_t>& continuation_point);
+            const std::vector<uint8_t>& continuation_point,
+            TypeLookup_getTypeDependencies_Out& out) const;
 
     /**
      * @brief Creates and sends the TypeLookup_Reply.
@@ -175,10 +154,6 @@ protected:
 
     //! A pointer to the typelookup manager.
     TypeLookupManager* typelookup_manager_;
-
-    //! Collection of the requests that needed continuation points.
-    std::unordered_map<xtypes::TypeIdentifierSeq, std::unordered_set<xtypes::TypeIdentfierWithSize>>
-    requests_with_continuation_;
 
     eprosima::thread request_processor_thread;
     std::queue<std::pair<TypeLookup_Request, rtps::VendorId_t>> requests_queue_;

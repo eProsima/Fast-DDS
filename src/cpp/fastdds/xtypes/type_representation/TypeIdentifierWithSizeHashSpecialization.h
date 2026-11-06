@@ -32,7 +32,21 @@ struct hash<eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize>
     std::size_t operator ()(
             const eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize& k) const
     {
-        return static_cast<size_t>(k.typeobject_serialized_size());
+        size_t hash {static_cast<size_t>(k.typeobject_serialized_size())};
+        const eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id {k.type_id()};
+        // Hashing only the size makes types with equal serialized size collide, degrading the containers to O(n^2)
+        if (eprosima::fastdds::dds::xtypes::EK_COMPLETE == type_id._d() ||
+                eprosima::fastdds::dds::xtypes::EK_MINIMAL == type_id._d())
+        {
+            // The EquivalenceHash is MD5 based, so its bytes are already well distributed
+            size_t equivalence_hash {0};
+            for (size_t i = 0; i < sizeof(size_t); ++i)
+            {
+                equivalence_hash = (equivalence_hash << 8) | static_cast<size_t>(type_id.equivalence_hash()[i]);
+            }
+            hash ^= equivalence_hash;
+        }
+        return hash;
     }
 
 };
@@ -40,4 +54,3 @@ struct hash<eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize>
 } // namespace std
 
 #endif // _FASTDDS_DDS_XTYPES_TYPE_IDENTIFIER_WITH_SIZE_HASH_SPECIALIZATION
-

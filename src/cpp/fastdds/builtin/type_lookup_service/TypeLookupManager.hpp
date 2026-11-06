@@ -20,6 +20,8 @@
 #ifndef FASTDDS_FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE__TYPELOOKUPMANAGER_HPP
 #define FASTDDS_FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE__TYPELOOKUPMANAGER_HPP
 
+#include <atomic>
+#include <chrono>
 #include <cstdint>
 #include <mutex>
 #include <unordered_map>
@@ -95,6 +97,7 @@ class RTPSParticipantImpl;
 class StatefulReader;
 class StatefulWriter;
 class ParticipantProxyData;
+class TimedEvent;
 class WriterHistory;
 
 } // namespace rtps
@@ -108,6 +111,17 @@ using AsyncGetTypeWriterCallback = std::function<
     void (eprosima::fastdds::dds::ReturnCode_t, eprosima::fastdds::rtps::WriterProxyData*)>;
 using AsyncGetTypeReaderCallback = std::function<
     void (eprosima::fastdds::dds::ReturnCode_t, eprosima::fastdds::rtps::ReaderProxyData*)>;
+
+//! Data of a TypeLookup request that has been sent and not answered yet.
+struct AsyncGetTypeRequest
+{
+    //! TypeIdentfierWithSize that originated the request.
+    xtypes::TypeIdentfierWithSize type_id;
+    //! GUID of the remote participant the request was sent to.
+    fastdds::rtps::GUID_t type_server;
+    //! Time at which the request was sent.
+    std::chrono::steady_clock::time_point sent_time;
+};
 
 /**
  * Class TypeLookupManager that implements the TypeLookup Service described in the DDS-XTYPES 1.3 specification.
@@ -237,19 +251,64 @@ protected:
      * TypeIdentfierWithSize was not in the map before.
      * @param request[in] SampleIdentity of the request.
      * @param type_identifier_with_size[in] TypeIdentfierWithSize that originated the request.
+     * @param type_server[in] GUID of the remote participant the request was sent to.
      * @return true if added. false otherwise.
      */
     bool add_async_get_type_request(
             const SampleIdentity& request,
-            const xtypes::TypeIdentfierWithSize& type_identifier_with_size );
+            const xtypes::TypeIdentfierWithSize& type_identifier_with_size,
+            const fastdds::rtps::GUID_t& type_server);
 
     /**
-     * Removes a TypeIdentfierWithSize from the async_get_type_callbacks_.
-     * @param type_identifier_with_size[in] TypeIdentfierWithSize to be removed.
-     * @return true if removed, false otherwise.
+     * add_async_get_type_request version to be called with async_get_types_mutex_ already taken.
+     * @param request[in] SampleIdentity of the request.
+     * @param type_identifier_with_size[in] TypeIdentfierWithSize that originated the request.
+     * @param type_server[in] GUID of the remote participant the request was sent to.
+     * @return true if added. false otherwise.
      */
-    bool remove_async_get_type_callback(
-            const xtypes::TypeIdentfierWithSize& type_identifier_with_size);
+    bool add_async_get_type_request_nts(
+            const SampleIdentity& request,
+            const xtypes::TypeIdentfierWithSize& type_identifier_with_size,
+            const fastdds::rtps::GUID_t& type_server);
+
+    /**
+     * Fails the given pending requests. The endpoints queued on their types that were announced by the type
+     * server that did not answer are notified or dropped, and the rest are requested again to one of their own
+     * type servers, so a single unresponsive participant does not block the endpoints of the others.
+     * @param failed_requests[in] SampleIdentities of the requests that will not be answered.
+     * @param notify[in] true to fail the endpoints of the type server that did not answer, so they are paired by
+     * type name, false to drop them.
+     */
+    void fail_pending_requests(
+            const std::vector<SampleIdentity>& failed_requests,
+            bool notify);
+
+    /**
+     * Fails the pending requests that have not been answered within typelookup_request_timeout_.
+     */
+    void check_pending_requests_timeout();
+
+    /**
+     * Takes the endpoints queued on a TypeIdentfierWithSize out of the collection, separating the ones that can
+     * still be resolved by their own type server from the ones announced by the type server that did not answer,
+     * which are failed or destroyed here.
+     * Must be called with async_get_types_mutex_ taken.
+     * @param [in, out] async_get_type_callbacks Collection of pending endpoints hashed by TypeIdentfierWithSize.
+     * @param [in] type_identifier_with_size TypeIdentfierWithSize of the request that failed.
+     * @param [in] failed_server GuidPrefix of the type server that did not answer.
+     * @param [in] notify true to collect the endpoints of that type server in failed, false to destroy them.
+     * @param [out] failed Endpoints whose callbacks have to be notified of the failure.
+     * @param [out] pending Endpoints that can still be resolved by their own type server.
+     */
+    template<typename ProxyType, typename AsyncCallback>
+    void take_pending_endpoints_nts(
+            std::unordered_map<xtypes::TypeIdentfierWithSize,
+            std::vector<std::pair<ProxyType*, AsyncCallback>>>& async_get_type_callbacks,
+            const xtypes::TypeIdentfierWithSize& type_identifier_with_size,
+            const fastdds::rtps::GuidPrefix_t& failed_server,
+            bool notify,
+            std::vector<std::pair<ProxyType*, AsyncCallback>>& failed,
+            std::vector<std::pair<ProxyType*, AsyncCallback>>& pending);
 
     /**
      * Removes a SampleIdentity from the async_get_type_callbacks_.
@@ -428,9 +487,16 @@ protected:
     //! Pointer to the temp WriterProxyData used for assigments.
     fastdds::rtps::WriterProxyData* temp_writer_proxy_data_ = nullptr;
 
-    mutable fastdds::rtps::SequenceNumber_t request_seq_number_;
+    //! Sequence number of the next request. Atomic, as requests are sent from several threads.
+    mutable std::atomic<uint64_t> request_seq_number_{0};
     mutable TypeLookup_RequestPubSubType request_type_;
     mutable TypeLookup_ReplyPubSubType reply_type_;
+
+    //! Time without an answer after which a TypeLookup request is failed. Zero disables the check.
+    std::chrono::milliseconds typelookup_request_timeout_ {0};
+
+    //! Event that periodically fails the TypeLookup requests that have not been answered in time.
+    fastdds::rtps::TimedEvent* request_timeout_event_ = nullptr;
 
     //! Mutex to protect access to async_get_type_callbacks_ and async_get_type_requests_.
     std::mutex async_get_types_mutex_;
@@ -446,10 +512,13 @@ protected:
             AsyncGetTypeReaderCallback>>> async_get_type_reader_callbacks_;
 
     //! Collection of all SampleIdentity and the TypeIdentfierWithSize it originated from, hashed by its SampleIdentity.
-    std::unordered_map<SampleIdentity, xtypes::TypeIdentfierWithSize> async_get_type_requests_;
+    std::unordered_map<SampleIdentity, AsyncGetTypeRequest> async_get_type_requests_;
 
     //! Max size of TypeLookup messages.
     static constexpr uint32_t typelookup_data_max_size = 5000;
+
+    //! Default time without an answer after which a TypeLookup request is failed.
+    static constexpr uint64_t default_typelookup_request_timeout_ms = 20000;
 
     //! TypePropagation policy
     utils::TypePropagation type_propagation_;

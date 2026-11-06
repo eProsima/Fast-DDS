@@ -48,7 +48,8 @@ TypeLookupServiceSubscriber::~TypeLookupServiceSubscriber()
 bool TypeLookupServiceSubscriber::init(
         uint32_t domain_id,
         std::vector<std::string> known_types,
-        uint32_t builtin_flow_controller_bytes)
+        uint32_t builtin_flow_controller_bytes,
+        uint32_t typelookup_request_timeout_ms)
 {
     domain_id_ = domain_id;
     create_type_creator_functions();
@@ -70,6 +71,12 @@ bool TypeLookupServiceSubscriber::init(
         new_flow_controller->period_ms = static_cast<uint64_t>(100000);
         qos.flow_controllers().push_back(new_flow_controller);
         qos.wire_protocol().builtin.flow_controller_name = new_flow_controller->name;
+    }
+    if (typelookup_request_timeout_ms > 0)
+    {
+        // Time a pending TypeLookup request is kept before it is failed
+        qos.properties().properties().emplace_back("fastdds.type_lookup_request_timeout_ms",
+                std::to_string(typelookup_request_timeout_ms));
     }
     participant_ = DomainParticipantFactory::get_instance()
                     ->create_participant(domain_id, qos, this, mask);
@@ -453,6 +460,15 @@ void TypeLookupServiceSubscriber::on_data_writer_discovery(
             std::replace(modified_type_name.begin(), modified_type_name.end(), ':', '_');
             const bool has_type_object = types_without_typeobject_.find(modified_type_name) ==
                     types_without_typeobject_.end();
+
+            if (has_type_object && !info.type_information.assigned())
+            {
+                // The TypeLookup service could not resolve a type that does have a TypeObject, so the writer is
+                // paired by type name and there is nothing to create a type from
+                std::cout << "Discovered writer of unresolved type: " << discovered_writer_type_name << std::endl;
+                return;
+            }
+
             const bool is_registered = check_registered_type(info.type_information);
 
             if ((has_type_object && !is_registered))

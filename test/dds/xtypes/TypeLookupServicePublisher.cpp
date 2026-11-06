@@ -46,7 +46,8 @@ TypeLookupServicePublisher::~TypeLookupServicePublisher()
 bool TypeLookupServicePublisher::init(
         uint32_t domain_id,
         std::vector<std::string> known_types,
-        uint32_t builtin_flow_controller_bytes)
+        uint32_t builtin_flow_controller_bytes,
+        uint32_t lease_duration_s)
 {
     domain_id_ = domain_id;
     create_type_creator_functions();
@@ -64,6 +65,12 @@ bool TypeLookupServicePublisher::init(
         new_flow_controller->period_ms = static_cast<uint64_t>(100000);
         qos.flow_controllers().push_back(new_flow_controller);
         qos.wire_protocol().builtin.flow_controller_name = new_flow_controller->name;
+    }
+    if (lease_duration_s > 0)
+    {
+        // Announced lease duration, used by the remote participants to detect that this one is gone
+        qos.wire_protocol().builtin.discovery_config.leaseDuration =
+                eprosima::fastdds::dds::Duration_t(static_cast<int32_t>(lease_duration_s), 0);
     }
     participant_ = DomainParticipantFactory::get_instance()
                     ->create_participant(domain_id, qos, this);
@@ -340,6 +347,15 @@ void TypeLookupServicePublisher::on_data_reader_discovery(
             std::replace(modified_type_name.begin(), modified_type_name.end(), ':', '_');
             const bool has_type_object = types_without_typeobject_.find(modified_type_name) ==
                     types_without_typeobject_.end();
+
+            if (has_type_object && !info.type_information.assigned())
+            {
+                // The TypeLookup service could not resolve a type that does have a TypeObject, so the reader is
+                // paired by type name and there is nothing to create a type from
+                std::cout << "Discovered reader of unresolved type: " << discovered_reader_type_name << std::endl;
+                return;
+            }
+
             const bool is_registered = check_registered_type(info.type_information);
 
             if ((has_type_object && !is_registered))

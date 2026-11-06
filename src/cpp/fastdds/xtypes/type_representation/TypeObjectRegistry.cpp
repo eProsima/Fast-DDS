@@ -695,6 +695,20 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
         const TypeObject& type_object,
         std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
 {
+    TypeIdentifierSeq pending_type_ids;
+    ReturnCode_t ret_code = get_direct_dependencies_from_type_object(type_object, type_dependencies, pending_type_ids);
+    if (eprosima::fastdds::dds::RETCODE_OK == ret_code && !pending_type_ids.empty())
+    {
+        ret_code = get_type_dependencies_impl(pending_type_ids, type_dependencies);
+    }
+    return ret_code;
+}
+
+ReturnCode_t TypeObjectRegistry::get_direct_dependencies_from_type_object(
+        const TypeObject& type_object,
+        std::unordered_set<TypeIdentfierWithSize>& type_dependencies,
+        TypeIdentifierSeq& pending_type_ids)
+{
     ReturnCode_t ret_code {eprosima::fastdds::dds::RETCODE_OK};
     TypeIdentifierSeq dependent_type_ids;
     TypeIdentfierWithSize type_id_size;
@@ -702,30 +716,33 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
         case EK_MINIMAL:
             switch (type_object.minimal()._d()){
                 case TK_ALIAS:
-                    ret_code = get_alias_dependencies(type_object.minimal().alias_type(), type_dependencies);
+                    ret_code = get_alias_dependencies(
+                        type_object.minimal().alias_type(), type_dependencies, pending_type_ids);
                     break;
                 case TK_ANNOTATION:
                     ret_code = get_annotation_dependencies(
-                        type_object.minimal().annotation_type(), type_dependencies);
+                        type_object.minimal().annotation_type(), type_dependencies, pending_type_ids);
                     break;
                 case TK_STRUCTURE:
                     ret_code = get_structure_dependencies(
-                        type_object.minimal().struct_type(), type_dependencies);
+                        type_object.minimal().struct_type(), type_dependencies, pending_type_ids);
                     break;
                 case TK_UNION:
-                    ret_code = get_union_dependencies(type_object.minimal().union_type(), type_dependencies);
+                    ret_code = get_union_dependencies(
+                        type_object.minimal().union_type(), type_dependencies, pending_type_ids);
                     break;
                 case TK_SEQUENCE:
                     ret_code = get_sequence_array_dependencies(
                         type_object.minimal().sequence_type(),
-                        type_dependencies);
+                        type_dependencies, pending_type_ids);
                     break;
                 case TK_ARRAY:
                     ret_code = get_sequence_array_dependencies(
-                        type_object.minimal().array_type(), type_dependencies);
+                        type_object.minimal().array_type(), type_dependencies, pending_type_ids);
                     break;
                 case TK_MAP:
-                    ret_code = get_map_dependencies(type_object.minimal().map_type(), type_dependencies);
+                    ret_code = get_map_dependencies(
+                        type_object.minimal().map_type(), type_dependencies, pending_type_ids);
                     break;
                 // No dependencies
                 case TK_BITSET:
@@ -737,14 +754,15 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
         case EK_COMPLETE:
             switch (type_object.complete()._d()){
                 case TK_ALIAS:
-                    ret_code = get_alias_dependencies(type_object.complete().alias_type(), type_dependencies);
+                    ret_code = get_alias_dependencies(
+                        type_object.complete().alias_type(), type_dependencies, pending_type_ids);
 
                     if (ret_code == eprosima::fastdds::dds::RETCODE_OK &&
                             type_object.complete().alias_type().header().detail().ann_custom().has_value())
                     {
                         ret_code = get_custom_annotations_dependencies(
                             type_object.complete().alias_type().header().detail().ann_custom().value(),
-                            type_dependencies);
+                            type_dependencies, pending_type_ids);
                     }
 
                     if (ret_code == eprosima::fastdds::dds::RETCODE_OK &&
@@ -752,22 +770,22 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                     {
                         ret_code = get_custom_annotations_dependencies(
                             type_object.complete().alias_type().body().ann_custom().value(),
-                            type_dependencies);
+                            type_dependencies, pending_type_ids);
                     }
                     break;
                 case TK_ANNOTATION:
                     ret_code = get_annotation_dependencies(
-                        type_object.complete().annotation_type(), type_dependencies);
+                        type_object.complete().annotation_type(), type_dependencies, pending_type_ids);
                     break;
                 case TK_STRUCTURE:
                     ret_code = get_structure_dependencies(
-                        type_object.complete().struct_type(), type_dependencies);
+                        type_object.complete().struct_type(), type_dependencies, pending_type_ids);
                     if (ret_code == eprosima::fastdds::dds::RETCODE_OK &&
                             type_object.complete().struct_type().header().detail().ann_custom().has_value())
                     {
                         ret_code = get_custom_annotations_dependencies(
                             type_object.complete().struct_type().header().detail().ann_custom().value(),
-                            type_dependencies);
+                            type_dependencies, pending_type_ids);
                     }
                     if (ret_code == eprosima::fastdds::dds::RETCODE_OK)
                     {
@@ -776,7 +794,7 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                             if (member.detail().ann_custom().has_value())
                             {
                                 ret_code = get_custom_annotations_dependencies(
-                                    member.detail().ann_custom().value(), type_dependencies);
+                                    member.detail().ann_custom().value(), type_dependencies, pending_type_ids);
                                 if (ret_code != eprosima::fastdds::dds::RETCODE_OK)
                                 {
                                     break;
@@ -786,14 +804,15 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                     }
                     break;
                 case TK_UNION:
-                    ret_code = get_union_dependencies(type_object.complete().union_type(), type_dependencies);
+                    ret_code = get_union_dependencies(
+                        type_object.complete().union_type(), type_dependencies, pending_type_ids);
 
                     if (ret_code == eprosima::fastdds::dds::RETCODE_OK &&
                             type_object.complete().union_type().header().detail().ann_custom().has_value())
                     {
                         ret_code = get_custom_annotations_dependencies(
                             type_object.complete().union_type().header().detail().ann_custom().value(),
-                            type_dependencies);
+                            type_dependencies, pending_type_ids);
                     }
 
                     if (ret_code == eprosima::fastdds::dds::RETCODE_OK &&
@@ -801,7 +820,7 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                     {
                         ret_code = get_custom_annotations_dependencies(
                             type_object.complete().union_type().discriminator().ann_custom().value(),
-                            type_dependencies);
+                            type_dependencies, pending_type_ids);
                     }
                     if (ret_code == eprosima::fastdds::dds::RETCODE_OK)
                     {
@@ -810,7 +829,7 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                             if (member.detail().ann_custom().has_value())
                             {
                                 ret_code = get_custom_annotations_dependencies(
-                                    member.detail().ann_custom().value(), type_dependencies);
+                                    member.detail().ann_custom().value(), type_dependencies, pending_type_ids);
                                 if (ret_code != eprosima::fastdds::dds::RETCODE_OK)
                                 {
                                     break;
@@ -822,16 +841,17 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                 case TK_SEQUENCE:
                     ret_code = get_sequence_array_dependencies(
                         type_object.complete().sequence_type(),
-                        type_dependencies);
+                        type_dependencies, pending_type_ids);
                     //TODO Collection annotations are not currently supported, so their dependencies are ignored.
                     break;
                 case TK_ARRAY:
                     ret_code = get_sequence_array_dependencies(
-                        type_object.complete().array_type(), type_dependencies);
+                        type_object.complete().array_type(), type_dependencies, pending_type_ids);
                     //TODO Collection annotations are not currently supported, so their dependencies are ignored.
                     break;
                 case TK_MAP:
-                    ret_code = get_map_dependencies(type_object.complete().map_type(), type_dependencies);
+                    ret_code = get_map_dependencies(
+                        type_object.complete().map_type(), type_dependencies, pending_type_ids);
                     //TODO Collection annotations are not currently supported, so their dependencies are ignored.
                     break;
                 case TK_BITSET:
@@ -840,7 +860,7 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                     {
                         ret_code = get_custom_annotations_dependencies(
                             type_object.complete().bitset_type().header().detail().ann_custom().value(),
-                            type_dependencies);
+                            type_dependencies, pending_type_ids);
                     }
                     if (ret_code == eprosima::fastdds::dds::RETCODE_OK)
                     {
@@ -849,7 +869,7 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                             if (member.detail().ann_custom().has_value())
                             {
                                 ret_code = get_custom_annotations_dependencies(
-                                    member.detail().ann_custom().value(), type_dependencies);
+                                    member.detail().ann_custom().value(), type_dependencies, pending_type_ids);
                                 if (ret_code != eprosima::fastdds::dds::RETCODE_OK)
                                 {
                                     break;
@@ -864,7 +884,7 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                     {
                         ret_code = get_custom_annotations_dependencies(
                             type_object.complete().enumerated_type().header().detail().ann_custom().value(),
-                            type_dependencies);
+                            type_dependencies, pending_type_ids);
                     }
                     if (ret_code == eprosima::fastdds::dds::RETCODE_OK)
                     {
@@ -874,7 +894,7 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                             if (member.detail().ann_custom().has_value())
                             {
                                 ret_code = get_custom_annotations_dependencies(
-                                    member.detail().ann_custom().value(), type_dependencies);
+                                    member.detail().ann_custom().value(), type_dependencies, pending_type_ids);
                                 if (ret_code != eprosima::fastdds::dds::RETCODE_OK)
                                 {
                                     break;
@@ -889,7 +909,7 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                     {
                         ret_code = get_custom_annotations_dependencies(
                             type_object.complete().bitmask_type().header().detail().ann_custom().value(),
-                            type_dependencies);
+                            type_dependencies, pending_type_ids);
                     }
                     if (ret_code == eprosima::fastdds::dds::RETCODE_OK)
                     {
@@ -898,7 +918,7 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                             if (member.detail().ann_custom().has_value())
                             {
                                 ret_code = get_custom_annotations_dependencies(
-                                    member.detail().ann_custom().value(), type_dependencies);
+                                    member.detail().ann_custom().value(), type_dependencies, pending_type_ids);
                                 if (ret_code != eprosima::fastdds::dds::RETCODE_OK)
                                 {
                                     break;
@@ -969,45 +989,60 @@ ReturnCode_t TypeObjectRegistry::get_type_dependencies_impl(
         std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
 {
     ReturnCode_t ret_code {eprosima::fastdds::dds::RETCODE_OK};
-    for (const TypeIdentifier& type_id : type_identifiers)
+    // Worklist instead of recursion, so the stack does not grow with the length of the dependency chain
+    TypeIdentifierSeq pending_type_ids {type_identifiers};
+    // Direct hash TypeIdentifiers already expanded, so shared dependencies are only resolved once
+    std::unordered_set<TypeIdentifier> expanded_type_ids;
+
+    while (eprosima::fastdds::dds::RETCODE_OK == ret_code && !pending_type_ids.empty())
     {
+        const TypeIdentifier type_id {std::move(pending_type_ids.back())};
+        pending_type_ids.pop_back();
+
         if (TypeObjectUtils::is_fully_descriptive_type_identifier(type_id))
         {
             return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
         }
         else if (TypeObjectUtils::is_direct_hash_type_identifier(type_id))
         {
+            if (!expanded_type_ids.insert(type_id).second)
+            {
+                continue;
+            }
+
             TypeObject type_object;
             ret_code = get_type_object(type_id, type_object);
             if (eprosima::fastdds::dds::RETCODE_OK == ret_code)
             {
-                ret_code = get_dependencies_from_type_object(type_object, type_dependencies);
-                if (eprosima::fastdds::dds::RETCODE_OK != ret_code)
-                {
-                    break;
-                }
+                ret_code = get_direct_dependencies_from_type_object(type_object, type_dependencies, pending_type_ids);
             }
         }
         else if (TypeObjectUtils::is_indirect_hash_type_identifier(type_id))
         {
             switch (type_id._d()){
                 case TI_PLAIN_SEQUENCE_SMALL:
-                    get_indirect_hash_collection_dependencies(type_id.seq_sdefn(), type_dependencies);
+                    ret_code = get_indirect_hash_collection_dependencies(
+                        type_id.seq_sdefn(), type_dependencies, pending_type_ids);
                     break;
                 case TI_PLAIN_SEQUENCE_LARGE:
-                    get_indirect_hash_collection_dependencies(type_id.seq_ldefn(), type_dependencies);
+                    ret_code = get_indirect_hash_collection_dependencies(
+                        type_id.seq_ldefn(), type_dependencies, pending_type_ids);
                     break;
                 case TI_PLAIN_ARRAY_SMALL:
-                    get_indirect_hash_collection_dependencies(type_id.array_sdefn(), type_dependencies);
+                    ret_code = get_indirect_hash_collection_dependencies(
+                        type_id.array_sdefn(), type_dependencies, pending_type_ids);
                     break;
                 case TI_PLAIN_ARRAY_LARGE:
-                    get_indirect_hash_collection_dependencies(type_id.array_ldefn(), type_dependencies);
+                    ret_code = get_indirect_hash_collection_dependencies(
+                        type_id.array_ldefn(), type_dependencies, pending_type_ids);
                     break;
                 case TI_PLAIN_MAP_SMALL:
-                    get_indirect_hash_map_dependencies(type_id.map_sdefn(), type_dependencies);
+                    ret_code = get_indirect_hash_map_dependencies(
+                        type_id.map_sdefn(), type_dependencies, pending_type_ids);
                     break;
                 case TI_PLAIN_MAP_LARGE:
-                    get_indirect_hash_map_dependencies(type_id.map_ldefn(), type_dependencies);
+                    ret_code = get_indirect_hash_map_dependencies(
+                        type_id.map_ldefn(), type_dependencies, pending_type_ids);
                     break;
                 default:
                     return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
@@ -1017,7 +1052,7 @@ ReturnCode_t TypeObjectRegistry::get_type_dependencies_impl(
     return ret_code;
 }
 
-void TypeObjectRegistry::add_dependency(
+ReturnCode_t TypeObjectRegistry::add_dependency(
         const TypeIdentifier& type_id,
         std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
 {
@@ -1025,34 +1060,39 @@ void TypeObjectRegistry::add_dependency(
     type_id_size.type_id(type_id);
     {
         std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
-        type_id_size.typeobject_serialized_size(
-            type_registry_entries_.at(
-                type_id).type_object_serialized_size);
+        auto it = type_registry_entries_.find(type_id);
+        if (type_registry_entries_.end() == it)
+        {
+            return eprosima::fastdds::dds::RETCODE_NO_DATA;
+        }
+        type_id_size.typeobject_serialized_size(it->second.type_object_serialized_size);
     }
     type_dependencies.insert(type_id_size);
+    return eprosima::fastdds::dds::RETCODE_OK;
 }
 
 ReturnCode_t TypeObjectRegistry::get_custom_annotations_dependencies(
         const AppliedAnnotationSeq& custom_annotation_seq,
-        std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
+        std::unordered_set<TypeIdentfierWithSize>& type_dependencies,
+        TypeIdentifierSeq& pending_type_ids)
 {
-    TypeIdentifierSeq type_ids;
     for (auto ann : custom_annotation_seq)
     {
         TypeIdentifier type_id = ann.annotation_typeid();
         if (TypeObjectUtils::is_direct_hash_type_identifier(type_id))
         {
-            add_dependency(type_id, type_dependencies);
-            type_ids.push_back(type_id);
+            ReturnCode_t ret_code = add_dependency(type_id, type_dependencies);
+            if (eprosima::fastdds::dds::RETCODE_OK != ret_code)
+            {
+                return ret_code;
+            }
+            pending_type_ids.push_back(type_id);
         }
         else if (TypeObjectUtils::is_indirect_hash_type_identifier(type_id))
         {
-            type_ids.push_back(type_id);
+            // Annotation TypeIdentifiers must be direct hash
+            return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
         }
-    }
-    if (!type_ids.empty())
-    {
-        return get_type_dependencies(type_ids, type_dependencies);
     }
     return eprosima::fastdds::dds::RETCODE_OK;
 }
