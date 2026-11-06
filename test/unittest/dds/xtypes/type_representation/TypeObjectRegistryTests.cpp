@@ -17,6 +17,11 @@
  * This file contains unit tests related to the TypeObjectRegistry API.
  */
 
+#include <limits>
+#include <string>
+#include <unordered_set>
+#include <vector>
+
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -39,6 +44,94 @@ public:
 
     using TypeObjectRegistry::set_annotation_parameter_value;
 };
+
+// Registry counting the TypeObject lookups done while resolving dependencies
+class LookupCountingTypeObjectRegistry : public TypeObjectRegistry
+{
+
+public:
+
+    ReturnCode_t get_type_object(
+            const TypeIdentifier& type_identifier,
+            TypeObject& type_object) override
+    {
+        // Cut the traversal once the limit is exceeded so that an exponential resolution finishes quickly
+        if (++lookups > max_lookups)
+        {
+            return RETCODE_NO_DATA;
+        }
+        return TypeObjectRegistry::get_type_object(type_identifier, type_object);
+    }
+
+    size_t lookups {0};
+    size_t max_lookups {std::numeric_limits<size_t>::max()};
+};
+
+// Direct hash TypeIdentifier which is not registered
+static TypeIdentifier unknown_hash_type_identifier()
+{
+    EquivalenceHash hash;
+    hash.fill(0xAA);
+    TypeIdentifier type_id;
+    type_id.equivalence_hash(hash);
+    type_id._d(EK_MINIMAL);
+    return type_id;
+}
+
+static TypeObject minimal_struct_type_object(
+        const std::vector<TypeIdentifier>& member_types,
+        const TypeIdentifier& base_type = TypeIdentifier())
+{
+    MinimalStructType struct_type;
+    struct_type.header().base_type(base_type);
+    MemberId member_id {0};
+    for (const TypeIdentifier& member_type : member_types)
+    {
+        MinimalStructMember member;
+        member.common().member_id(member_id++);
+        member.common().member_type_id(member_type);
+        struct_type.member_seq().push_back(member);
+    }
+    MinimalTypeObject minimal;
+    minimal.struct_type(struct_type);
+    TypeObject type_object;
+    type_object.minimal(minimal);
+    return type_object;
+}
+
+static TypeObject minimal_alias_type_object(
+        const TypeIdentifier& related_type)
+{
+    MinimalAliasType alias_type;
+    alias_type.body().common().related_type(related_type);
+    MinimalTypeObject minimal;
+    minimal.alias_type(alias_type);
+    TypeObject type_object;
+    type_object.minimal(minimal);
+    return type_object;
+}
+
+static TypeObject minimal_sequence_type_object(
+        const TypeIdentifier& element_type)
+{
+    MinimalSequenceType sequence_type;
+    sequence_type.element().common().type(element_type);
+    MinimalTypeObject minimal;
+    minimal.sequence_type(sequence_type);
+    TypeObject type_object;
+    type_object.minimal(minimal);
+    return type_object;
+}
+
+// Register the TypeObject as the TypeLookup service does with the remote ones (no dependency validation)
+static TypeIdentifier register_remote_type_object(
+        TypeObjectRegistry& registry,
+        const TypeObject& type_object)
+{
+    TypeIdentifierPair type_ids;
+    EXPECT_EQ(RETCODE_OK, registry.register_type_object(type_object, type_ids, false));
+    return type_ids.type_identifier1();
+}
 
 // Test TypeObjectRegistry::register_type_object
 TEST(TypeObjectRegistryTests, register_type_object)
@@ -339,6 +432,94 @@ TEST(TypeObjectRegistryTests, get_type_information)
 
     TypeInformation type_info;
     EXPECT_EQ(RETCODE_OK, registry.get_type_information(type_ids, type_info, false));
+}
+
+/**
+ * @test Regression test for #25766.
+ * A registered type referencing an unregistered TypeIdentifier must make get_type_dependencies
+ * return RETCODE_NO_DATA instead of throwing.
+ */
+TEST(TypeObjectRegistryTests, get_type_dependencies_unknown_dependency)
+{
+    TypeObjectRegistry registry;
+    const TypeIdentifier unknown_id {unknown_hash_type_identifier()};
+    TypeIdentifier int32_id;
+    int32_id._d(TK_INT32);
+
+    const TypeIdentifier known_struct_id {
+        register_remote_type_object(registry, minimal_struct_type_object({int32_id}))};
+    const TypeIdentifier unknown_member_struct_id {
+        register_remote_type_object(registry, minimal_struct_type_object({unknown_id}))};
+
+    // The unknown TypeIdentifier is referenced from different positions
+    const std::vector<TypeIdentifier> type_ids {
+        unknown_member_struct_id,
+        register_remote_type_object(registry, minimal_struct_type_object({int32_id}, unknown_id)),
+        register_remote_type_object(registry, minimal_struct_type_object({known_struct_id, unknown_id})),
+        register_remote_type_object(registry, minimal_alias_type_object(unknown_id)),
+        register_remote_type_object(registry, minimal_sequence_type_object(unknown_id)),
+        // Nested: only an indirect dependency is unknown
+        register_remote_type_object(registry, minimal_struct_type_object({unknown_member_struct_id}))
+    };
+
+    for (size_t i = 0; i < type_ids.size(); ++i)
+    {
+        SCOPED_TRACE("type_ids[" + std::to_string(i) + "]");
+        std::unordered_set<TypeIdentfierWithSize> type_dependencies;
+        ReturnCode_t ret {RETCODE_OK};
+        EXPECT_NO_THROW(ret = registry.get_type_dependencies({type_ids[i]}, type_dependencies));
+        EXPECT_EQ(RETCODE_NO_DATA, ret);
+    }
+}
+
+/**
+ * @test Regression test for #25766.
+ * Dependencies shared by several members must be resolved once, so the work grows linearly with the
+ * number of distinct types instead of exponentially.
+ */
+TEST(TypeObjectRegistryTests, get_type_dependencies_shared_dependencies)
+{
+    constexpr size_t depth {30};
+    LookupCountingTypeObjectRegistry registry;
+    TypeIdentifier int32_id;
+    int32_id._d(TK_INT32);
+
+    // S_1 has primitive members and S_i has two members of type S_(i-1)
+    TypeIdentifier head_id {register_remote_type_object(registry, minimal_struct_type_object({int32_id, int32_id}))};
+    for (size_t i = 2; i <= depth; ++i)
+    {
+        head_id = register_remote_type_object(registry, minimal_struct_type_object({head_id, head_id}));
+    }
+
+    // Without memoization 2^(depth-1) lookups would be required
+    registry.lookups = 0;
+    registry.max_lookups = 4 * depth;
+    std::unordered_set<TypeIdentfierWithSize> type_dependencies;
+    EXPECT_EQ(RETCODE_OK, registry.get_type_dependencies({head_id}, type_dependencies));
+    EXPECT_EQ(depth - 1, type_dependencies.size());
+    EXPECT_LE(registry.lookups, registry.max_lookups);
+}
+
+/**
+ * @test Regression test for #25766.
+ * Resolving a long chain of dependencies must not exhaust the stack.
+ */
+TEST(TypeObjectRegistryTests, get_type_dependencies_long_dependency_chain)
+{
+    constexpr size_t chain_length {100000};
+    TypeObjectRegistry registry;
+
+    // A_1 aliases a primitive type and A_i aliases A_(i-1)
+    TypeIdentifier head_id;
+    head_id._d(TK_INT32);
+    for (size_t i = 0; i < chain_length; ++i)
+    {
+        head_id = register_remote_type_object(registry, minimal_alias_type_object(head_id));
+    }
+
+    std::unordered_set<TypeIdentfierWithSize> type_dependencies;
+    EXPECT_EQ(RETCODE_OK, registry.get_type_dependencies({head_id}, type_dependencies));
+    EXPECT_EQ(chain_length - 1, type_dependencies.size());
 }
 
 // (MacOS) Regression test for clang/libc++ builds: empty char8 annotation

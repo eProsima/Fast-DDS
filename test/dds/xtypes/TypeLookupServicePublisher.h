@@ -80,7 +80,8 @@ public:
     bool init(
             uint32_t domain_id,
             std::vector<std::string> known_types,
-            uint32_t builtin_flow_controller_bytes);
+            uint32_t builtin_flow_controller_bytes,
+            uint32_t lease_duration_s = 0);
 
     bool wait_discovery(
             uint32_t expected_matches,

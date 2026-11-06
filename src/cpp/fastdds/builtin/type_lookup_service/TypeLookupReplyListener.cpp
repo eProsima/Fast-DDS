@@ -18,6 +18,9 @@
  */
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupReplyListener.hpp>
+
+#include <fastcdr/exceptions/Exception.h>
+
 #include <fastdds/dds/log/Log.hpp>
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
@@ -86,27 +89,49 @@ void TypeLookupReplyListener::stop_reply_processor_thread()
 
 void TypeLookupReplyListener::process_reply()
 {
-    std::unique_lock<std::mutex> guard(replies_processor_cv_mutex_);
-
-    while (processing_)
+    while (true)
     {
-        // Wait until either processing is done or there are replies in the queue
-        replies_processor_cv_.wait(guard,
-                [&]()
-                {
-                    return !processing_ || !replies_queue_.empty();
-                });
-
-        if (!replies_queue_.empty())
+        ReplyWithServerGUID reply_with_server;
         {
-            TypeLookup_Reply& reply = replies_queue_.front().reply;
+            std::unique_lock<std::mutex> guard(replies_processor_cv_mutex_);
 
+            // Wait until either processing is done or there are replies in the queue
+            replies_processor_cv_.wait(guard,
+                    [&]()
+                    {
+                        return !processing_ || !replies_queue_.empty();
+                    });
+
+            if (!processing_)
+            {
+                return;
+            }
+
+            // Take the reply out of the queue, as it is processed with the mutex released
+            reply_with_server = std::move(replies_queue_.front());
+            replies_queue_.pop();
+        }
+
+        // Processing sends new requests, which takes the writer mutex, which is also taken in a reply
+        TypeLookup_Reply& reply = reply_with_server.reply;
+
+        try
+        {
             // Check if the received reply SampleIdentity corresponds to an outstanding request
             auto& request_id {reply.header().relatedRequestId()};
-            auto request_it = typelookup_manager_->async_get_type_requests_.find(request_id);
-            if (request_it != typelookup_manager_->async_get_type_requests_.end())
+            xtypes::TypeIdentfierWithSize type_id;
+            bool request_found = false;
             {
-                xtypes::TypeIdentfierWithSize type_id {request_it->second};
+                std::lock_guard<std::mutex> lock(typelookup_manager_->async_get_types_mutex_);
+                auto request_it = typelookup_manager_->async_get_type_requests_.find(request_id);
+                if (request_it != typelookup_manager_->async_get_type_requests_.end())
+                {
+                    type_id = request_it->second.type_id;
+                    request_found = true;
+                }
+            }
+            if (request_found)
+            {
                 // Process the TypeLookup_Reply based on its type
                 switch (reply.return_value()._d())
                 {
@@ -129,7 +154,7 @@ void TypeLookupReplyListener::process_reply()
                         if (RETCODE_OK == reply.return_value().getTypeDependencies()._d())
                         {
                             check_get_type_dependencies_reply(
-                                request_id, type_id, replies_queue_.front().type_server,
+                                request_id, type_id, reply_with_server.type_server,
                                 reply.return_value().getTypeDependencies().result());
                         }
                         else
@@ -146,8 +171,21 @@ void TypeLookupReplyListener::process_reply()
                         break;
                 }
             }
-            // Remove the requests from the queue
-            replies_queue_.pop();
+        }
+        catch (const std::exception& exception)
+        {
+            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE_REPLY_LISTENER,
+                    "Error processing reply in type lookup service: " << exception.what());
+        }
+        catch (const eprosima::fastcdr::exception::Exception& exception)
+        {
+            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE_REPLY_LISTENER,
+                    "Error processing reply in type lookup service: " << exception.what());
+        }
+        catch (...)
+        {
+            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE_REPLY_LISTENER,
+                    "Unknown error processing reply in type lookup service.");
         }
     }
 }
@@ -212,8 +250,21 @@ void TypeLookupReplyListener::check_get_types_reply(
                 {
                     EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE_REPLY_LISTENER,
                             "Error registering remote type: " << exception.what());
+                    // The type cannot be used, fail the request
+                    typelookup_manager_->notify_callbacks(RETCODE_NO_DATA, type_id);
+                }
+                catch (...)
+                {
+                    // Fast CDR exceptions do not derive from std::exception
+                    EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE_REPLY_LISTENER, "Error registering remote type.");
+                    typelookup_manager_->notify_callbacks(RETCODE_NO_DATA, type_id);
                 }
             }
+        }
+        else
+        {
+            // The reply arrived but its types could not be registered, so the request cannot be completed
+            typelookup_manager_->notify_callbacks(RETCODE_NO_DATA, type_id);
         }
     }
     else
@@ -240,6 +291,15 @@ void TypeLookupReplyListener::check_get_type_dependencies_reply(
 
     for (xtypes::TypeIdentfierWithSize type : reply.dependent_typeids())
     {
+        // Only TypeIdentifiers with an EquivalenceHash can be requested, and any other one would throw when hashed
+        if (xtypes::EK_COMPLETE != type.type_id()._d() &&
+                xtypes::EK_MINIMAL != type.type_id()._d())
+        {
+            EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REPLY_LISTENER,
+                    "Ignoring dependency whose TypeIdentifier has no EquivalenceHash.");
+            continue;
+        }
+
         // Check if the type is known
         if (!fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
                         is_type_identifier_known(type))
@@ -268,7 +328,7 @@ void TypeLookupReplyListener::check_get_type_dependencies_reply(
         if (INVALID_SAMPLE_IDENTITY != next_request_id)
         {
             // Store the sent requests and associated TypeIdentfierWithSize
-            typelookup_manager_->add_async_get_type_request(next_request_id, type_id);
+            typelookup_manager_->add_async_get_type_request(next_request_id, type_id, type_server);
         }
         else
         {
@@ -283,7 +343,7 @@ void TypeLookupReplyListener::check_get_type_dependencies_reply(
     if (INVALID_SAMPLE_IDENTITY != get_types_request)
     {
         // Store the type request
-        typelookup_manager_->add_async_get_type_request(get_types_request, type_id);
+        typelookup_manager_->add_async_get_type_request(get_types_request, type_id, type_server);
 
         // If this get_types request has a continuation_point, store it in the list
         if (!reply.continuation_point().empty())
@@ -327,7 +387,7 @@ void TypeLookupReplyListener::on_new_cache_change_added(
             // TODO: Implement specific handling for each exception
             EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REPLY_LISTENER,
                     "Received reply with exception code: " << static_cast<int>(reply.header().remoteEx()));
-            // If the reply was not ok, ignore it
+            reader->get_history()->remove_change(change);
             return;
         }
 
@@ -342,6 +402,20 @@ void TypeLookupReplyListener::on_new_cache_change_added(
 
     // Remove the processed cache change from the history
     reader->get_history()->remove_change(change);
+}
+
+void TypeLookupReplyListener::remove_replies_with_continuation(
+        const std::vector<SampleIdentity>& requests)
+{
+    std::unique_lock<std::mutex> guard(replies_with_continuation_mutex_);
+    for (const SampleIdentity& request : requests)
+    {
+        auto it = std::find(replies_with_continuation_.begin(), replies_with_continuation_.end(), request);
+        if (it != replies_with_continuation_.end())
+        {
+            replies_with_continuation_.erase(it);
+        }
+    }
 }
 
 void TypeLookupReplyListener::on_writer_change_received_by_all(

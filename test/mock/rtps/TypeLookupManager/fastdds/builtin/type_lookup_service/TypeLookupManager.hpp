@@ -22,6 +22,7 @@
 
 #include <gmock/gmock.h>
 
+#include <chrono>
 #include <mutex>
 #include <unordered_map>
 #include <vector>
@@ -113,6 +114,17 @@ using AsyncGetTypeWriterCallback = std::function<
 using AsyncGetTypeReaderCallback = std::function<
     void (eprosima::ProxyPool<eprosima::fastdds::rtps::ReaderProxyData>::smart_ptr&)>;
 
+//! Data of a TypeLookup request that has been sent and not answered yet.
+struct AsyncGetTypeRequest
+{
+    //! TypeIdentfierWithSize that originated the request.
+    xtypes::TypeIdentfierWithSize type_id;
+    //! GUID of the remote participant the request was sent to.
+    fastdds::rtps::GUID_t type_server;
+    //! Time at which the request was sent.
+    std::chrono::steady_clock::time_point sent_time;
+};
+
 class TypeLookupManager
 {
     friend class TypeLookupRequestListener;
@@ -155,12 +167,10 @@ public:
                 ReturnCode_t,
                 const xtypes::TypeIdentfierWithSize&));
 
-    MOCK_METHOD2(add_async_get_type_request, bool(
+    MOCK_METHOD3(add_async_get_type_request, bool(
                 const SampleIdentity&,
-                const xtypes::TypeIdentfierWithSize&));
-
-    MOCK_METHOD1(remove_async_get_type_callback, bool(
-                const xtypes::TypeIdentfierWithSize&));
+                const xtypes::TypeIdentfierWithSize&,
+                const fastdds::rtps::GUID_t&));
 
     MOCK_METHOD1(remove_async_get_type_request, bool(
                 SampleIdentity));
@@ -194,7 +204,9 @@ public:
 
     fastdds::rtps::RTPSParticipantImpl* participant_ = nullptr;
 
-    std::unordered_map<SampleIdentity, xtypes::TypeIdentfierWithSize> async_get_type_requests_;
+    std::mutex async_get_types_mutex_;
+
+    std::unordered_map<SampleIdentity, AsyncGetTypeRequest> async_get_type_requests_;
 
     mutable TypeLookup_ReplyPubSubType reply_type_;
 
