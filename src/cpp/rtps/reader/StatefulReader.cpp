@@ -819,7 +819,10 @@ bool StatefulReader::process_data_frag_msg(
             if (work_change != nullptr && work_change->is_fully_assembled())
             {
                 fastdds::dds::SampleRejectedStatusKind rejection_reason;
-                if (history_->completed_change(work_change, changes_up_to, rejection_reason))
+                // A change created complete, because its first DATA_FRAG carried every fragment, was already added
+                // to its instance by change_received.
+                if (change_created != nullptr ||
+                        history_->completed_change(work_change, changes_up_to, rejection_reason))
                 {
                     pWP->received_change_set(work_change->sequenceNumber);
 

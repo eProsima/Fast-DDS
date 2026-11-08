@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <algorithm>
+#include <array>
+#include <cstdlib>
+#include <future>
 #include <mutex>
 #include <thread>
 #include <type_traits>
@@ -31,12 +35,14 @@
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 
 #include "../utils/filter_helpers.hpp"
 #include "BlackboxTests.hpp"
 #include "PubSubParticipant.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
+#include "UDPMessageSender.hpp"
 
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
@@ -1431,6 +1437,131 @@ TEST(DDSDataReader, reception_timestamp_for_resent_samples)
     auto reception_ts_3 = reader.reception_timestamps[3];
     EXPECT_TRUE(reception_ts_1 <= reception_ts_2);
     EXPECT_TRUE(reception_ts_2 <= reception_ts_3);
+}
+
+/*
+ * Fast DDS writers send one fragment per DATA_FRAG submessage, but a DATA_FRAG may carry several, so a reader can
+ * receive every fragment of a sample in its first DATA_FRAG and create the change already complete.
+ * The change must be added to its instance once, otherwise take() finds it again after it has been released.
+ */
+template<typename PubSubType>
+static void take_sample_received_in_single_data_frag(
+        const std::array<uint8_t, 17>& serialized_sample,
+        std::vector<typename PubSubType::type>& taken)
+{
+    using namespace eprosima::fastdds::dds;
+
+    PubSubWriter<PubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<PubSubType> reader(TEST_TOPIC_NAME);
+
+    // Set a known reader locator so the hand-crafted message can be sent to it
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+    Locator_t reader_locator;
+    ASSERT_TRUE(IPLocator::setIPv4(reader_locator, "127.0.0.1"));
+    reader_locator.port = 7000;
+    reader.add_to_unicast_locator_list("127.0.0.1", 7000)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(udp_transport)
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .history_depth(10)
+            .datasharing_off()
+            .init();
+    ASSERT_TRUE(reader.isInitialized());
+    writer.disable_builtin_transport()
+            .add_user_transport_to_pparams(udp_transport)
+            .init();
+    ASSERT_TRUE(writer.isInitialized());
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Sequence number 1 from the writer, in 3 fragments of 8, 8 and 1 bytes, all in one DATA_FRAG submessage
+    struct SingleDataFragPacket
+    {
+        std::array<char, 4> rtps_id{ {'R', 'T', 'P', 'S'} };
+        std::array<uint8_t, 2> protocol_version{ {2, 3} };
+        std::array<uint8_t, 2> vendor_id{ {0x01, 0x0F} };
+        GuidPrefix_t sender_prefix{};
+
+        uint8_t submessage_id = 0x16;
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
+        uint8_t flags = 0x00;
+#else
+        uint8_t flags = 0x01;
+#endif  // FASTDDS_IS_BIG_ENDIAN_TARGET
+        uint16_t octets_to_next_header = 32 + 20;
+        uint16_t extra_flags = 0;
+        uint16_t octets_to_inline_qos = 28;
+        EntityId_t reader_id{};
+        EntityId_t writer_id{};
+        SequenceNumber_t sn{ 1 };
+        uint32_t fragment_starting_num = 1;
+        uint16_t fragments_in_submessage = 3;
+        uint16_t fragment_size = 8;
+        uint32_t sample_size = 17;
+        std::array<uint8_t, 20> payload{};
+    };
+
+    SingleDataFragPacket packet{};
+    packet.sender_prefix = writer.datawriter_guid().guidPrefix;
+    packet.writer_id = writer.datawriter_guid().entityId;
+    packet.reader_id = reader.datareader_guid().entityId;
+    std::copy(serialized_sample.begin(), serialized_sample.end(), packet.payload.begin());
+
+    CDRMessage_t msg(0);
+    uint32_t msg_len = static_cast<uint32_t>(sizeof(packet));
+    msg.init(reinterpret_cast<octet*>(&packet), msg_len);
+    msg.length = msg_len;
+    msg.pos = msg_len;
+    UDPMessageSender fake_msg_sender;
+    fake_msg_sender.send(msg, reader_locator);
+
+    DataReader& native_reader = reader.get_native_reader();
+    ASSERT_TRUE(native_reader.wait_for_unread_message(Duration_t(10, 0)));
+
+    // A hang fails the test instead of blocking the whole suite.
+    auto take_all = std::async(std::launch::async, [&taken, &native_reader]()
+                    {
+                        typename PubSubType::type sample;
+                        SampleInfo info;
+                        for (int i = 0; i < 3 && RETCODE_OK == native_reader.take_next_sample(&sample, &info); ++i)
+                        {
+                            if (info.valid_data)
+                            {
+                                taken.push_back(sample);
+                            }
+                        }
+                    });
+    if (std::future_status::ready != take_all.wait_for(std::chrono::seconds(10)))
+    {
+        ADD_FAILURE() << "take() never returned";
+        // The reader's mutex is held by the stuck take(), so destroying the entities would hang too.
+        std::_Exit(1);
+    }
+}
+
+TEST(DDSDataReader, single_data_frag_with_all_fragments_non_keyed)
+{
+    // CDR_LE encapsulation, index 7, message "frag"
+    const std::array<uint8_t, 17> serialized_sample{ {
+        0x00, 0x01, 0x00, 0x00, 0x07, 0x00, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00, 'f', 'r', 'a', 'g', 0x00} };
+    std::vector<HelloWorld> taken;
+    take_sample_received_in_single_data_frag<HelloWorldPubSubType>(serialized_sample, taken);
+    ASSERT_EQ(1u, taken.size());
+    EXPECT_EQ(7u, taken.front().index());
+    EXPECT_STREQ("frag", taken.front().message().c_str());
+}
+
+TEST(DDSDataReader, single_data_frag_with_all_fragments_keyed)
+{
+    // CDR_LE encapsulation, key 1, index 7, message "frag"
+    const std::array<uint8_t, 17> serialized_sample{ {
+        0x00, 0x01, 0x00, 0x00, 0x01, 0x00, 0x07, 0x00, 0x05, 0x00, 0x00, 0x00, 'f', 'r', 'a', 'g', 0x00} };
+    std::vector<KeyedHelloWorld> taken;
+    take_sample_received_in_single_data_frag<KeyedHelloWorldPubSubType>(serialized_sample, taken);
+    ASSERT_EQ(1u, taken.size());
+    EXPECT_EQ(1u, taken.front().key());
+    EXPECT_EQ(7u, taken.front().index());
+    EXPECT_STREQ("frag", taken.front().message().c_str());
 }
 
 /* This is a regression test for redmine issue 22929.
