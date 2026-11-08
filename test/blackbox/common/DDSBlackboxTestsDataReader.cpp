@@ -1564,6 +1564,112 @@ TEST(DDSDataReader, single_data_frag_with_all_fragments_keyed)
     EXPECT_STREQ("frag", taken.front().message().c_str());
 }
 
+/*
+ * A KEEP_LAST 1 reader receives sample 2 while it is still reassembling sample 1.
+ * When sample 1 completes, older than the sample in the instance, it must be discarded. It must not stay in the
+ * history, counted as unread, where take() cannot reach it.
+ */
+template<typename PubSubType>
+static void keep_last_discards_sample_completed_after_newer_one(
+        std::list<typename PubSubType::type> data)
+{
+    using namespace eprosima::fastdds::dds;
+
+    // Hold fragment 2 of sample 1 back, so it completes after sample 2
+    std::atomic<bool> dropped{false};
+    std::atomic<bool> hold{true};
+    auto writer_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    writer_transport->drop_data_frag_messages_filter_ = [&dropped, &hold](CDRMessage_t& msg) -> bool
+            {
+                uint32_t old_pos = msg.pos;
+
+                // see RTPS DDS 9.4.5.4 DataFrag Submessage
+                SequenceNumber_t sn;
+                msg.pos += 2; // flags
+                msg.pos += 2; // octets to inline qos
+                msg.pos += 4; // reader ID
+                msg.pos += 4; // writer ID
+                sn.high = (int32_t)eprosima::fastdds::helpers::cdr_parse_u32(
+                    (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+                sn.low = eprosima::fastdds::helpers::cdr_parse_u32(
+                    (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+                uint32_t fragment_starting_num = eprosima::fastdds::helpers::cdr_parse_u32(
+                    (char*)&msg.buffer[msg.pos]);
+
+                // restore buffer pos
+                msg.pos = old_pos;
+
+                bool drop = SequenceNumber_t{0, 1} == sn && 2u == fragment_starting_num && hold.load();
+                if (drop)
+                {
+                    dropped.store(true);
+                }
+                return drop;
+            };
+
+    PubSubWriter<PubSubType> writer(TEST_TOPIC_NAME);
+    writer.disable_builtin_transport()
+            .add_user_transport_to_pparams(writer_transport)
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .history_depth(10)
+            .heartbeat_period_seconds(0)
+            .heartbeat_period_nanosec(100000000)
+            .datasharing_off()
+            .init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    PubSubReader<PubSubType> reader(TEST_TOPIC_NAME);
+    reader.reliability(RELIABLE_RELIABILITY_QOS)
+            .history_depth(1)
+            .datasharing_off()
+            .init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    ASSERT_TRUE(writer.send_sample(data.front()));
+    ASSERT_TRUE(writer.send_sample(data.back()));
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    hold.store(false);
+    ASSERT_TRUE(writer.waitForAllAcked(std::chrono::seconds(10)));
+    ASSERT_TRUE(dropped.load());
+
+    DataReader& native_reader = reader.get_native_reader();
+    EXPECT_EQ(1u, native_reader.get_unread_count());
+
+    std::vector<typename PubSubType::type> taken;
+    typename PubSubType::type sample;
+    SampleInfo info;
+    while (RETCODE_OK == native_reader.take_next_sample(&sample, &info))
+    {
+        if (info.valid_data)
+        {
+            taken.push_back(sample);
+        }
+    }
+    ASSERT_EQ(1u, taken.size());
+    EXPECT_TRUE(data.back() == taken.front());
+    EXPECT_EQ(0u, native_reader.get_unread_count());
+}
+
+TEST(DDSDataReader, keep_last_discards_sample_completed_after_newer_one_non_keyed)
+{
+    keep_last_discards_sample_completed_after_newer_one<Data1mbPubSubType>(default_data300kb_data_generator(2));
+}
+
+TEST(DDSDataReader, keep_last_discards_sample_completed_after_newer_one_keyed)
+{
+    auto data = default_keyeddata300kb_data_generator(2);
+    for (auto& sample : data)
+    {
+        sample.key(1);
+    }
+    keep_last_discards_sample_completed_after_newer_one<KeyedData1mbPubSubType>(data);
+}
+
 /* This is a regression test for redmine issue 22929.
  *
  * Considers the following scenario:

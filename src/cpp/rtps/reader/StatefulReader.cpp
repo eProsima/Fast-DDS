@@ -870,6 +870,14 @@ bool StatefulReader::process_data_frag_msg(
                             has_to_notify = true;
                         }
                     }
+                    else
+                    {
+                        /* Not rejected but discarded, as it is older than the samples a KEEP_LAST instance keeps.
+                         * It should never be received again.
+                         */
+                        pWP->irrelevant_change_set(work_change->sequenceNumber);
+                        has_to_notify = true;
+                    }
 
                     History::const_iterator chit = history_->find_change_nts(work_change);
                     if (chit != history_->changesEnd())

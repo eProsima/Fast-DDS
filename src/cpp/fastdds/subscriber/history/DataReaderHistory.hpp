@@ -190,7 +190,8 @@ public:
      * @param [in] unknown_missing_changes_up_to Number of missing changes before this one
      * @param [out] rejection_reason In case of been rejected the sample, it will contain the reason of the rejection.
      *
-     * @return Whether the operation succeeded.
+     * @return Whether the operation succeeded. When it did not and @c rejection_reason is NOT_REJECTED, the change
+     * was discarded because it is older than the samples kept in its instance.
      */
     bool completed_change(
             CacheChange_t* change,
