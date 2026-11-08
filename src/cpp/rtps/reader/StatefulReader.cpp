@@ -1026,7 +1026,8 @@ bool StatefulReader::process_gap_msg(
                 }
 
                 // Fragmented change present in the gap, so remove it.
-                history_iterator = history_->remove_change_nts(history_iterator);
+                // We call the History overload to avoid callbacks
+                history_iterator = history_->History::remove_change_nts(history_iterator);
             }
         }
 
