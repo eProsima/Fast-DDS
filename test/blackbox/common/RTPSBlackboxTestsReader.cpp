@@ -156,3 +156,55 @@ GTEST_INSTANTIATE_TEST_MACRO(RTPSReaderTests,
             }
 
         });
+
+/**
+ * Checks that a reliable RTPS reader whose history is filled with changes received out of order can still receive
+ * the change those are waiting for.
+ *
+ * The first DATA message sent by the writer is dropped, so every following change is received out of order and
+ * cannot be delivered until the first one is repaired. The reader history only has room for 10 changes, and the
+ * writer sends 20.
+ */
+TEST(RTPSReaderTests, reliable_reader_history_full_of_future_changes)
+{
+    const uint32_t reader_history_depth = 10;
+    const size_t samples_to_send = 20;
+
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    reader.reliability(eprosima::fastdds::rtps::ReliabilityKind_t::RELIABLE).
+            history_depth(reader_history_depth).
+            init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    std::atomic_bool drop_next_data {false};
+    auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+    test_transport->drop_data_messages_filter_ = [&drop_next_data](eprosima::fastdds::rtps::CDRMessage_t&)
+            -> bool
+            {
+                // drop_data_filter never receives builtin data
+                return drop_next_data.exchange(false);
+            };
+
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer.reliability(eprosima::fastdds::rtps::ReliabilityKind_t::RELIABLE).
+            history_depth(static_cast<int32_t>(samples_to_send)).
+            disable_builtin_transport().
+            add_user_transport_to_pparams(test_transport).
+            init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // The first change is lost, so every following change is received out of order.
+    drop_next_data = true;
+
+    auto data = default_helloworld_data_generator(samples_to_send);
+    reader.expected_data(data);
+    reader.startReception();
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+
+    reader.block_for_all(std::chrono::seconds(10));
+    EXPECT_EQ(reader.getReceivedCount(), samples_to_send);
+}

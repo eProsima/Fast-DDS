@@ -79,8 +79,16 @@ bool ReaderHistory::can_change_be_added_nts(
 
 bool ReaderHistory::received_change(
         CacheChange_t* change,
-        size_t)
+        size_t unknown_missing_changes_up_to)
 {
+    // Keep room for the changes this one is waiting for. Changes are delivered in order, so if the history were
+    // filled with later changes, the missing ones could never be stored and the reader would stall.
+    if ((0 < unknown_missing_changes_up_to) && (0 < m_att.maximumReservedCaches) &&
+            (m_changes.size() + unknown_missing_changes_up_to >= static_cast<size_t>(m_att.maximumReservedCaches)))
+    {
+        return false;
+    }
+
     return add_change(change);
 }
 
