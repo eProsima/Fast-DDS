@@ -1230,22 +1230,21 @@ bool StatefulReader::change_received(
         auto payload_length = a_change->serializedPayload.length;
         bool ret = true;
 
-        if (a_change->is_fully_assembled())
+        /* The change may have been discarded even when the history accepted it, because a KEEP_LAST instance
+         * discards the samples older than the oldest one it stores. This check also covers a change whose first
+         * fragment was discarded for the same reason, in which case the sample should be set as irrelevant too.
+         * Setting it as irrelevant tells the writer it does not need to keep it pending, and returning false makes
+         * the caller return the change to the pool. */
+        if (history_->changesEnd() == history_->find_change(a_change))
+        {
+            prox->irrelevant_change_set(a_change->sequenceNumber);
+            send_ack_if_datasharing(this, history_, prox, a_change->sequenceNumber);
+            will_never_be_accepted = true;
+            ret = false;
+        }
+        else if (a_change->is_fully_assembled())
         {
             ret = prox->received_change_set(a_change->sequenceNumber);
-        }
-        else
-        {
-            /* Search if the first fragment was stored, because it may have been discarded due to being older and KEEP_LAST
-             * policy. In this case this samples should be set as irrelevant.
-             */
-            if (history_->changesEnd() == history_->find_change(a_change))
-            {
-                prox->irrelevant_change_set(a_change->sequenceNumber);
-                send_ack_if_datasharing(this, history_, prox, a_change->sequenceNumber);
-                will_never_be_accepted = true;
-                ret = false;
-            }
         }
 
         Time_t::now(a_change->reader_info.receptionTimestamp);

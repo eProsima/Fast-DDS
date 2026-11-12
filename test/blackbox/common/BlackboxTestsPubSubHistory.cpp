@@ -1403,6 +1403,66 @@ TEST(PubSubHistory, ReliableUnmatchWithFutureChanges)
     reader.block_for_all();
 }
 
+/**
+ * Regression test for https://github.com/eProsima/Fast-DDS/issues/6592
+ *
+ * A KEEP_LAST reader discards a sample whose source timestamp is older than the oldest one stored for its instance.
+ * The change reserved for that sample has to be returned to the reader's pool, or every discarded sample leaks one
+ * change, and the reader ends up rejecting every following sample.
+ *
+ * The reader history holds a single sample, so its pool holds two changes (max_samples + 1). Discarding one sample is
+ * therefore enough to exhaust it, and the sample sent afterwards should still replace the stored one.
+ *
+ * Nothing is taken from the reader until every sample has been sent, because taking a sample returns its change to the
+ * pool and would hide the leak.
+ */
+TEST_P(PubSubHistory, KeepLastReaderReleasesSampleDiscardedAsOldest)
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
+            .history_depth(1)
+            .resource_limits_allocated_samples(1)
+            .resource_limits_max_samples(1)
+            .mem_policy(mem_policy_).init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
+            .history_depth(3)
+            .resource_limits_allocated_samples(3)
+            .resource_limits_max_samples(3)
+            .mem_policy(mem_policy_).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator(3);
+
+    // The sample sent second is older than the one stored, so the reader discards it.
+    const int32_t timestamps[] = { 10, 9, 11 };
+    size_t index = 0;
+    for (auto& sample : data)
+    {
+        WriteParams params;
+        params.source_timestamp(Time_t(timestamps[index++], 0u));
+        ASSERT_TRUE(writer.send_sample(sample, &params));
+    }
+
+    ASSERT_TRUE(reader.get_native_reader().wait_for_unread_message({ 5, 0 }));
+    // Give the reader time to process the samples that were sent after the first one.
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    // The sample kept by the single-slot history should be the newest one, which can only be stored if the change
+    // reserved for the discarded sample was returned to the pool.
+    HelloWorld received;
+    eprosima::fastdds::dds::SampleInfo info;
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, reader.get_native_reader().take_next_sample(&received, &info));
+    EXPECT_EQ(data.back().index(), received.index());
+}
 
 
 #ifdef INSTANTIATE_TEST_SUITE_P
