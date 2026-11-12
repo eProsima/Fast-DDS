@@ -73,6 +73,10 @@
                     </duration>
                 </disablePositiveAcks>
 
+                <data_representation>
+                    <value>XCDR2</value>
+                    <value>XCDR</value>
+                </data_representation>
                 <data_sharing>
                     <kind>AUTOMATIC</kind>
                     <shared_dir>/home</shared_dir>

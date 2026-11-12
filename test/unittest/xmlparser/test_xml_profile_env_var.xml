@@ -244,6 +244,9 @@
                         <name>${XML_PROFILES_ENV_VAR_82}</name>
                     </names>
                 </partition>
+                <data_representation>
+                    <value>${XML_PROFILES_ENV_VAR_170}</value>
+                </data_representation>
                 <publishMode>
                     <kind>${XML_PROFILES_ENV_VAR_83}</kind>
                     <flow_controller_name>${XML_PROFILES_ENV_VAR_167}</flow_controller_name>
@@ -365,6 +368,10 @@
                         <name>${XML_PROFILES_ENV_VAR_129}</name>
                     </names>
                 </partition>
+                <data_representation>
+                    <value>${XML_PROFILES_ENV_VAR_171}</value>
+                    <value>${XML_PROFILES_ENV_VAR_172}</value>
+                </data_representation>
                 <userData>
                     <value>${XML_PROFILES_ENV_VAR_130}</value>
                 </userData>

@@ -688,6 +688,11 @@ protected:
             dds::DataSharingQosPolicy& data_sharing,
             uint8_t ident);
 
+    static XMLP_ret getXMLDataRepresentationQos(
+            tinyxml2::XMLElement* elem,
+            dds::DataRepresentationQosPolicy& data_representation,
+            uint8_t ident);
+
     static XMLP_ret getXMLguidPrefix(
             tinyxml2::XMLElement* elem,
             rtps::GuidPrefix_t& prefix,
