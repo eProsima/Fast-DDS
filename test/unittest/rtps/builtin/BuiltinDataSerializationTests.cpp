@@ -26,6 +26,7 @@
 #include <fastdds/config.hpp>
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/core/policy/ParameterSerializer.hpp>
+#include <fastdds/core/policy/QosPoliciesSerializer.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/common/CacheChange.hpp>
@@ -4084,6 +4085,37 @@ TEST(BuiltinDataSerializationTests, regressions)
             }
         }
     }
+}
+
+// Regression test for https://github.com/eProsima/Fast-DDS/issues/5566
+TEST(BuiltinDataSerializationTests, reader_proxy_data_with_type_information)
+{
+    ReaderProxyData with_type_information(max_unicast_locators, max_multicast_locators);
+    ReaderProxyData without_type_information(max_unicast_locators, max_multicast_locators);
+
+    with_type_information.topic_name = "TEST";
+    with_type_information.type_name = "TestType";
+    without_type_information.topic_name = "TEST";
+    without_type_information.type_name = "TestType";
+
+    with_type_information.type_information =
+            dds::xtypes::TypeInformationParameter(dds::xtypes::TypeInformation());
+
+    // The size of the type information has to be accounted only once.
+    uint32_t type_information_size =
+            dds::QosPoliciesSerializer<dds::xtypes::TypeInformationParameter>::cdr_serialized_size(
+        with_type_information.type_information);
+    EXPECT_EQ(type_information_size, with_type_information.get_serialized_size(true) -
+            without_type_information.get_serialized_size(true));
+
+    // The type information still has to be serialized, and only once.
+    CDRMessage_t msg(with_type_information.get_serialized_size(true));
+    ASSERT_TRUE(with_type_information.write_to_cdr_message(&msg, true));
+
+    ReaderProxyData output(max_unicast_locators, max_multicast_locators);
+    msg.pos = 0;
+    ASSERT_TRUE(output.read_from_cdr_message(&msg, c_VendorId_eProsima));
+    EXPECT_TRUE(output.type_information.assigned());
 }
 
 } // namespace rtps

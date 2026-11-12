@@ -318,12 +318,6 @@ uint32_t ReaderProxyData::get_serialized_size(
         ret_val += dds::QosPoliciesSerializer<dds::DisablePositiveACKsQosPolicy>::cdr_serialized_size(
             disable_positive_acks);
     }
-    if (type_information.assigned())
-    {
-        ret_val +=
-                dds::QosPoliciesSerializer<dds::xtypes::TypeInformationParameter>::cdr_serialized_size(
-            type_information);
-    }
 
     if (related_datawriter_key != c_Guid_Unknown)
     {
@@ -632,14 +626,6 @@ bool ReaderProxyData::write_to_cdr_message(
         }
     }
 
-    if (m_type_id && m_type_id->m_type_identifier._d() != fastdds::dds::xtypes::TK_NONE)
-    {
-        if (!dds::QosPoliciesSerializer<dds::xtypes::TypeInformationParameter>::add_to_cdr_message(
-                    type_information, msg))
-        {
-            return false;
-        }
-    }
     if (properties.size() > 0)
     {
         if (!dds::ParameterSerializer<dds::ParameterPropertyList_t>::add_to_cdr_message(properties, msg))
