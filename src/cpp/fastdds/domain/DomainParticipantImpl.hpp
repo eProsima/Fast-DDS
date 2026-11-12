@@ -121,11 +121,19 @@ public:
         }
 
         std::unique_lock<std::mutex> lock(mtx_gs_);
-        if (!cv_gs_.wait_until(lock, time_out, [this]
+        const auto no_callbacks_running = [this]
                 {
                     // Proceed if no callbacks are being executed
                     return !(rtps_listener_.callback_counter_ > 0);
-                }))
+                };
+
+        // Avoid converting steady_clock::time_point::max() to the condition
+        // variable's native clock, which can overflow on older libstdc++.
+        if (timeout == std::chrono::seconds::max())
+        {
+            cv_gs_.wait(lock, no_callbacks_running);
+        }
+        else if (!cv_gs_.wait_until(lock, time_out, no_callbacks_running))
         {
             return RETCODE_ERROR;
         }
