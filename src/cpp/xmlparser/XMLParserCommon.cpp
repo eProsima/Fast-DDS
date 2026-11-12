@@ -247,6 +247,9 @@ const char* PUB_MODE = "publishMode";
 const char* DISABLE_POSITIVE_ACKS = "disablePositiveAcks";
 const char* DISABLE_HEARTBEAT_PIGGYBACK = "disable_heartbeat_piggyback";
 const char* DATA_SHARING = "data_sharing";
+const char* DATA_REPRESENTATION = "data_representation";
+const char* DATA_REPRESENTATION_XCDR = "XCDR";
+const char* DATA_REPRESENTATION_XCDR2 = "XCDR2";
 
 const char* SYNCHRONOUS = "SYNCHRONOUS";
 const char* ASYNCHRONOUS = "ASYNCHRONOUS";

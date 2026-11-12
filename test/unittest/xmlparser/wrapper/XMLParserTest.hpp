@@ -118,6 +118,14 @@ public:
 
     static XMLP_ret propertiesPolicy_wrapper(
             tinyxml2::XMLElement* elem,
+            DataRepresentationQosPolicy& data_representation_qos,
+            uint8_t ident)
+    {
+        return getXMLDataRepresentationQos(elem, data_representation_qos, ident);
+    }
+
+    static XMLP_ret propertiesPolicy_wrapper(
+            tinyxml2::XMLElement* elem,
             OwnershipQosPolicy& ownershipQos,
             uint8_t ident)
     {

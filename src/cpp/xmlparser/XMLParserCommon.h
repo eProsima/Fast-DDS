@@ -259,6 +259,9 @@ extern const char* PUB_MODE;
 extern const char* DISABLE_POSITIVE_ACKS;
 extern const char* DISABLE_HEARTBEAT_PIGGYBACK;
 extern const char* DATA_SHARING;
+extern const char* DATA_REPRESENTATION;
+extern const char* DATA_REPRESENTATION_XCDR;
+extern const char* DATA_REPRESENTATION_XCDR2;
 
 extern const char* SYNCHRONOUS;
 extern const char* ASYNCHRONOUS;

@@ -1327,6 +1327,7 @@
     </xs:complexType>
 
     <!--Data writer QoS Policies:
+        ├ data_representation         [0~1],
         ├ data_sharing                [0~1],
         ├ deadline                    [0~1],
         ├ destination_order           [0~1] NOT SUPPORTED YET: COMMENTED,
@@ -1351,6 +1352,7 @@
         └ transport_priority          [0~1] -->
     <xs:complexType name="dataWriterQosPoliciesType">
         <xs:all>
+            <xs:element name="data_representation" type="dataRepresentationQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="data_sharing" type="dataSharingQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="deadline" type="deadlineQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="destination_order" type="destinationOrderQosPolicyType" minOccurs="0" maxOccurs="1"/>
@@ -1376,6 +1378,7 @@
     </xs:complexType>
 
     <!--Data reader QoS Policies:
+        ├ data_representation         [0~1],
         ├ data_sharing                [0~1],
         ├ deadline                    [0~1],
         ├ destination_order           [0~1] NOT SUPPORTED YET: COMMENTED,
@@ -1396,6 +1399,7 @@
         └ userData                    [0~1] -->
     <xs:complexType name="dataReaderQosPoliciesType">
         <xs:all>
+            <xs:element name="data_representation" type="dataRepresentationQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="data_sharing" type="dataSharingQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="deadline" type="deadlineQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="destination_order" type="destinationOrderQosPolicyType" minOccurs="0" maxOccurs="1"/>
@@ -1592,6 +1596,21 @@
 
 
     <!--| QoS POLICY TYPES DEFINITION |-->
+    <!--QoS Data Representation:
+        └ value [1~*] [string] ("XCDR", "XCDR2") -->
+    <xs:complexType name="dataRepresentationQosPolicyType">
+        <xs:sequence>
+            <xs:element name="value" minOccurs="1" maxOccurs="unbounded">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="XCDR"/>
+                        <xs:enumeration value="XCDR2"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
     <!--QoS Data Sharing:
         ├ kind                         [string] ("AUTOMATIC", "ON", "OFF"),
         ├ shared_dir                   [string],
