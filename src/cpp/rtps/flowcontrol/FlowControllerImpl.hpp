@@ -1024,7 +1024,7 @@ public:
     void register_writer(
             BaseWriter* writer) override
     {
-        std::unique_lock<fastdds::TimedMutex> lock(mutex_);
+        std::unique_lock<fastdds::RecursiveTimedMutex> lock(mutex_);
         auto ret = writers_.insert({ writer->getGuid(), writer});
         (void)ret;
         assert(ret.second);
@@ -1039,7 +1039,7 @@ public:
     void unregister_writer(
             BaseWriter* writer) override
     {
-        std::unique_lock<fastdds::TimedMutex> lock(mutex_);
+        std::unique_lock<fastdds::RecursiveTimedMutex> lock(mutex_);
         writers_.erase(writer->getGuid());
         unregister_writer_impl(writer);
     }
@@ -1325,11 +1325,11 @@ protected:
         {
             ++async_mode.writers_interested_in_remove;
 #if HAVE_STRICT_REALTIME
-            std::unique_lock<fastdds::TimedMutex> lock(mutex_, std::defer_lock);
+            std::unique_lock<fastdds::RecursiveTimedMutex> lock(mutex_, std::defer_lock);
             if (lock.try_lock_until(max_blocking_time))
 #else
             static_cast<void>(max_blocking_time);
-            std::unique_lock<fastdds::TimedMutex> lock(mutex_);
+            std::unique_lock<fastdds::RecursiveTimedMutex> lock(mutex_);
 #endif // if HAVE_STRICT_REALTIME
             {
 #if HAVE_STRICT_REALTIME
@@ -1402,7 +1402,7 @@ protected:
                 continue;
             }
 
-            std::unique_lock<fastdds::TimedMutex> lock(mutex_);
+            std::unique_lock<fastdds::RecursiveTimedMutex> lock(mutex_);
             CacheChange_t* change_to_process = nullptr;
 
             //Check if we have to sleep.
@@ -1526,7 +1526,7 @@ protected:
         return (std::numeric_limits<uint32_t>::max)();
     }
 
-    fastdds::TimedMutex mutex_;
+    fastdds::RecursiveTimedMutex mutex_;
 
     RTPSParticipantImpl* participant_ = nullptr;
 
