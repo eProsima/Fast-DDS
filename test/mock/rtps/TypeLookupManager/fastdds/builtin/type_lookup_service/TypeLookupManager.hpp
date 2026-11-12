@@ -159,9 +159,6 @@ public:
                 const SampleIdentity&,
                 const xtypes::TypeIdentfierWithSize&));
 
-    MOCK_METHOD1(remove_async_get_type_callback, bool(
-                const xtypes::TypeIdentfierWithSize&));
-
     MOCK_METHOD1(remove_async_get_type_request, bool(
                 SampleIdentity));
 
@@ -194,6 +191,7 @@ public:
 
     fastdds::rtps::RTPSParticipantImpl* participant_ = nullptr;
 
+    std::mutex async_get_types_mutex_;
     std::unordered_map<SampleIdentity, xtypes::TypeIdentfierWithSize> async_get_type_requests_;
 
     mutable TypeLookup_ReplyPubSubType reply_type_;

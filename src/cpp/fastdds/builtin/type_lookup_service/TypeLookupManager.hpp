@@ -225,7 +225,9 @@ protected:
             AsyncCallback>>>& async_get_type_callbacks);
 
     /**
-     *  Notifies callbacks for a given TypeIdentfierWithSize.
+     * Notifies and removes callbacks for a given TypeIdentfierWithSize.
+     * Callbacks are invoked after releasing async_get_types_mutex_, and their proxy copies are released afterwards.
+     * @param request_ret_status[in] Result of the TypeLookup request.
      * @param type_identifier_with_size[in] TypeIdentfierWithSize of the callbacks to notify.
      */
     void notify_callbacks(
@@ -242,14 +244,6 @@ protected:
     bool add_async_get_type_request(
             const SampleIdentity& request,
             const xtypes::TypeIdentfierWithSize& type_identifier_with_size );
-
-    /**
-     * Removes a TypeIdentfierWithSize from the async_get_type_callbacks_.
-     * @param type_identifier_with_size[in] TypeIdentfierWithSize to be removed.
-     * @return true if removed, false otherwise.
-     */
-    bool remove_async_get_type_callback(
-            const xtypes::TypeIdentfierWithSize& type_identifier_with_size);
 
     /**
      * Removes a SampleIdentity from the async_get_type_callbacks_.
@@ -429,6 +423,8 @@ protected:
     fastdds::rtps::WriterProxyData* temp_writer_proxy_data_ = nullptr;
 
     mutable fastdds::rtps::SequenceNumber_t request_seq_number_;
+    //! Mutex to protect the request sequence number shared by concurrent discovery threads.
+    mutable std::mutex request_seq_mutex_;
     mutable TypeLookup_RequestPubSubType request_type_;
     mutable TypeLookup_ReplyPubSubType reply_type_;
 
