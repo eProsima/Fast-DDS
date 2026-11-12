@@ -138,7 +138,7 @@ DataReaderHistory::DataReaderHistory(
         compute_key_for_change_fn_ = [](CacheChange_t* change)
                 {
                     change->instanceHandle = c_InstanceHandle_Unknown;
-                    return true;
+                    return change->is_fully_assembled();
                 };
     }
     else
@@ -728,7 +728,7 @@ ReaderHistory::iterator DataReaderHistory::remove_change_nts(
 
         if (ret_val == changesEnd() || !matches_change(&dummy_change, *ret_val)) // Change was successfully removed.
         {
-            if (!has_keys_ || is_fully_assembled)
+            if (is_fully_assembled)
             {
                 // clean any references to this CacheChange in the key state collection
                 auto it = instances_.find(dummy_change.instanceHandle);
@@ -786,8 +786,7 @@ bool DataReaderHistory::completed_change(
         InstanceCollection::iterator vit;
         if (find_key(change->instanceHandle, vit))
         {
-            ret_value = !change->instanceHandle.isDefined() ||
-                    complete_fn_(change, *vit->second, unknown_missing_changes_up_to, rejection_reason);
+            ret_value = complete_fn_(change, *vit->second, unknown_missing_changes_up_to, rejection_reason);
         }
     }
 
@@ -826,7 +825,7 @@ bool DataReaderHistory::completed_change_keep_last(
         CacheChange_t* change,
         DataReaderInstance& instance,
         size_t,
-        SampleRejectedStatusKind&)
+        SampleRejectedStatusKind& rejection_reason)
 {
     bool ret_value = false;
     DataReaderInstance::ChangeCollection& instance_changes = instance.cache_changes;
@@ -845,8 +844,9 @@ bool DataReaderHistory::completed_change_keep_last(
         }
         else
         {
-            // Received change is older than oldest, and should be discarded
-            return true;
+            // Completed change is older than oldest, and should be discarded
+            rejection_reason = NOT_REJECTED;
+            return false;
         }
     }
 
