@@ -19,6 +19,7 @@
 
 #include "TypeLookupServicePublisher.h"
 #include "TypeLookupServiceSubscriber.h"
+#include "TypeLookupServiceManyTypes.h"
 
 #include <iostream>
 #include <sstream>
@@ -60,6 +61,14 @@ CommandLineArgs parse_args(
             else if (value == "subscriber")
             {
                 args.kind = 2;
+            }
+            else if (value == "many_types_publisher")
+            {
+                args.kind = 3;
+            }
+            else if (value == "many_types_subscriber")
+            {
+                args.kind = 4;
             }
         }
         else if (key == "samples")
@@ -148,6 +157,13 @@ int main(
                            sub.run(args.samples, args.timeout)) ? 0 : -1;
                 }
             }
+            case 3:
+                // expected_matches is the number of types
+                return eprosima::fastdds::dds::run_many_types_publisher(
+                    args.seed % 230, args.expected_matches, args.timeout);
+            case 4:
+                return eprosima::fastdds::dds::run_many_types_subscriber(
+                    args.seed % 230, args.expected_matches, args.timeout);
             default:
                 std::cout << "Invalid participant type. Use 'publisher' or 'subscriber'." << std::endl;
                 return -1;

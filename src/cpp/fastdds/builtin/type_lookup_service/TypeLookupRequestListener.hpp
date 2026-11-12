@@ -20,6 +20,7 @@
 #ifndef _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_REQUEST_LISTENER_HPP_
 #define _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_REQUEST_LISTENER_HPP_
 
+#include <atomic>
 #include <condition_variable>
 #include <mutex>
 #include <queue>
@@ -142,6 +143,13 @@ protected:
             const std::vector<uint8_t>& continuation_point);
 
     /**
+     * @brief Sends a reply, waiting for room in the reply history if it is full.
+     * @param reply[in] Reply to send.
+     */
+    void send_reply(
+            TypeLookup_Reply& reply);
+
+    /**
      * @brief Creates and sends the TypeLookup_Reply.
      * @param request_id[in] The SampleIdentity of the request.
      * @param exception_code[in] The RemoteExceptionCode_t used in the header.
@@ -184,7 +192,7 @@ protected:
     std::queue<std::pair<TypeLookup_Request, rtps::VendorId_t>> requests_queue_;
     std::mutex request_processor_cv_mutex_;
     std::condition_variable request_processor_cv_;
-    bool processing_ = false;
+    std::atomic<bool> processing_ {false};
     rtps::ThreadSettings request_processor_thread_settings_;
 };
 
