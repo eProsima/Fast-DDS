@@ -1454,7 +1454,16 @@ protected:
 
                 LocatorSelectorSender& locator_selector =
                         current_writer->get_async_locator_selector();
-                async_mode.group.sender(current_writer, &locator_selector);
+                try
+                {
+                    async_mode.group.sender(current_writer, &locator_selector);
+                }
+                catch (const RTPSMessageGroup::timeout&)
+                {
+                    EPROSIMA_LOG_ERROR(RTPS_WRITER, "Max blocking time reached flushing asynchronous message");
+                    current_writer->getMutex().unlock();
+                    break;
+                }
                 locator_selector.lock();
 
                 // Remove previously from queue, because deliver_sample_nts could call FlowController::remove_sample()
@@ -1508,7 +1517,14 @@ protected:
                 change_to_process = sched.get_next_change_nts();
             }
 
-            async_mode.group.sender(nullptr, nullptr);
+            try
+            {
+                async_mode.group.sender(nullptr, nullptr);
+            }
+            catch (const RTPSMessageGroup::timeout&)
+            {
+                EPROSIMA_LOG_ERROR(RTPS_WRITER, "Max blocking time reached flushing asynchronous message");
+            }
         }
     }
 
