@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <memory>
+#include <utility>
+
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 #include <gtest/gtest.h>
 
@@ -268,6 +271,72 @@ TEST_F(ResourceLimitedVectorTests, remove_if)
     // Should be half-empty
     ASSERT_EQ(uut.size(), NUM_ITEMS / 2);
     ASSERT_EQ(uut.capacity(), NUM_ITEMS);
+}
+
+/**
+ * Helper type keeping track of how many times an instance has been copied or moved.
+ */
+struct CopyMoveCounter
+{
+    CopyMoveCounter() = default;
+
+    CopyMoveCounter(
+            const CopyMoveCounter& other)
+        : copies(other.copies + 1)
+        , moves(other.moves)
+    {
+    }
+
+    CopyMoveCounter(
+            CopyMoveCounter&& other) noexcept
+        : copies(other.copies)
+        , moves(other.moves + 1)
+    {
+    }
+
+    CopyMoveCounter& operator =(
+            const CopyMoveCounter& other) = default;
+
+    CopyMoveCounter& operator =(
+            CopyMoveCounter&& other) = default;
+
+    //! Number of copy constructions this value went through.
+    size_t copies = 0;
+    //! Number of move constructions this value went through.
+    size_t moves = 0;
+};
+
+TEST_F(ResourceLimitedVectorTests, emplace_back_forwards_arguments)
+{
+    ResourceLimitedVector<CopyMoveCounter> uut(ResourceLimitedContainerConfig::fixed_size_configuration(NUM_ITEMS));
+
+    // An lvalue argument should be copied into the new element
+    CopyMoveCounter lvalue;
+    auto copied = uut.emplace_back(lvalue);
+    ASSERT_NE(copied, nullptr);
+    ASSERT_EQ(copied->copies, 1u);
+    ASSERT_EQ(copied->moves, 0u);
+
+    // An rvalue argument should be moved into the new element
+    CopyMoveCounter rvalue;
+    auto moved = uut.emplace_back(std::move(rvalue));
+    ASSERT_NE(moved, nullptr);
+    ASSERT_EQ(moved->copies, 0u);
+    ASSERT_EQ(moved->moves, 1u);
+}
+
+TEST_F(ResourceLimitedVectorTests, emplace_back_move_only_value)
+{
+    ResourceLimitedVector<std::unique_ptr<int>> uut(
+        ResourceLimitedContainerConfig::fixed_size_configuration(NUM_ITEMS));
+
+    // Move-only values should be accepted, and left empty after the call
+    std::unique_ptr<int> value(new int(42));
+    auto item = uut.emplace_back(std::move(value));
+    ASSERT_NE(item, nullptr);
+    ASSERT_EQ(value, nullptr);
+    ASSERT_NE(*item, nullptr);
+    ASSERT_EQ(**item, 42);
 }
 
 
