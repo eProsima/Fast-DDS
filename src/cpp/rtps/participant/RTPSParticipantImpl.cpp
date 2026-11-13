@@ -796,6 +796,11 @@ void RTPSParticipantImpl::enable()
     {
         receiver.Receiver->RegisterReceiver(receiver.mp_receiver);
     }
+
+    // Remote participants reply to the first announcement only once, so it must not be sent before reception starts.
+    // Otherwise, replies arriving before the receivers are registered are discarded, and the remote participants
+    // are not discovered until their next periodic announcement.
+    mp_builtinProtocols->start_participant_announcement();
 }
 
 void RTPSParticipantImpl::disable()
