@@ -95,6 +95,12 @@ public:
     void enable();
 
     /**
+     * Send the first participant announcement and start the periodic ones.
+     * Must be called after enable(), once the participant is able to receive the replies to the announcement.
+     */
+    void start_participant_announcement();
+
+    /**
      * Update the metatraffic locatorlist after it was created. Because when you create
      * the EDP readers you are not sure the selected endpoints can be used.
      * @param loclist LocatorList to update
