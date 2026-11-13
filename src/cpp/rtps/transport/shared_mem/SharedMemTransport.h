@@ -15,6 +15,7 @@
 #ifndef _FASTDDS_SHAREDMEM_TRANSPORT_H_
 #define _FASTDDS_SHAREDMEM_TRANSPORT_H_
 
+#include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/transport/TransportInterface.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
 
@@ -56,6 +57,16 @@ public:
             const uint32_t& max_msg_size_no_frag = 0) override;
 
     ~SharedMemTransport() override;
+
+    //! An explicit participant prefix pins the SHM host id (bytes 2-3 of the prefix)
+    void participant_prefix(
+            const GuidPrefix_t& prefix)
+    {
+        if (c_GuidPrefix_Unknown != prefix)
+        {
+            host_id_ = static_cast<uint16_t>(prefix.value[2] | (prefix.value[3] << 8));
+        }
+    }
 
     /**
      * Starts listening on the specified port, and if the specified address is in the
@@ -215,6 +226,8 @@ public:
     }
 
 private:
+
+    uint16_t host_id_;
 
     using TransportInterface::transform_remote_locator;
 
