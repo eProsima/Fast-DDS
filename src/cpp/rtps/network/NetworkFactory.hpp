@@ -18,6 +18,7 @@
 #include <vector>
 #include <memory>
 
+#include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/LocatorSelector.hpp>
@@ -73,7 +74,8 @@ public:
     bool RegisterTransport(
             const fastdds::rtps::TransportDescriptorInterface* descriptor,
             const fastdds::rtps::PropertyPolicy* properties = nullptr,
-            const uint32_t& max_msg_size_no_frag = 0);
+            const uint32_t& max_msg_size_no_frag = 0,
+            const GuidPrefix_t& participant_prefix = c_GuidPrefix_Unknown);
 
     /**
      * Walk over the list of transports, opening every possible channel that can send through
