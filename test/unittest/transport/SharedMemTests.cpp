@@ -29,6 +29,7 @@
 #include <utils/Semaphore.hpp>
 
 #include "../../../src/cpp/rtps/transport/shared_mem/MultiProducerConsumerRingBuffer.hpp"
+#include "../../../src/cpp/rtps/transport/shared_mem/SHMLocator.hpp"
 #include "../../../src/cpp/rtps/transport/shared_mem/SharedMemGlobal.hpp"
 #include "../../../src/cpp/rtps/transport/shared_mem/SharedMemManager.hpp"
 #include "../../../src/cpp/rtps/transport/shared_mem/SharedMemSenderResource.hpp"
@@ -699,6 +700,30 @@ TEST_F(SHMTransportTests, all_shared_mem_locators_are_local)
 
     // Then
     ASSERT_TRUE(transportUnderTest.is_local_locator(shared_mem_locator));
+}
+
+TEST_F(SHMTransportTests, explicit_prefix_pins_host_id_in_locators)
+{
+    SharedMemTransport transportUnderTest(descriptor);
+
+    GuidPrefix_t prefix;
+    const uint16_t pinned_id = static_cast<uint16_t>(eprosima::Host::instance().id() ^ 0x5A5A);
+    prefix.value[2] = static_cast<octet>(pinned_id & 0xFF);
+    prefix.value[3] = static_cast<octet>(pinned_id >> 8);
+    transportUnderTest.participant_prefix(prefix);
+    ASSERT_TRUE(transportUnderTest.init());
+
+    // Transport generated locators use the pinned id
+    LocatorList_t locators;
+    ASSERT_TRUE(transportUnderTest.getDefaultUnicastLocators(locators, g_default_port));
+    ASSERT_EQ(locators.size(), 1u);
+    ASSERT_TRUE(SHMLocator::is_shm_and_from_this_host(*locators.begin(), pinned_id));
+
+    // Locators built with the real host id are rewritten to the pinned id
+    Locator_t user_locator = SHMLocator::create_locator(0, SHMLocator::Type::UNICAST);
+    ASSERT_TRUE(transportUnderTest.fillUnicastLocator(user_locator, g_default_port));
+    ASSERT_EQ(user_locator.port, g_default_port);
+    ASSERT_TRUE(SHMLocator::is_shm_and_from_this_host(user_locator, pinned_id));
 }
 
 TEST_F(SHMTransportTests, match_if_port_and_address_matches)

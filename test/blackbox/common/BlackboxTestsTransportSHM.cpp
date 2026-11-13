@@ -548,6 +548,66 @@ TEST(SHM, SHM_copy)
     EXPECT_EQ(shm_transport_copy, shm_transport);
 }
 
+// The host id of SHM locators must be taken from an explicitly set GUID prefix (bytes 2-3)
+TEST(SHM, explicit_prefix_host_id_is_used_in_locators)
+{
+    auto get_shm_locators = [](PubSubReader<HelloWorldPubSubType>& reader)
+            {
+                rtps::LocatorList locators;
+                EXPECT_EQ(reader.get_native_reader().get_listening_locators(locators),
+                        eprosima::fastdds::dds::RETCODE_OK);
+                std::vector<rtps::Locator> result;
+                for (const auto& loc : locators)
+                {
+                    if (LOCATOR_KIND_SHM == loc.kind)
+                    {
+                        result.push_back(loc);
+                    }
+                }
+                return result;
+            };
+
+    // Without an explicit prefix, the real host id is used
+    PubSubReader<HelloWorldPubSubType> default_reader(TEST_TOPIC_NAME);
+    default_reader.disable_builtin_transport()
+            .add_user_transport_to_pparams(std::make_shared<rtps::SharedMemTransportDescriptor>())
+            .init();
+    ASSERT_TRUE(default_reader.isInitialized());
+    auto default_locators = get_shm_locators(default_reader);
+    ASSERT_FALSE(default_locators.empty());
+    const rtps::octet real_id_low = default_locators.front().address[1];
+    const rtps::octet real_id_high = default_locators.front().address[2];
+
+    // With an explicit prefix, a different host id is pinned
+    rtps::GuidPrefix_t prefix;
+    prefix.value[0] = 0x01;
+    prefix.value[1] = 0x0f;
+    prefix.value[2] = static_cast<rtps::octet>(real_id_low ^ 0x5A);
+    prefix.value[3] = static_cast<rtps::octet>(real_id_high ^ 0xA5);
+
+    // Default unicast SHM locator built with the real host id, as the large data builtin profile does
+    rtps::Locator_t real_id_locator(LOCATOR_KIND_SHM, 0);
+    real_id_locator.address[0] = 'U';
+    real_id_locator.address[1] = real_id_low;
+    real_id_locator.address[2] = real_id_high;
+    rtps::LocatorList default_unicast;
+    default_unicast.push_back(real_id_locator);
+
+    PubSubReader<HelloWorldPubSubType> pinned_reader(TEST_TOPIC_NAME);
+    pinned_reader.guid_prefix(prefix)
+            .set_default_unicast_locators(default_unicast)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(std::make_shared<rtps::SharedMemTransportDescriptor>())
+            .init();
+    ASSERT_TRUE(pinned_reader.isInitialized());
+    auto pinned_locators = get_shm_locators(pinned_reader);
+    ASSERT_FALSE(pinned_locators.empty());
+    for (const auto& loc : pinned_locators)
+    {
+        EXPECT_EQ(loc.address[1], prefix.value[2]);
+        EXPECT_EQ(loc.address[2], prefix.value[3]);
+    }
+}
+
+
 #endif // EPROSIMA_SHM_TRANSPORT_DISABLED
-
-
