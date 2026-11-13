@@ -20,38 +20,15 @@ file(GLOB DDSSQLFILTER_SOURCES
     )
 
 file(GLOB DDSSQLFILTER_LIB_SOURCES
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/network.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterfaceWithFilter.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/Host.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     )
-
-if(WIN32)
-    add_definitions(-D_WIN32_WINNT=0x0601)
-endif()
 
 add_executable(DDSSQLFilterTests
     ${DDSSQLFILTERTEST_SOURCES}
     ${DDSSQLFILTER_TYPE_SOURCES}
     ${DDSSQLFILTER_SOURCES}
     ${DDSSQLFILTER_LIB_SOURCES}
-    )
-target_compile_definitions(DDSSQLFilterTests PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(DDSSQLFilterTests PRIVATE
     ${Asio_INCLUDE_DIR}
@@ -63,10 +40,17 @@ target_include_directories(DDSSQLFilterTests PRIVATE
     )
 target_link_libraries(DDSSQLFilterTests
     fastcdr
-    fastdds::xtypes::dynamic-types::impl
-    fastdds::xtypes::type-representation
     foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS}
     )
+fastdds_target_link_object_groups(DDSSQLFilterTests
+    fastdds::xtypes::dynamic-types::impl
+    fastdds::xtypes::type-representation
+    fastdds::rtps::host-net
+    fastdds::rtps::net-interface
+    fastdds::time
+    fastdds::rtps::netmask-filter
+    )
+
 gtest_discover_tests(DDSSQLFilterTests)

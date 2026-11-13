@@ -18,10 +18,6 @@ set(THREAD_SETTINGS_TESTS_SOURCE
     ThreadSettingsTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp)
 
-if(WIN32)
-    add_definitions(-D_WIN32_WINNT=0x0601)
-endif()
-
 add_executable(${THREAD_SETTINGS_TESTS_EXEC} ${THREAD_SETTINGS_TESTS_SOURCE})
 
 target_include_directories(
@@ -52,26 +48,11 @@ set(SERVER_ATTRIBUTES_TESTS_EXEC ServerAttributesTests)
 
 set(SERVER_ATTRIBUTES_TESTS_SOURCE
     ServerAttributesTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ServerAttributes.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/GuidPrefix_t.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/network.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/Host.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     )
 
 add_executable(${SERVER_ATTRIBUTES_TESTS_EXEC} ${SERVER_ATTRIBUTES_TESTS_SOURCE})
-target_compile_definitions(${SERVER_ATTRIBUTES_TESTS_EXEC} PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories( ${SERVER_ATTRIBUTES_TESTS_EXEC} PRIVATE
     ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include
@@ -81,11 +62,16 @@ target_include_directories( ${SERVER_ATTRIBUTES_TESTS_EXEC} PRIVATE
 
 target_link_libraries(${SERVER_ATTRIBUTES_TESTS_EXEC}
     fastcdr
-    fastdds::log
     GTest::gtest
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
     ${CMAKE_DL_LIBS})
+fastdds_target_link_object_groups(${SERVER_ATTRIBUTES_TESTS_EXEC}
+    fastdds::log
+    fastdds::rtps::host-net
+    fastdds::time
+    )
+
 
 gtest_discover_tests(${SERVER_ATTRIBUTES_TESTS_EXEC}
     TEST_PREFIX "ServerAttributesTests."

@@ -1,6 +1,10 @@
 set(${PROJECT_NAME}_module_dirs
     fastdds/log
     fastdds/xtypes
+    fastdds
+    rtps
+    security
+    statistics
     )
 
 set(${PROJECT_NAME}_source_files

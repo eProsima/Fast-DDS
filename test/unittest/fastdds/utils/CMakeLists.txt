@@ -12,22 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if(WIN32)
-    add_definitions(-D_WIN32_WINNT=0x0601)
-endif()
-
 set(TYPE_PROPAGATION_SOURCE
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/utils/TypePropagation.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     TypePropagationTests.cpp)
 
 add_executable(TypePropagationTests ${TYPE_PROPAGATION_SOURCE})
-target_compile_definitions(TypePropagationTests PRIVATE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(TypePropagationTests PRIVATE
     ${Asio_INCLUDE_DIR}
     ${PROJECT_BINARY_DIR}/include
@@ -38,4 +28,8 @@ target_link_libraries(TypePropagationTests
     fastcdr
     GTest::gtest
     )
+fastdds_target_link_object_groups(TypePropagationTests
+    fastdds::time
+    )
+
 gtest_discover_tests(TypePropagationTests)
