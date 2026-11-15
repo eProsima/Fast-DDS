@@ -432,7 +432,7 @@ void TypeLookupRequestListener::answer_request(
     reply->header().relatedRequestId(request_id);
     reply->header().remoteEx(exception_code);
 
-    typelookup_manager_->send(*reply);
+    send_reply(*reply);
     typelookup_manager_->reply_type_.delete_data(reply);
 }
 
@@ -448,7 +448,7 @@ void TypeLookupRequestListener::answer_request(
     reply->header().relatedRequestId(request_id);
     reply->header().remoteEx(exception_code);
 
-    typelookup_manager_->send(*reply);
+    send_reply(*reply);
     typelookup_manager_->reply_type_.delete_data(reply);
 }
 
@@ -460,8 +460,19 @@ void TypeLookupRequestListener::answer_request(
     reply->header().relatedRequestId(request_id);
     reply->header().remoteEx(exception_code);
 
-    typelookup_manager_->send(*reply);
+    send_reply(*reply);
     typelookup_manager_->reply_type_.delete_data(reply);
+}
+
+void TypeLookupRequestListener::send_reply(
+        TypeLookup_Reply& reply)
+{
+    // The requester waits for this reply to pair its endpoints, so it must not be dropped when the reply history
+    // is full. Wait instead for the replies already sent to be acknowledged.
+    while (!typelookup_manager_->send(reply) && processing_)
+    {
+        typelookup_manager_->wait_for_reply_writer_space(std::chrono::milliseconds(100));
+    }
 }
 
 void TypeLookupRequestListener::on_new_cache_change_added(

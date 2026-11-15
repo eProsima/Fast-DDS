@@ -77,6 +77,7 @@ set(DDS_XTYPES_SOURCE ${COMMON_SOURCE}
     TypeLookupService_main.cpp
     TypeLookupServicePublisher.cpp
     TypeLookupServiceSubscriber.cpp
+    TypeLookupServiceManyTypes.cpp
     )
 
 if(WIN32)

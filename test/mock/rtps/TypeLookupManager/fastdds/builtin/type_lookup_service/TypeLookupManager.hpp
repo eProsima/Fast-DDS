@@ -195,6 +195,9 @@ public:
 
     MOCK_METHOD1(remove_builtin_reply_writer_history_change, void(
                 fastdds::rtps::CacheChange_t*));
+
+    MOCK_CONST_METHOD1(wait_for_reply_writer_space, void(
+                std::chrono::milliseconds));
     // *INDENT-ON*
 
     xtypes::TypeKind get_type_kind_to_propagate() const
