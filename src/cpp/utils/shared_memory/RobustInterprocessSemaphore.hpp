@@ -131,6 +131,7 @@ private:
 
     std::atomic<uint32_t> count_;
     static_assert(ATOMIC_INT_LOCK_FREE == 2, "Must be lock free to live in shared memory");
+    static_assert(ATOMIC_LONG_LOCK_FREE == 2, "Must be lock free to live in shared memory");
 };
 
 static_assert(sizeof(RobustInterprocessSemaphore) == sizeof(boost::interprocess::interprocess_semaphore),
