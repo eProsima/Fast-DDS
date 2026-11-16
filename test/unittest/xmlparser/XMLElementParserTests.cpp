@@ -4171,6 +4171,116 @@ TEST_F(XMLParserTests, getXMLOwnershipQos)
     }
 }
 
+/**
+ * @test checks the proper parsing of the <data_representation> xml elements to a DataRepresentationQosPolicy
+ * object.
+ * 1. Correct parsing of a single valid <value> (XCDR and XCDR2).
+ * 2. Correct parsing of several <value> elements, keeping the order and replacing any previous content.
+ * 3. Correct parsing as part of the writer and reader QoS policies.
+ * 4. Check no value.
+ * 5. Check an empty value.
+ * 6. Check an invalid value.
+ * 7. Check a repeated value.
+ * 8. Check an invalid element.
+ * 9. Check that the policy is not modified when the parsing fails.
+ */
+TEST_F(XMLParserTests, getXMLDataRepresentationQos)
+{
+    uint8_t ident = 1;
+    DataRepresentationQosPolicy representation_policy;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    using representation_vector = std::vector<DataRepresentationId_t>;
+
+    {
+        // Template xml
+        const char* xml_p =
+                "\
+                <data_representation>\
+                    <value>%s</value>\
+                </data_representation>\
+                ";
+        constexpr size_t xml_len {1000};
+        char xml[xml_len];
+
+        snprintf(xml, xml_len, xml_p, "XCDR");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK,
+                XMLParserTest::propertiesPolicy_wrapper(titleElement, representation_policy, ident));
+        EXPECT_EQ(representation_policy.m_value, representation_vector({XCDR_DATA_REPRESENTATION}));
+
+        snprintf(xml, xml_len, xml_p, "XCDR2");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK,
+                XMLParserTest::propertiesPolicy_wrapper(titleElement, representation_policy, ident));
+        EXPECT_EQ(representation_policy.m_value, representation_vector({XCDR2_DATA_REPRESENTATION}));
+    }
+
+    {
+        const char* xml =
+                "\
+                <data_representation>\
+                    <value>XCDR2</value>\
+                    <value>XCDR</value>\
+                </data_representation>\
+                ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK,
+                XMLParserTest::propertiesPolicy_wrapper(titleElement, representation_policy, ident));
+        EXPECT_EQ(representation_policy.m_value,
+                representation_vector({XCDR2_DATA_REPRESENTATION, XCDR_DATA_REPRESENTATION}));
+    }
+
+    {
+        const char* xml =
+                "\
+                <qos>\
+                    <data_representation>\
+                        <value>XCDR2</value>\
+                    </data_representation>\
+                </qos>\
+                ";
+
+        WriterQos writer_qos;
+        ReaderQos reader_qos;
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement, writer_qos, ident));
+        EXPECT_EQ(writer_qos.representation.m_value, representation_vector({XCDR2_DATA_REPRESENTATION}));
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement, reader_qos, ident));
+        EXPECT_EQ(reader_qos.representation.m_value, representation_vector({XCDR2_DATA_REPRESENTATION}));
+    }
+
+    {
+        // Wrong contents
+        const std::vector<std::string> wrong_contents =
+        {
+            "",
+            "<value></value>",
+            "<value>INVALID</value>",
+            "<value>XML</value>",
+            "<value>XCDR2</value><value>XCDR2</value>",
+            "<value>XCDR2</value><bad_element>XCDR</bad_element>"
+        };
+
+        representation_policy.m_value = {XCDR_DATA_REPRESENTATION};
+        for (const std::string& content : wrong_contents)
+        {
+            std::string xml = "<data_representation>" + content + "</data_representation>";
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+            titleElement = xml_doc.RootElement();
+            EXPECT_EQ(XMLP_ret::XML_ERROR,
+                    XMLParserTest::propertiesPolicy_wrapper(titleElement, representation_policy, ident)) << xml;
+            EXPECT_EQ(representation_policy.m_value, representation_vector({XCDR_DATA_REPRESENTATION})) << xml;
+        }
+    }
+}
+
 /*
  * This test checks the proper parsing of the <ownershipStrength> xml elements to a OwnershipQosPolicy object.
  * 1. Correct parsing of a valid <ownershipStrength> value set to 0.

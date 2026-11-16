@@ -1387,6 +1387,7 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(
                 <xs:element name="groupData" type="groupDataQosPolicyType" minOccurs="0"/>
                 <xs:element name="publishMode" type="publishModeQosPolicyType" minOccurs="0"/>
                 <xs:element name="data_sharing" type="dataSharingQosPolicyType" minOccurs="0"/>
+                <xs:element name="data_representation" type="dataRepresentationQosPolicyType" minOccurs="0"/>
                 <xs:element name="disablePositiveAcks" type="disablePositiveAcksQosPolicyType" minOccurs="0"/>
                 <xs:element name="disable_heartbeat_piggyback" type="boolType" minOccurs="0"/>
                 <xs:element name="transport_priority" type="boolType" minOccurs="0"/>
@@ -1490,6 +1491,14 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(
                 return XMLP_ret::XML_ERROR;
             }
         }
+        else if (std::strcmp(name, DATA_REPRESENTATION) == 0)
+        {
+            // data representation
+            if (XMLP_ret::XML_OK != getXMLDataRepresentationQos(p_aux0, qos.representation, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
         else if (strcmp(name, OWNERSHIP) == 0)
         {
             //ownership
@@ -1579,6 +1588,7 @@ XMLP_ret XMLParser::getXMLReaderQosPolicies(
                 <xs:element name="topicData" type="topicDataQosPolicyType" minOccurs="0"/>
                 <xs:element name="groupData" type="groupDataQosPolicyType" minOccurs="0"/>
                 <xs:element name="data_sharing" type="dataSharingQosPolicyType" minOccurs="0"/>
+                <xs:element name="data_representation" type="dataRepresentationQosPolicyType" minOccurs="0"/>
                 <xs:element name="disablePositiveAcks" type="disablePositiveAcksQosPolicyType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
@@ -1667,6 +1677,14 @@ XMLP_ret XMLParser::getXMLReaderQosPolicies(
         {
             //data sharing
             if (XMLP_ret::XML_OK != getXMLDataSharingQos(p_aux0, qos.data_sharing, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (std::strcmp(name, DATA_REPRESENTATION) == 0)
+        {
+            // data representation
+            if (XMLP_ret::XML_OK != getXMLDataRepresentationQos(p_aux0, qos.representation, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
@@ -2475,6 +2493,78 @@ XMLP_ret XMLParser::getXMLOwnershipQos(
         return XMLP_ret::XML_ERROR;
     }
 
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::getXMLDataRepresentationQos(
+        tinyxml2::XMLElement* elem,
+        dds::DataRepresentationQosPolicy& data_representation,
+        uint8_t /*ident*/)
+{
+    /*
+        <xs:complexType name="dataRepresentationQosPolicyType">
+            <xs:sequence>
+                <xs:element name="value" minOccurs="1" maxOccurs="unbounded">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="XCDR"/>
+                            <xs:enumeration value="XCDR2"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+     */
+
+    // The list in the XML replaces any previous one (e.g. the one inherited from a base profile)
+    std::vector<dds::DataRepresentationId_t> values;
+
+    tinyxml2::XMLElement* p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (std::strcmp(name, VALUE) == 0)
+        {
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << VALUE << "' without content");
+                return XMLP_ret::XML_ERROR;
+            }
+
+            dds::DataRepresentationId_t value = dds::DataRepresentationId_t::XCDR_DATA_REPRESENTATION;
+            if (!get_element_enum_value(text.c_str(), value,
+                    DATA_REPRESENTATION_XCDR, dds::DataRepresentationId_t::XCDR_DATA_REPRESENTATION,
+                    DATA_REPRESENTATION_XCDR2, dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION))
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << VALUE << "' with bad content");
+                return XMLP_ret::XML_ERROR;
+            }
+
+            if (values.end() != std::find(values.begin(), values.end(), value))
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Node 'dataRepresentationQosPolicyType' with repeated value: " << text);
+                return XMLP_ret::XML_ERROR;
+            }
+            values.push_back(value);
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER,
+                    "Invalid element found into 'dataRepresentationQosPolicyType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+
+    if (values.empty())
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Node 'dataRepresentationQosPolicyType' without content");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    data_representation.m_value = std::move(values);
     return XMLP_ret::XML_OK;
 }
 
