@@ -227,6 +227,12 @@ TEST_P(TransportTCP, large_data_topology)
     auto rng = std::default_random_engine{};
     std::shuffle(ports.begin(), ports.end(), rng);
 
+    // Configure the socket buffer sizes explicitly instead of relying on OS autotuning.
+    // Autotuned buffers start at the system minimum and only grow with forward progress,
+    // so a discovery burst can fill both directions at once and wedge the pair.
+    BuiltinTransportsOptions transport_options;
+    transport_options.sockets_buffer_size = 1024 * 1024;
+
     // Reliable Keep_all to wait for all acked as end condition
     for (uint16_t i = 0; i < n_participants; i++)
     {
@@ -245,8 +251,8 @@ TEST_P(TransportTCP, large_data_topology)
                 .resource_limits_max_samples_per_instance(samples_per_participant);
 
         // Force TCP EDP discovery & data communication and UDP PDP discovery (NO SHM)
-        writers[i]->setup_large_data_tcp(use_ipv6, ports[i]);
-        readers[i]->setup_large_data_tcp(use_ipv6, ports[n_participants + i]);
+        writers[i]->setup_large_data_tcp(use_ipv6, ports[i], transport_options);
+        readers[i]->setup_large_data_tcp(use_ipv6, ports[n_participants + i], transport_options);
     }
 
     // Init participants
@@ -1302,4 +1308,3 @@ GTEST_INSTANTIATE_TEST_MACRO(TransportTCP,
             }
 
         });
-
