@@ -21,6 +21,7 @@
 #include <cstdint>
 
 #include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/interprocess/sync/interprocess_semaphore.hpp>
 #include <boost/interprocess/sync/spin/wait.hpp>
 #include <boost/thread/thread_time.hpp>
 
@@ -129,9 +130,13 @@ private:
     }
 
     std::atomic<uint32_t> count_;
-    static_assert(sizeof(std::atomic<uint32_t>) == sizeof(uint32_t), "Must match boost spin_semaphore layout");
     static_assert(ATOMIC_INT_LOCK_FREE == 2, "Must be lock free to live in shared memory");
 };
+
+static_assert(sizeof(RobustInterprocessSemaphore) == sizeof(boost::interprocess::interprocess_semaphore),
+        "Must match boost::interprocess::interprocess_semaphore layout");
+static_assert(alignof(RobustInterprocessSemaphore) == alignof(boost::interprocess::interprocess_semaphore),
+        "Must match boost::interprocess::interprocess_semaphore layout");
 
 } // namespace rtps
 } // namespace fastdds
