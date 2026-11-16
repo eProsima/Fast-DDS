@@ -34,6 +34,7 @@
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>
+#include <mock/rtps/participant/RTPSParticipantImplMock.hpp>
 #include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
@@ -300,8 +301,8 @@ protected:
     }
 
     PDPTester* pdp_;
-    ::testing::NiceMock<BuiltinProtocols> bp_;
-    ::testing::NiceMock<RTPSParticipantImpl> participant_;
+    BuiltinProtocols bp_;
+    TestRTPSParticipantImpl participant_;
 };
 
 TEST_F(PDPTests, iproxy_queryable_get_all_local_proxies)
@@ -313,7 +314,6 @@ TEST_F(PDPTests, iproxy_queryable_get_all_local_proxies)
     local_guids.reserve(n_entities);
 
     GUID_t part_guid(GuidPrefix_t::unknown(), ENTITYID_RTPSParticipant);
-    EXPECT_CALL(participant_, getGuid()).WillRepeatedly(testing::ReturnRef(part_guid));
     pdp_->create_and_add_participant_proxy_data(part_guid);
     local_guids.push_back(part_guid);
 

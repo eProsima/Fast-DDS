@@ -1,8 +1,10 @@
 #include <fastdds/subscriber/history/DataReaderHistory.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
-#include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/dds/topic/TopicDescription.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
+#include <mock/rtps/reader/StatelessReaderMock.hpp>
 #include <rtps/reader/StatelessReader.hpp>
 
 
@@ -11,6 +13,30 @@
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::dds::detail;
+
+// Auxiliary class: DataReaderHistory only reads the topic and type names of its TopicDescription.
+class TestTopic : public TopicDescription
+{
+public:
+
+    TestTopic(
+            const std::string& topic_name,
+            const std::string& type_name)
+        : TopicDescription(topic_name, type_name)
+    {
+    }
+
+    DomainParticipant* get_participant() const override
+    {
+        return nullptr;
+    }
+
+    TopicDescriptionImpl* get_impl() const override
+    {
+        return nullptr;
+    }
+
+};
 
 // Auxiliary class
 class TestType : public TopicDataType
@@ -75,13 +101,12 @@ bool add_test_change(
 TEST(DataReaderHistory, exclusive_ownership_non_keyed_sample_reception)
 {
     const TypeSupport type(new TestType());
-    const Topic topic("test", "test");
+    const TestTopic topic("test", "test");
     DataReaderQos qos;
     qos.ownership().kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
     qos.history().kind = KEEP_ALL_HISTORY_QOS;
     DataReaderHistory history(type, nullptr, topic, qos);
-    eprosima::fastdds::RecursiveTimedMutex mutex;
-    eprosima::fastdds::rtps::StatelessReader reader(&history, &mutex);
+    eprosima::fastdds::rtps::TestStatelessReader reader(&history);
     std::vector<std::unique_ptr<eprosima::fastdds::rtps::CacheChange_t>> changes;
 
     eprosima::fastdds::rtps::CacheChange_t dw1_change;
@@ -135,13 +160,12 @@ TEST(DataReaderHistory, exclusive_ownership_keyed_sample_reception)
 
     const TypeSupport type(type_);
     type->is_compute_key_provided = true;
-    const Topic topic("test", "test");
+    const TestTopic topic("test", "test");
     DataReaderQos qos;
     qos.ownership().kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
     qos.history().kind = KEEP_ALL_HISTORY_QOS;
     DataReaderHistory history(type, nullptr, topic, qos);
-    eprosima::fastdds::RecursiveTimedMutex mutex;
-    eprosima::fastdds::rtps::StatelessReader reader(&history, &mutex);
+    eprosima::fastdds::rtps::TestStatelessReader reader(&history);
     std::vector<std::unique_ptr<eprosima::fastdds::rtps::CacheChange_t>> changes;
 
     const InstanceHandle_t instance_1 = eprosima::fastdds::rtps::GUID_t{{}, 1};

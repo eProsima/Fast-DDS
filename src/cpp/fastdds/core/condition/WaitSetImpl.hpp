@@ -36,7 +36,10 @@ struct WaitSetImpl
 {
     ~WaitSetImpl();
 
-    WaitSetImpl() = default;
+    /**
+     * Construct a WaitSet implementation without attached conditions.
+     */
+    WaitSetImpl();
 
     // Non-copyable
     WaitSetImpl(

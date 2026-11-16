@@ -19,6 +19,8 @@
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/builtin/discovery/participant/PDP.h>
+#include <mock/rtps/builtin/discovery/participant/PDPMock.hpp>
+#include <mock/rtps/participant/RTPSParticipantImplMock.hpp>
 #include <rtps/participant/RTPSParticipantImpl.hpp>
 
 #if HAVE_SECURITY
@@ -198,8 +200,8 @@ protected:
         }
     }
 
-    ::testing::NiceMock<PDP> pdp_;
-    ::testing::NiceMock<RTPSParticipantImpl> participant_;
+    ::testing::NiceMock<TestPDP> pdp_;
+    TestRTPSParticipantImpl participant_;
     ::testing::NiceMock<WriterProxyData>* wdata;
     ::testing::NiceMock<ReaderProxyData>* rdata;
     EDPMock* edp;

@@ -1,0 +1,95 @@
+// Copyright 2026 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// Link-seam implementation of NetworkFactory: replaces src/cpp/rtps/network/NetworkFactory.cpp. No transport is
+// registered, and every locator is accepted as is.
+
+#include <rtps/network/NetworkFactory.hpp>
+
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
+
+NetworkFactory::NetworkFactory(
+        const RTPSParticipantAttributes&)
+    : maxMessageSizeBetweenTransports_(0)
+    , minSendBufferSize_(65536)
+    , network_configuration_(0)
+{
+}
+
+bool NetworkFactory::transform_remote_locator(
+        const Locator_t& remote_locator,
+        Locator_t& result_locator,
+        const NetworkConfigSet_t&) const
+{
+    result_locator = remote_locator;
+    return true;
+}
+
+bool NetworkFactory::transform_remote_locator(
+        const Locator_t& remote_locator,
+        Locator_t& result_locator,
+        const NetworkConfigSet_t&,
+        bool) const
+{
+    result_locator = remote_locator;
+    return true;
+}
+
+bool NetworkFactory::is_locator_supported(
+        const Locator_t&) const
+{
+    return true;
+}
+
+bool NetworkFactory::is_locator_allowed(
+        const Locator_t&) const
+{
+    return true;
+}
+
+bool NetworkFactory::is_locator_remote_or_allowed(
+        const Locator_t&) const
+{
+    return true;
+}
+
+bool NetworkFactory::is_locator_remote_or_allowed(
+        const Locator_t&,
+        bool) const
+{
+    return true;
+}
+
+bool NetworkFactory::is_locator_reachable(
+        const Locator_t&)
+{
+    return true;
+}
+
+bool NetworkFactory::is_local_locator(
+        const Locator_t&) const
+{
+    return true;
+}
+
+std::vector<fastdds::rtps::TransportNetmaskFilterInfo> NetworkFactory::netmask_filter_info() const
+{
+    return {};
+}
+
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima

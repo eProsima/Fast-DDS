@@ -15,15 +15,7 @@
 set(TYPEOBJECTUTILSTESTS_SOURCE TypeObjectUtilsTests.cpp)
 set(TYPEOBJECTREGISTRYTESTS_SOURCE TypeObjectRegistryTests.cpp)
 
-if(WIN32)
-    add_definitions(-D_WIN32_WINNT=0x0601)
-endif()
-
 add_executable(TypeObjectUtilsTests ${TYPEOBJECTUTILSTESTS_SOURCE})
-target_compile_definitions(TypeObjectUtilsTests PRIVATE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(TypeObjectUtilsTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
@@ -36,10 +28,6 @@ target_link_libraries(TypeObjectUtilsTests
 gtest_discover_tests(TypeObjectUtilsTests SOURCES ${TYPEOBJECTUTILSTESTS_SOURCE})
 
 add_executable(TypeObjectRegistryTests ${TYPEOBJECTREGISTRYTESTS_SOURCE})
-target_compile_definitions(TypeObjectRegistryTests PRIVATE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(TypeObjectRegistryTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp

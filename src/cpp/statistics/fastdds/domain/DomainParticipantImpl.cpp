@@ -142,8 +142,7 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
             auto data_writer = builtin_publisher_impl_->create_datawriter(topic, writer_impl, efd::StatusMask::all());
             if (nullptr == data_writer)
             {
-                // Remove already created Impl
-                delete writer_impl;
+                // No need to delete writer_impl: create_datawriter already did when enabling it failed
                 // Remove topic and type
                 delete_topic_and_type(use_topic_name);
                 EPROSIMA_LOG_ERROR(STATISTICS_DOMAIN_PARTICIPANT, topic_name << " DataWriter creation has failed");

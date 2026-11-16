@@ -30,16 +30,21 @@
 
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/participant/RTPSParticipantImpl.hpp>
+#include <mock/rtps/reader/StatefulReaderMock.hpp>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/reader/WriterProxy.h>
 #include <rtps/reader/WriterProxy.cpp>
 #include <rtps/resources/TimedEvent.h>
+
+#include <mock/rtps/resources/TimedEventMock.hpp>
 
 #include "../../common/operators.hpp"
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
+
+using mock::mock_of;
 
 TEST(WriterProxyTests, MissingChangesUpdate)
 {
@@ -49,19 +54,21 @@ TEST(WriterProxyTests, MissingChangesUpdate)
     using ::testing::Const;
 
     WriterProxyData wattr( 4u, 1u );
-    StatefulReader readerMock; // avoid annoying uninteresting call warnings
+    TestStatefulReader readerMock; // avoid annoying uninteresting call warnings
 
     // Testing the Timed events are properly configured
-    EXPECT_CALL(readerMock, getEventResource()).Times(1u);
+    EXPECT_CALL(mock::mock_of(&readerMock), getEventResource()).Times(1u);
     WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig());
-    EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initial_acknack_delay)).Times(1u);
-    EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeat_response_delay)).Times(1u);
-    EXPECT_CALL(*wproxy.initial_acknack_, restart_timer()).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.initial_acknack_),
+            update_interval(readerMock.getTimes().initial_acknack_delay)).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.heartbeat_response_),
+            update_interval(readerMock.getTimes().heartbeat_response_delay)).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.initial_acknack_), restart_timer()).Times(1u);
     wproxy.start(wattr, SequenceNumber_t());
 
     // 1. Simulate initial acknack
     SequenceNumberSet_t t1(SequenceNumber_t(0, 0));
-    EXPECT_CALL(readerMock, simp_send_acknack(t1)).Times(1u);
+    EXPECT_CALL(mock::mock_of(&readerMock), simp_send_acknack(t1)).Times(1u);
     wproxy.perform_initial_ack_nack();
 
     // 2. Simulate Writer initial HEARTBEAT if there is a single sample in writer's history
@@ -70,7 +77,7 @@ TEST(WriterProxyTests, MissingChangesUpdate)
     bool assert_liveliness = false;
     uint32_t heartbeat_count = 1;
     int32_t current_sample_lost = 0;
-    EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.heartbeat_response_), restart_timer()).Times(1u);
     wproxy.process_heartbeat(
         heartbeat_count++,
         SequenceNumber_t(0, 1),
@@ -90,7 +97,7 @@ TEST(WriterProxyTests, MissingChangesUpdate)
     ASSERT_EQ(0, current_sample_lost);
 
     // 3. Simulate reception of a HEARTBEAT after two more samples are added to the writer's history
-    EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.heartbeat_response_), restart_timer()).Times(1u);
     wproxy.process_heartbeat(
         heartbeat_count++,
         SequenceNumber_t(0, 1),
@@ -126,7 +133,7 @@ TEST(WriterProxyTests, MissingChangesUpdate)
     ASSERT_EQ(0, current_sample_lost);
 
     // 5. Simulate reception of a HEARTBEAT(1,6)
-    EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.heartbeat_response_), restart_timer()).Times(1u);
     wproxy.process_heartbeat(
         heartbeat_count++,
         SequenceNumber_t(0, 1),
@@ -145,7 +152,7 @@ TEST(WriterProxyTests, MissingChangesUpdate)
     ASSERT_EQ(0, current_sample_lost);
 
     // 5. Simulate reception of a HEARTBEAT(1,7)
-    EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.heartbeat_response_), restart_timer()).Times(1u);
     wproxy.process_heartbeat(
         heartbeat_count++,
         SequenceNumber_t(0, 1),
@@ -181,7 +188,7 @@ TEST(WriterProxyTests, MissingChangesUpdate)
     ASSERT_EQ(0, current_sample_lost);
 
     // 7. Simulate reception of a faulty HEARTBEAT with a lower last sequence number (4)
-    EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.heartbeat_response_), restart_timer()).Times(1u);
     wproxy.process_heartbeat(
         heartbeat_count++,
         SequenceNumber_t(0, 1),
@@ -212,7 +219,7 @@ TEST(WriterProxyTests, MissingChangesUpdate)
     ASSERT_EQ(0, current_sample_lost);
 
     // 9. Simulate reception of HEARTBEAT(1,10)
-    EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.heartbeat_response_), restart_timer()).Times(1u);
     wproxy.process_heartbeat(
         heartbeat_count++,
         SequenceNumber_t( 0, 1 ),
@@ -231,7 +238,7 @@ TEST(WriterProxyTests, MissingChangesUpdate)
     ASSERT_EQ(0, current_sample_lost);
 
     // 10. Simulate reception of HEARTBEAT(11,0)
-    EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.heartbeat_response_), restart_timer()).Times(1u);
     wproxy.process_heartbeat(
         heartbeat_count++,
         SequenceNumber_t( 0, 11 ),
@@ -250,19 +257,21 @@ TEST(WriterProxyTests, MissingChangesUpdate)
 TEST(WriterProxyTests, LostChangesUpdate)
 {
     WriterProxyData wattr(4u, 1u);
-    StatefulReader readerMock;
-    EXPECT_CALL(readerMock, getEventResource()).Times(1u);
+    TestStatefulReader readerMock;
+    EXPECT_CALL(mock::mock_of(&readerMock), getEventResource()).Times(1u);
     WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig());
-    EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initial_acknack_delay)).Times(1u);
-    EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeat_response_delay)).Times(1u);
-    EXPECT_CALL(*wproxy.initial_acknack_, restart_timer()).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.initial_acknack_),
+            update_interval(readerMock.getTimes().initial_acknack_delay)).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.heartbeat_response_),
+            update_interval(readerMock.getTimes().heartbeat_response_delay)).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.initial_acknack_), restart_timer()).Times(1u);
     wproxy.start(wattr, SequenceNumber_t());
 
     // 1. Simulate reception of a HEARTBEAT(3,3)
     uint32_t heartbeat_count = 1;
     bool assert_liveliness = false;
     int32_t current_sample_lost = 0;
-    EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.heartbeat_response_), restart_timer()).Times(1u);
     wproxy.process_heartbeat(
         heartbeat_count++,
         SequenceNumber_t(0, 3),
@@ -282,7 +291,7 @@ TEST(WriterProxyTests, LostChangesUpdate)
     ASSERT_EQ(0, current_sample_lost);
 
     // 2. Simulate reception of a DATA(5) follow by a HEARTBEAT(5,5)
-    EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.heartbeat_response_), restart_timer()).Times(1u);
     wproxy.received_change_set(SequenceNumber_t(0, 5));
     wproxy.process_heartbeat(
         heartbeat_count++,
@@ -301,7 +310,7 @@ TEST(WriterProxyTests, LostChangesUpdate)
     ASSERT_EQ(2, current_sample_lost);
 
     // 3. Simulate reception of a faulty HEARTBEAT with a lower first sequence number (4)
-    EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.heartbeat_response_), restart_timer()).Times(1u);
     wproxy.process_heartbeat(
         heartbeat_count++,
         SequenceNumber_t(0, 4),
@@ -330,7 +339,7 @@ TEST(WriterProxyTests, LostChangesUpdate)
     ASSERT_EQ(1u, wproxy.unknown_missing_changes_up_to( SequenceNumber_t(0, 8)));
 
     // 5. Simulate reception of a HEARTBEAT(8,8)
-    EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.heartbeat_response_), restart_timer()).Times(1u);
     wproxy.process_heartbeat(
         heartbeat_count++,
         SequenceNumber_t(0, 8),
@@ -348,7 +357,7 @@ TEST(WriterProxyTests, LostChangesUpdate)
     ASSERT_EQ(1, current_sample_lost);
 
     // 6. Simulate reception of a HEARTBEAT(10,10)
-    EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.heartbeat_response_), restart_timer()).Times(1u);
     wproxy.process_heartbeat(
         heartbeat_count++,
         SequenceNumber_t(0, 10),
@@ -369,8 +378,8 @@ TEST(WriterProxyTests, LostChangesUpdate)
 TEST(WriterProxyTests, ReceivedChangeSet)
 {
     WriterProxyData wattr(4u, 1u);
-    StatefulReader readerMock;
-    EXPECT_CALL(readerMock, getEventResource()).Times(1u);
+    TestStatefulReader readerMock;
+    EXPECT_CALL(mock::mock_of(&readerMock), getEventResource()).Times(1u);
     WriterProxy wproxy(&readerMock,
             RemoteLocatorsAllocationAttributes(),
             ResourceLimitedContainerConfig());
@@ -379,9 +388,11 @@ TEST(WriterProxyTests, ReceivedChangeSet)
     /// Tests that heartbeat response timed event is updated with new interval
     /// Tests that initial acknack timed event is started
 
-    EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initial_acknack_delay)).Times(1u);
-    EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeat_response_delay)).Times(1u);
-    EXPECT_CALL(*wproxy.initial_acknack_, restart_timer()).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.initial_acknack_),
+            update_interval(readerMock.getTimes().initial_acknack_delay)).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.heartbeat_response_),
+            update_interval(readerMock.getTimes().heartbeat_response_delay)).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.initial_acknack_), restart_timer()).Times(1u);
     wproxy.start(wattr, SequenceNumber_t());
 
     // 1. Writer proxy receives DATA with sequence number 3
@@ -469,7 +480,7 @@ TEST(WriterProxyTests, ReceivedChangeSet)
     bool assert_liveliness = false;
     uint32_t heartbeat_count = 1;
     int32_t current_sample_lost = 0;
-    EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.heartbeat_response_), restart_timer()).Times(1u);
     wproxy.process_heartbeat(
         heartbeat_count++,
         SequenceNumber_t(0, 4),
@@ -546,12 +557,14 @@ TEST(WriterProxyTests, ReceivedChangeSet)
 TEST(WriterProxyTests, IrrelevantChangeSet)
 {
     WriterProxyData wattr(4u, 1u);
-    StatefulReader readerMock;
-    EXPECT_CALL(readerMock, getEventResource()).Times(1u);
+    TestStatefulReader readerMock;
+    EXPECT_CALL(mock::mock_of(&readerMock), getEventResource()).Times(1u);
     WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig());
-    EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initial_acknack_delay)).Times(1u);
-    EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeat_response_delay)).Times(1u);
-    EXPECT_CALL(*wproxy.initial_acknack_, restart_timer()).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.initial_acknack_),
+            update_interval(readerMock.getTimes().initial_acknack_delay)).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.heartbeat_response_),
+            update_interval(readerMock.getTimes().heartbeat_response_delay)).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.initial_acknack_), restart_timer()).Times(1u);
     wproxy.start(wattr, SequenceNumber_t());
 
     auto test_step = [](
@@ -570,7 +583,7 @@ TEST(WriterProxyTests, IrrelevantChangeSet)
             };
 
     // A Heartbeat must precede every GAP for the reader to learn the writer's sequence number range
-    EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(::testing::AnyNumber());
+    EXPECT_CALL(mock_of(wproxy.heartbeat_response_), restart_timer()).Times(::testing::AnyNumber());
     bool assert_liveliness = false;
     uint32_t heartbeat_count = 1;
     int32_t current_sample_lost = 0;
@@ -797,13 +810,15 @@ TEST(WriterProxyTests, IrrelevantChangeSet)
 TEST(WriterProxyTests, GapIgnoredUntilHeartbeat)
 {
     WriterProxyData wattr(4u, 1u);
-    StatefulReader readerMock;
-    EXPECT_CALL(readerMock, getEventResource()).Times(1u);
+    TestStatefulReader readerMock;
+    EXPECT_CALL(mock::mock_of(&readerMock), getEventResource()).Times(1u);
     WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig());
-    EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initial_acknack_delay)).Times(1u);
-    EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeat_response_delay)).Times(1u);
-    EXPECT_CALL(*wproxy.initial_acknack_, restart_timer()).Times(1u);
-    EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(::testing::AnyNumber());
+    EXPECT_CALL(mock_of(wproxy.initial_acknack_),
+            update_interval(readerMock.getTimes().initial_acknack_delay)).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.heartbeat_response_),
+            update_interval(readerMock.getTimes().heartbeat_response_delay)).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.initial_acknack_), restart_timer()).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.heartbeat_response_), restart_timer()).Times(::testing::AnyNumber());
     wproxy.start(wattr, SequenceNumber_t());
 
     // No Heartbeat processed yet: max_sequence_number_ == low mark, so the GAP is ignored.
@@ -839,13 +854,15 @@ TEST(WriterProxyTests, MaliciousHeartbeatHighSN)
     const SequenceNumber_t huge_SN{ std::numeric_limits<int32_t>::max(), std::numeric_limits<uint32_t>::max() - 1 };
 
     WriterProxyData wattr(4u, 1u);
-    StatefulReader readerMock;
-    EXPECT_CALL(readerMock, getEventResource()).Times(1u);
+    TestStatefulReader readerMock;
+    EXPECT_CALL(mock::mock_of(&readerMock), getEventResource()).Times(1u);
     WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig());
-    EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initial_acknack_delay)).Times(1u);
-    EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeat_response_delay)).Times(1u);
-    EXPECT_CALL(*wproxy.initial_acknack_, restart_timer()).Times(1u);
-    EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(::testing::AnyNumber());
+    EXPECT_CALL(mock_of(wproxy.initial_acknack_),
+            update_interval(readerMock.getTimes().initial_acknack_delay)).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.heartbeat_response_),
+            update_interval(readerMock.getTimes().heartbeat_response_delay)).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.initial_acknack_), restart_timer()).Times(1u);
+    EXPECT_CALL(mock_of(wproxy.heartbeat_response_), restart_timer()).Times(::testing::AnyNumber());
     wproxy.start(wattr, SequenceNumber_t());
 
     bool assert_liveliness = false;

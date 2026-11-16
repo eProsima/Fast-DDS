@@ -132,25 +132,6 @@ TEST_F(NetworkTests, build_sender_resource_returns_multiple_resources_if_multipl
     ASSERT_EQ(1u, send_resource_list.size());
 }
 
-/*
-   TEST_F(NetworkTests, creating_send_resource_from_locator_opens_channels_mapped_to_that_locator)
-   {
-   // Given
-   int ArbitraryKind = 1;
-   HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
-
-   Locator_t locator;
-   locator.kind = ArbitraryKind;
-
-   // When
-   auto resources = networkFactoryUnderTest.BuildSenderResources(locator);
-
-   // Then
-   const MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
-   ASSERT_TRUE(lastRegisteredTransport->IsOutputChannelOpen(locator));
-   }
- */
-
 TEST_F(NetworkTests, creating_receive_resource_from_locator_opens_channels_mapped_to_that_locator)
 {
     // Given
@@ -171,30 +152,7 @@ TEST_F(NetworkTests, creating_receive_resource_from_locator_opens_channels_mappe
     ASSERT_TRUE(lastRegisteredTransport->IsInputChannelOpen(locator));
 }
 
-/*
-   TEST_F(NetworkTests, destroying_a_send_resource_will_close_all_channels_mapped_to_it_on_destruction)
-   {
-   // Given
-   int ArbitraryKind = 1;
-   HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
-   Locator_t locator;
-   locator.kind = ArbitraryKind;
-
-    // TODO review why clear is crashing but end of scope don't.
-   { // Destroyed by end of scope but...
-      auto resources = networkFactoryUnderTest.BuildSenderResources(locator);
-   }
-   // When (End of scope)
-
-   //resources.clear(); // Why this was failing?
-
-   // Then
-   const MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
-   ASSERT_FALSE(lastRegisteredTransport->IsOutputChannelOpen(locator));
-   }
- */
-
-TEST_F(NetworkTests, destroying_a_receive_resource_will_close_all_channels_mapped_to_it_on_destruction)
+TEST_F(NetworkTests, disabling_a_receive_resource_will_close_all_channels_mapped_to_it)
 {
     // Given
     int ArbitraryKind = 1;
@@ -207,6 +165,10 @@ TEST_F(NetworkTests, destroying_a_receive_resource_will_close_all_channels_mappe
     ASSERT_TRUE(ret);
 
     // When
+    for (auto& resource : resources)
+    {
+        resource->disable();
+    }
     resources.clear();
 
     // Then
@@ -280,91 +242,6 @@ TEST_F(NetworkTests, A_receiver_resource_accurately_reports_whether_it_supports_
     // Then
     ASSERT_FALSE(resource->SupportsLocator(locator));
 }
-
-/*
-   TEST_F(NetworkTests, A_sender_resource_accurately_reports_whether_it_supports_a_locator)
-   {
-   // Given
-   int ArbitraryKind = 1;
-   HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
-   eprosima::fastdds::rtps::SendResourceList send_resource_list;
-   Locator_t locator;
-   locator.kind = ArbitraryKind;
-   ASSERT_TRUE(networkFactoryUnderTest.build_send_resources(send_resource_list, locator));
-   auto& resource = resources.back();
-
-   // Then
-   ASSERT_TRUE(resource.SupportsLocator(locator));
-
-   // When
-   locator.port++;
-
-   // Then
-   ASSERT_TRUE(resource.SupportsLocator(locator));
-   }
- */
-
-/*
-   TEST_F(NetworkTests, A_Sender_Resource_will_always_send_through_its_original_outbound_locator)
-   {
-   // Given
-   int ArbitraryKind = 1;
-   HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
-   Locator_t locator;
-   locator.kind = ArbitraryKind;
-   auto resources = networkFactoryUnderTest.BuildSenderResources(locator);
-   auto& senderResource = resources.back();
-
-   // When
-   const uint32_t testDataLength = 3;
-   const char testData[testDataLength] { 'a', 'b', 'c' };
-   Locator_t destinationLocator;
-   destinationLocator.kind = 1;
-   destinationLocator.address[0] = 5;
-   senderResource.Send((octet*)testData, testDataLength, destinationLocator);
-
-   // Then
-   const MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
-   const auto& messageSent = lastRegisteredTransport->mockMessagesSent.back();
-
-   ASSERT_TRUE(0 == memcmp(messageSent.data.data(), testData, testDataLength));
-   ASSERT_EQ(messageSent.destination, destinationLocator);
-   }
- */
-
-/*
-   TEST_F(NetworkTests, A_Receiver_Resource_will_always_receive_through_its_original_inbound_locator_and_from_the_specified_remote_locator)
-   {
-   // Given
-   int ArbitraryKind = 1;
-   HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
-   Locator_t locator;
-   locator.kind = ArbitraryKind;
-   std::vector<std::shared_ptr<ReceiverResource>> resources;
-   bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, resources);
-   ASSERT_TRUE(ret);
-   auto& receiverResource = resources.back();
-
-   vector<octet> testData { 'a', 'b', 'c' };
-   Locator_t originLocator;
-   originLocator.kind = 1;
-   originLocator.get_Address()[0] = 5;
-   MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
-   MockTransport::MockMessage message {locator, originLocator, testData};
-   lastRegisteredTransport->mockMessagesToReceive.push_back(message);
-
-   // When
-   octet receivedData[65536];
-   uint32_t receivedDataSize;
-
-   Locator_t receivedLocator;
-   receiverResource->Receive(receivedData, 65536, receivedDataSize, receivedLocator);
-
-   // Then
-   ASSERT_EQ(memcmp(receivedData, testData.data(), 3), 0);
-   ASSERT_EQ(receivedLocator, originLocator);
-   }
- */
 
 void NetworkTests::HELPER_RegisterTransportWithKindAndChannels(
         int kind,

@@ -40,8 +40,8 @@ TYPED_TEST(FlowControllerPublishModes, pure_sync_publish_mode)
 
 
     // Instantiate writers.
-    BaseWriter writer1;
-    BaseWriter writer2;
+    TestBaseWriter writer1;
+    TestBaseWriter writer2;
 
     // Register writers.
     pure_sync.register_writer(&writer1);

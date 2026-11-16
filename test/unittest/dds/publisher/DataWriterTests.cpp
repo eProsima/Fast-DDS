@@ -38,6 +38,7 @@
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/publisher/DataWriterImpl.hpp>
+#include <mock/fastdds/publisher/DataWriterHistoryMock.hpp>
 
 #include "../../common/CustomPayloadPool.hpp"
 #include "../../logging/mock/MockConsumer.h"
@@ -2268,14 +2269,14 @@ TEST(DataWriterTests, InstanceWaitForAcknowledgement)
 
     // 5. Calling wait_for_acknowledgments in a keyed topic with HANDLE_NIL returns
     // RETCODE_OK
-    EXPECT_CALL(*history, wait_for_acknowledgement_last_change(_, _, _)).WillOnce(testing::Return(true));
+    EXPECT_CALL(mock::mock_of(history), wait_for_acknowledgement_last_change(_, _, _)).WillOnce(testing::Return(true));
     ASSERT_EQ(RETCODE_OK, instance_datawriter->write(&data, HANDLE_NIL));
     EXPECT_EQ(RETCODE_OK, instance_datawriter->wait_for_acknowledgments(&data, handle,
             max_wait));
 
     // 6. Calling wait_for_acknowledgments in a keyed topic with a known handle returns RETCODE_OK (no matched readers)
     // Expectations
-    EXPECT_CALL(*history, wait_for_acknowledgement_last_change(_, _, _)).WillOnce(testing::Return(true));
+    EXPECT_CALL(mock::mock_of(history), wait_for_acknowledgement_last_change(_, _, _)).WillOnce(testing::Return(true));
 
     instance_type.compute_key(&data, handle);
     EXPECT_EQ(RETCODE_OK, instance_datawriter->wait_for_acknowledgments(&data, handle, max_wait));
@@ -2283,7 +2284,7 @@ TEST(DataWriterTests, InstanceWaitForAcknowledgement)
     // 7. Calling wait_for_acknowledgments in a keyed topic with a known handle timeouts if some reader has not
     // acknowledged before max_wait time (mock) returns RETCODE_TIMEOUT
     // Expectations
-    EXPECT_CALL(*history, wait_for_acknowledgement_last_change(_, _, _)).WillOnce(testing::Return(false));
+    EXPECT_CALL(mock::mock_of(history), wait_for_acknowledgement_last_change(_, _, _)).WillOnce(testing::Return(false));
     EXPECT_EQ(RETCODE_TIMEOUT, instance_datawriter->wait_for_acknowledgments(&data, handle, max_wait));
 }
 #endif // __QNXNTO__
@@ -2778,7 +2779,7 @@ TEST(DataWriterTests, data_type_is_plain_data_representation)
 
     /* Define default data representation (XCDR1) QoS to force "is_plain" call */
     DataWriterQos qos_xcdr = DATAWRITER_QOS_DEFAULT;
-    qos_xcdr.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    qos_xcdr.endpoint().history_memory_policy = rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
     /* Expect the "is_plain" method called with default data representation (XCDR1) */
     EXPECT_CALL(*type, custom_is_plain_with_rep(DataRepresentationId_t::XCDR_DATA_REPRESENTATION)).Times(
@@ -2793,7 +2794,7 @@ TEST(DataWriterTests, data_type_is_plain_data_representation)
 
     /* Define XCDR2 data representation QoS to force "is_plain" call */
     DataWriterQos qos_xcdr2 = DATAWRITER_QOS_DEFAULT;
-    qos_xcdr2.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    qos_xcdr2.endpoint().history_memory_policy = rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     qos_xcdr2.representation().m_value.clear();
     qos_xcdr2.representation().m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
 

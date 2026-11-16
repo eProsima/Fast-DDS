@@ -1,6 +1,7 @@
 #ifndef _UNITTEST_RTPS_FLOWCONTROL_FLOWCONTROLLERPUBLISHMODESTESTS_HPP_
 #define _UNITTEST_RTPS_FLOWCONTROL_FLOWCONTROLLERPUBLISHMODESTESTS_HPP_
 
+#include <mock/rtps/writer/BaseWriterMock.hpp>
 #include <rtps/flowcontrol/FlowControllerImpl.hpp>
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
 

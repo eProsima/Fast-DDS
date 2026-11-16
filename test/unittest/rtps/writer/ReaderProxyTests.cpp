@@ -16,8 +16,10 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/core/ReturnCode.hpp>
+#include <mock/rtps/messages/RTPSGapBuilderMock.hpp>
 #include <rtps/messages/RTPSGapBuilder.hpp>
 #include <rtps/writer/ReaderProxy.hpp>
+#include <mock/rtps/writer/StatefulWriterMock.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
 #include <rtps/writer/StatefulWriterListener.hpp>
 
@@ -51,7 +53,7 @@ using testing::_;
 TEST(ReaderProxyTests, find_change_test)
 {
     //RemoteReaderAttributes rattr;
-    StatefulWriter writerMock;
+    TestStatefulWriter writerMock;
     WriterTimes wTimes;
     RemoteLocatorsAllocationAttributes alloc;
     ListenerMock listener;
@@ -125,7 +127,7 @@ TEST(ReaderProxyTests, find_change_test)
 TEST(ReaderProxyTests, find_change_removed_test)
 {
     //RemoteReaderAttributes rattr;
-    StatefulWriter writerMock;
+    TestStatefulWriter writerMock;
     WriterTimes wTimes;
     RemoteLocatorsAllocationAttributes alloc;
     ListenerMock listener;
@@ -158,7 +160,7 @@ TEST(ReaderProxyTests, find_change_removed_test)
 #ifndef __QNXNTO__
 TEST(ReaderProxyTests, requested_changes_set_test)
 {
-    StatefulWriter writerMock;
+    TestStatefulWriter writerMock;
     WriterTimes wTimes;
     RemoteLocatorsAllocationAttributes alloc;
     ListenerMock listener;
@@ -186,8 +188,8 @@ TEST(ReaderProxyTests, requested_changes_set_test)
     set.add({0, 3});
     set.add({0, 4});
 
-    EXPECT_CALL(gap_builder, add(SequenceNumber_t(0, 1))).Times(1).WillOnce(testing::Return(true));
-    EXPECT_CALL(gap_builder, add(SequenceNumber_t(0, 4))).Times(1).WillOnce(testing::Return(true));
+    EXPECT_CALL(mock::mock_of(&gap_builder), add(SequenceNumber_t(0, 1))).Times(1).WillOnce(testing::Return(true));
+    EXPECT_CALL(mock::mock_of(&gap_builder), add(SequenceNumber_t(0, 4))).Times(1).WillOnce(testing::Return(true));
 
     rproxy.requested_changes_set(set, gap_builder, {0, 1});
 }
@@ -218,7 +220,7 @@ TEST(ReaderProxyTests, process_nack_frag_single_fragment_different_windows_test)
     constexpr FragmentNumber_t TOTAL_NUMBER_OF_FRAGMENTS = 400;
     constexpr uint16_t FRAGMENT_SIZE = 100;
 
-    StatefulWriter writerMock;
+    TestStatefulWriter writerMock;
     WriterTimes wTimes;
     RemoteLocatorsAllocationAttributes alloc;
     ListenerMock listener;
@@ -291,7 +293,7 @@ TEST(ReaderProxyTests, process_nack_frag_multiple_fragments_different_windows_te
     constexpr FragmentNumber_t TOTAL_NUMBER_OF_FRAGMENTS = 400;
     constexpr uint16_t FRAGMENT_SIZE = 100;
 
-    StatefulWriter writerMock;
+    TestStatefulWriter writerMock;
     WriterTimes wTimes;
     RemoteLocatorsAllocationAttributes alloc;
     ListenerMock listener;
@@ -386,7 +388,7 @@ TEST(ReaderProxyTests, process_nack_frag_multiple_fragments_different_windows_te
 
 TEST(ReaderProxyTests, has_been_delivered_test)
 {
-    StatefulWriter writer_mock;
+    TestStatefulWriter writer_mock;
     WriterTimes w_times;
     RemoteLocatorsAllocationAttributes alloc;
     ListenerMock listener;
@@ -439,7 +441,7 @@ TEST(ReaderProxyTests, has_been_delivered_test)
 // Serves as a regression test for redmine issue #20729.
 TEST(ReaderProxyTests, acknack_count)
 {
-    StatefulWriter writer_mock;
+    TestStatefulWriter writer_mock;
     WriterTimes w_times;
     RemoteLocatorsAllocationAttributes alloc;
     ListenerMock listener;
@@ -503,7 +505,7 @@ TEST(ReaderProxyTests, listener_notification)
     RTPSMessageGroup message_group(nullptr, false);
     RTPSGapBuilder gap_builder(message_group);
 
-    StatefulWriter writer_mock;
+    TestStatefulWriter writer_mock;
     WriterTimes w_times;
     RemoteLocatorsAllocationAttributes alloc;
     ListenerMock listener;
