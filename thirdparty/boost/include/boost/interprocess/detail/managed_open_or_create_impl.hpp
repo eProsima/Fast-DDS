@@ -410,8 +410,12 @@ class managed_open_or_create_impl
 
             if(previous == UninitializedSegment){
                try{
-                  construct_func( static_cast<char*>(region.get_address()) + ManagedOpenOrCreateUserOffset
-                                , size - ManagedOpenOrCreateUserOffset, true);
+                  //A false result means the segment manager could not be placed
+                  //in the segment: using the segment afterwards dereferences null
+                  if(!construct_func( static_cast<char*>(region.get_address()) + ManagedOpenOrCreateUserOffset
+                                    , size - ManagedOpenOrCreateUserOffset, true)){
+                     throw interprocess_exception(error_info(corrupted_error));
+                  }
                   //All ok, just move resources to the external mapped region
                   m_mapped_region.swap(region);
                }
@@ -467,9 +471,11 @@ class managed_open_or_create_impl
          if(value != InitializedSegment)
             throw interprocess_exception(error_info(corrupted_error));
 
-         construct_func( static_cast<char*>(region.get_address()) + ManagedOpenOrCreateUserOffset
-                        , region.get_size() - ManagedOpenOrCreateUserOffset
-                        , false);
+         if(!construct_func( static_cast<char*>(region.get_address()) + ManagedOpenOrCreateUserOffset
+                           , region.get_size() - ManagedOpenOrCreateUserOffset
+                           , false)){
+            throw interprocess_exception(error_info(corrupted_error));
+         }
          //All ok, just move resources to the external mapped region
          m_mapped_region.swap(region);
       }
