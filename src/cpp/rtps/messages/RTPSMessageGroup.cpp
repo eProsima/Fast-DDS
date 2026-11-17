@@ -44,6 +44,21 @@ namespace rtps {
 using BaseReader = fastdds::rtps::BaseReader;
 
 /**
+ * Resolve the deadline to be used on a sending operation. If no deadline was imposed by the caller,
+ * a default deadline of 24 hours from now is returned.
+ *
+ * @param max_blocking_time_point Deadline imposed on the group when it was created.
+ * @return @c max_blocking_time_point, or a deadline 24 hours from now when no deadline was imposed.
+ */
+static std::chrono::steady_clock::time_point resolve_max_blocking_time(
+        const std::chrono::steady_clock::time_point& max_blocking_time_point)
+{
+    return (std::chrono::steady_clock::time_point::max() == max_blocking_time_point) ?
+           std::chrono::steady_clock::now() + std::chrono::hours(24) :
+           max_blocking_time_point;
+}
+
+/**
  * An InlineQosWriter that puts the inline_qos of a CacheChange_t into a CDRMessage_t.
  */
 class CacheChangeInlineQoSWriter final : public InlineQosWriter
@@ -240,7 +255,8 @@ RTPSMessageGroup::RTPSMessageGroup(
         std::chrono::steady_clock::time_point max_blocking_time_point)
     : participant_(participant)
     , max_blocking_time_point_(max_blocking_time_point)
-    , send_buffer_(!internal_buffer ? participant->get_send_buffer(max_blocking_time_point) : nullptr)
+    , send_buffer_(!internal_buffer ?
+            participant->get_send_buffer(resolve_max_blocking_time(max_blocking_time_point)) : nullptr)
     , internal_buffer_(internal_buffer)
     , config_send_buffer_size_(participant->get_min_network_send_buffer_size())
 {
@@ -385,7 +401,7 @@ void RTPSMessageGroup::send()
 
             if (!sender_->send(*buffers_to_send_,
                     buffers_bytes_,
-                    max_blocking_time_point_))
+                    resolve_max_blocking_time(max_blocking_time_point_)))
             {
                 throw timeout();
             }
