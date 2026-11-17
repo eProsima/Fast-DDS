@@ -93,7 +93,7 @@ public:
             RTPSParticipantImpl* participant,
             bool internal_buffer = false,
             std::chrono::steady_clock::time_point max_blocking_time_point =
-            std::chrono::steady_clock::now() + std::chrono::hours(24));
+            std::chrono::steady_clock::time_point::max());
 
     /**
      * Basic constructor.
@@ -108,7 +108,7 @@ public:
             Endpoint* endpoint,
             RTPSMessageSenderInterface* msg_sender,
             std::chrono::steady_clock::time_point max_blocking_time_point =
-            std::chrono::steady_clock::now() + std::chrono::hours(24));
+            std::chrono::steady_clock::time_point::max());
 
     ~RTPSMessageGroup() noexcept(false);
 
@@ -344,6 +344,8 @@ private:
 
      #endif // if HAVE_SECURITY
 
+    //! Deadline imposed by the creator of the group.
+    //! @c time_point::max() means no deadline was imposed, and a new one is calculated on every send.
     std::chrono::steady_clock::time_point max_blocking_time_point_;
 
     std::unique_ptr<RTPSMessageGroup_t> send_buffer_;
