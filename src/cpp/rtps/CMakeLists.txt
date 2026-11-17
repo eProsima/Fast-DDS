@@ -329,6 +329,7 @@ fastdds_add_unit(rtps::proxy-data
     PUBLIC
     fastcdr
     foonathan_memory
+    $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto$<$<BOOL:${WIN32}>:$<SEMICOLON>crypt32.lib>>
     )
 
 #}}}

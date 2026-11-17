@@ -12,6 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Workaround for GCC 13 false positive with GoogleTest ON_CALL/EXPECT_CALL matchers, as in the unit tests.
+# GCC 13 incorrectly reports uninitialized variables when using matchers like _. This is fixed in GCC 14.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND
+   CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 13.0 AND
+   CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.0)
+    add_compile_options(-Wno-error=uninitialized)
+    add_compile_options(-Wno-error=maybe-uninitialized)
+endif()
+
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/add_mock_library.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/target_link_units.cmake)
 
