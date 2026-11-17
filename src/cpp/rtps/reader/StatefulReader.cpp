@@ -706,7 +706,9 @@ bool StatefulReader::process_data_msg(
         return true;
     }
 
-    return true;
+    // The writer is not matched (yet). Report the change as not processed, so that an intraprocess
+    // writer keeps it unacknowledged and resends it once the matching completes.
+    return false;
 }
 
 bool StatefulReader::process_data_frag_msg(
