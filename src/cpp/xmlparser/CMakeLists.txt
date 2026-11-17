@@ -96,6 +96,7 @@ fastdds_add_unit(xmlparser::profile-manager
     LINK_LIBRARIES
     PUBLIC
     fastcdr
+    ${TINYXML2_LIBRARY}
     foonathan_memory
     )
 
@@ -122,6 +123,7 @@ fastdds_add_unit(xmlparser::endpoint-parser
     LINK_LIBRARIES
     PUBLIC
     fastcdr
+    ${TINYXML2_LIBRARY}
     foonathan_memory
     )
 

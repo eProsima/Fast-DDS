@@ -79,6 +79,7 @@ fastdds_add_unit(dds::participant-factory
     LINK_LIBRARIES
     PUBLIC
     fastcdr
+    ${TINYXML2_LIBRARY}
     foonathan_memory
     $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto$<$<BOOL:${WIN32}>:$<SEMICOLON>crypt32.lib>>
     )
@@ -163,6 +164,7 @@ fastdds_add_unit(dds::entities
     LINK_LIBRARIES
     PUBLIC
     fastcdr
+    ${TINYXML2_LIBRARY}
     foonathan_memory
     $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto$<$<BOOL:${WIN32}>:$<SEMICOLON>crypt32.lib>>
     )

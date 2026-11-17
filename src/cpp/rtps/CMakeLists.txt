@@ -373,6 +373,7 @@ fastdds_add_unit(rtps::domain
     LINK_LIBRARIES
     PUBLIC
     fastcdr
+    ${TINYXML2_LIBRARY}
     foonathan_memory
     $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto$<$<BOOL:${WIN32}>:$<SEMICOLON>crypt32.lib>>
     )
@@ -532,6 +533,7 @@ fastdds_add_unit(rtps::participant-impl
     LINK_LIBRARIES
     PUBLIC
     fastcdr
+    ${TINYXML2_LIBRARY}
     foonathan_memory
     $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto$<$<BOOL:${WIN32}>:$<SEMICOLON>crypt32.lib>>
     )

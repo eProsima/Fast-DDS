@@ -155,6 +155,7 @@ if(SECURITY)
         LINK_LIBRARIES
         PUBLIC
         fastcdr
+        ${TINYXML2_LIBRARY}
         OpenSSL::SSL
         OpenSSL::Crypto
         $<$<BOOL:${WIN32}>:crypt32.lib>
