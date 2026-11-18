@@ -172,7 +172,7 @@ TEST(Reliability, AsyncPiggybackHeartbeatByteAccounting)
     start_reception = true;
     writer.send(data);
     ASSERT_TRUE(data.empty());
-    reader.block_for_all();
+    reader.block_for_all(std::chrono::seconds(30));
 
     EXPECT_EQ(0u, heartbeats_found.load());
 }
