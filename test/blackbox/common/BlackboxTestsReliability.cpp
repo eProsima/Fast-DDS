@@ -146,6 +146,7 @@ TEST(Reliability, AsyncPiggybackHeartbeatByteAccounting)
             };
 
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .resource_limits_max_samples_per_instance(2 * NUM_SAMPLES)
             .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
             .history_depth(2 * NUM_SAMPLES)
             .heartbeat_period_seconds(180000)
@@ -174,7 +175,7 @@ TEST(Reliability, AsyncPiggybackHeartbeatByteAccounting)
     start_reception = true;
     writer.send(data);
     ASSERT_TRUE(data.empty());
-    reader.block_for_all();
+    reader.block_for_all(std::chrono::seconds(30));
 
     EXPECT_EQ(0u, heartbeats_found.load());
 }
