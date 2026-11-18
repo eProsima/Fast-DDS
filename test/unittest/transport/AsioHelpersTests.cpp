@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <chrono>
 #include <limits>
 #include <memory>
 #include <thread>
+#include <vector>
 
 #include <asio.hpp>
 #include <gtest/gtest.h>
@@ -92,6 +94,96 @@ TEST(AsioHelpersTests, tcp_buffer_size)
             initial_buffer_value, minimum_buffer_value);
         test_buffer_setting<asio::socket_base::receive_buffer_size, asio::ip::tcp::socket, asio::ip::tcp>(
             initial_buffer_value, minimum_buffer_value);
+    }
+}
+
+// Test that microsecond durations are converted into a normalized timeval whose tv_usec
+// field is always within the [0, 999999] range accepted by the kernel. Leaving the field
+// out of range makes setsockopt(SO_SNDTIMEO) fail with EINVAL for every timeout of one
+// second or longer, which silently disables the configured send timeout.
+TEST(AsioHelpersTests, duration_to_timeval_keeps_tv_usec_in_range)
+{
+    const std::vector<std::chrono::microseconds> timeouts =
+    {
+        std::chrono::microseconds(1),
+        std::chrono::microseconds(1000),
+        std::chrono::microseconds(100000),
+        std::chrono::microseconds(999999),
+        std::chrono::microseconds(1000000),
+        std::chrono::microseconds(1000001),
+        std::chrono::microseconds(1500000),
+        std::chrono::microseconds(5000000),
+        std::chrono::microseconds(30000000),
+        std::chrono::microseconds(3600000000LL)
+    };
+
+    for (const auto& timeout : timeouts)
+    {
+        timeval time_struct;
+        asio_helpers::duration_to_timeval(timeout, time_struct);
+
+        EXPECT_GE(time_struct.tv_usec, 0) << "timeout of " << timeout.count() << " us";
+        EXPECT_LE(time_struct.tv_usec, 999999) << "timeout of " << timeout.count() << " us";
+
+        // The converted value must represent the very same instant.
+        const auto total = std::chrono::seconds(time_struct.tv_sec) +
+                std::chrono::microseconds(time_struct.tv_usec);
+        EXPECT_EQ(std::chrono::duration_cast<std::chrono::microseconds>(total).count(), timeout.count())
+            << "timeout of " << timeout.count() << " us";
+    }
+}
+
+// Test the expected conversion for representative durations.
+TEST(AsioHelpersTests, duration_to_timeval_splits_seconds_and_microseconds)
+{
+    struct TestCase
+    {
+        std::chrono::microseconds input;
+        decltype(timeval::tv_sec) expected_sec;
+        decltype(timeval::tv_usec) expected_usec;
+    };
+
+    const std::vector<TestCase> cases =
+    {
+        {std::chrono::microseconds(100000),   0,  100000},
+        {std::chrono::microseconds(999999),   0,  999999},
+        {std::chrono::microseconds(1000000),  1,       0},
+        {std::chrono::microseconds(1500000),  1,  500000},
+        {std::chrono::microseconds(5000000),  5,       0},
+        {std::chrono::microseconds(30000000), 30,      0}
+    };
+
+    for (const auto& test_case : cases)
+    {
+        timeval time_struct;
+        asio_helpers::duration_to_timeval(test_case.input, time_struct);
+
+        EXPECT_EQ(time_struct.tv_sec, test_case.expected_sec)
+            << "timeout of " << test_case.input.count() << " us";
+        EXPECT_EQ(time_struct.tv_usec, test_case.expected_usec)
+            << "timeout of " << test_case.input.count() << " us";
+    }
+}
+
+// Test that a non-positive timeout is mapped to a zero timeval.
+TEST(AsioHelpersTests, duration_to_timeval_maps_non_positive_durations_to_zero)
+{
+    const std::vector<std::chrono::microseconds> timeouts =
+    {
+        std::chrono::microseconds(0),
+        std::chrono::microseconds(-1),
+        std::chrono::microseconds(-1000000)
+    };
+
+    for (const auto& timeout : timeouts)
+    {
+        timeval time_struct;
+        time_struct.tv_sec = 123;
+        time_struct.tv_usec = 456;
+        asio_helpers::duration_to_timeval(timeout, time_struct);
+
+        EXPECT_EQ(time_struct.tv_sec, 0) << "timeout of " << timeout.count() << " us";
+        EXPECT_EQ(time_struct.tv_usec, 0) << "timeout of " << timeout.count() << " us";
     }
 }
 
