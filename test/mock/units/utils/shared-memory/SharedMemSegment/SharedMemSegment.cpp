@@ -29,11 +29,13 @@ uint32_t SharedSegment<T, U>::compute_per_allocation_extra_size(
     throw boost::interprocess::interprocess_exception(("Cannot create a segment for " + domain_name).c_str());
 }
 
-template uint32_t SharedMemSegment::compute_per_allocation_extra_size(
+template uint32_t SharedSegment<SharedMemSegment::managed_shared_memory_type,
+        SharedMemSegment::managed_shared_object_type>::compute_per_allocation_extra_size(
         size_t allocation_alignment,
         const std::string& domain_name);
 
-template uint32_t SharedFileSegment::compute_per_allocation_extra_size(
+template uint32_t SharedSegment<SharedFileSegment::managed_shared_memory_type,
+        SharedFileSegment::managed_shared_object_type>::compute_per_allocation_extra_size(
         size_t allocation_alignment,
         const std::string& domain_name);
 
