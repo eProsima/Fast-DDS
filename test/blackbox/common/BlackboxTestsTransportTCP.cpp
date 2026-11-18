@@ -204,6 +204,8 @@ TEST_P(TransportTCP, large_data_topology)
 {
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
 
+    EPROSIMA_LOG_WARNING(TRANSPORT_TCP_TEST, "This test is very sensitive to the system's file descriptor limit. If it fails, try increasing the limit with 'ulimit -n'.");
+    std::cout << "cout: This is to check if the stdcout is being printed in the test." << std::endl;
     // Limited to 12 readers and 12 writers so as not to exceed the system's file descriptor limit.
     uint16_t n_participants = 12;
     constexpr uint32_t samples_per_participant = 10;
