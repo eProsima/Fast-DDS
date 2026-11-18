@@ -144,6 +144,7 @@ TEST(Reliability, AsyncPiggybackHeartbeatByteAccounting)
             };
 
     writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .resource_limits_max_samples_per_instance(2 * NUM_SAMPLES)
             .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
             .history_depth(2 * NUM_SAMPLES)
             .heartbeat_period_seconds(180000)
