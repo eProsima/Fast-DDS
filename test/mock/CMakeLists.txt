@@ -21,6 +21,12 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND
     add_compile_options(-Wno-error=maybe-uninitialized)
 endif()
 
+# The link-seam mocks define every method of the class they replace without using its private fields, which Clang
+# reports as unused when all of them are defined in the same source file.
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    add_compile_options(-Wno-unused-private-field)
+endif()
+
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/add_mock_library.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/target_link_units.cmake)
 
