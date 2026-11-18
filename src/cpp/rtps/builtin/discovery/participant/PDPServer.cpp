@@ -387,9 +387,11 @@ void PDPServer::initializeParticipantProxyData(
     }
 
     // Set discovery server version property
+    // Use the (key, value) overload: building a by-value std::pair temporary here is miscompiled by MSVC x86
+    // (14.44), constructing it at an invalid stack address and crashing the server on creation.
     participant_data->properties.push_back(
-        std::pair<std::string,
-        std::string>({dds::parameter_property_ds_version, dds::parameter_property_current_ds_version}));
+        dds::parameter_property_ds_version,
+        dds::parameter_property_current_ds_version);
 }
 
 void PDPServer::match_reliable_pdp_endpoints(
