@@ -134,7 +134,7 @@ TEST(StatefulReaderTests, EmptyPayloadUnregisterDisposeProcessing)
 
 /* Regression test: a DATA message from a writer that the reader has not matched yet must be
    reported as not processed. An intraprocess StatefulWriter uses the return value of
-   process_data_msg() to decide whether the change was delivered. If it is told the change was
+   processDataMsg() to decide whether the change was delivered. If it is told the change was
    delivered, the change is acknowledged and never resent once the reader matches the writer,
    so the sample is lost.
  */
@@ -174,16 +174,17 @@ TEST(StatefulReaderTests, DataFromUnmatchedWriterIsNotProcessed)
     change.serializedPayload.length = 0;
     change.instanceHandle.value[0] = 1;
     change.kind = ChangeKind_t::NOT_ALIVE_DISPOSED;
-    EXPECT_FALSE(uut->process_data_msg(&change));
+    EXPECT_FALSE(uut->processDataMsg(&change));
 
     // Once the endpoints are matched, the same change is processed
-    TopicDescription topic_desc;
-    topic_desc.type_name = "string";
-    topic_desc.topic_name = "topic";
-    part->register_reader(reader, topic_desc, fastdds::dds::ReaderQos());
-    part->register_writer(writer, topic_desc, fastdds::dds::WriterQos());
+    TopicAttributes topic_desc;
+    topic_desc.topicKind = rtps::WITH_KEY;
+    topic_desc.topicName = "topic";
+    topic_desc.topicDataType = "string";
+    part->registerReader(reader, topic_desc, fastdds::dds::ReaderQos());
+    part->registerWriter(writer, topic_desc, fastdds::dds::WriterQos());
     EXPECT_TRUE(uut->matched_writer_is_matched(writer_guid));
-    EXPECT_TRUE(uut->process_data_msg(&change));
+    EXPECT_TRUE(uut->processDataMsg(&change));
 
     // Destroy the writer
     RTPSDomain::removeRTPSWriter(writer);
