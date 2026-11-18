@@ -127,9 +127,11 @@ void PDPClient::initializeParticipantProxyData(
     }
 
     // Set discovery server version property
-    participant_data->properties.push_back(std::pair<std::string,
-            std::string>({fastdds::dds::parameter_property_ds_version,
-                          fastdds::dds::parameter_property_current_ds_version}));
+    // Use the (key, value) overload: building a by-value std::pair temporary here is miscompiled by MSVC x86
+    // (14.44), constructing it at an uninitialized stack address.
+    participant_data->properties.push_back(
+        fastdds::dds::parameter_property_ds_version,
+        fastdds::dds::parameter_property_current_ds_version);
 
 #if HAVE_SECURITY
     if (discovery_config.m_simpleEDP.enable_builtin_secure_publications_writer_and_subscriptions_reader)
