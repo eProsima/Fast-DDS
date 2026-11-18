@@ -21,6 +21,7 @@
 #define LATENCYTESTSUBSCRIBER_H_
 
 #include <condition_variable>
+#include <mutex>
 
 #include <asio.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
@@ -117,6 +118,9 @@ private:
     std::condition_variable command_msg_cv_;
     int command_msg_count_ = 0;
     int test_status_ = 0;
+
+    //! Protects the lifetime of the dynamic data sample against the DataReader listener thread
+    std::mutex data_sample_mutex_;
 
     /* Files */
     std::string xml_config_file_;
