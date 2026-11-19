@@ -3115,6 +3115,26 @@ TEST_F(IdlParserTests, get_declared_type_names_w_early_stop)
     ASSERT_EQ(declared_types, expected_type_names);
 }
 
+TEST_F(IdlParserTests, invalid_path)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    std::vector<std::string> helpers_include;
+    helpers_include.push_back("IDL/helpers");
+
+    for (const char* path : {"IDL/does_not_exist_file.idl", "IDL/does_not_exist_dir/", "IDL/helpers"})
+    {
+        for (const std::vector<std::string>& include_paths : {std::vector<std::string>{}, helpers_include})
+        {
+            EXPECT_EQ(factory->for_each_type_w_uri(path, include_paths,
+                    [](traits<DynamicTypeBuilder>::ref_type)
+                    {
+                        return true;
+                    }), RETCODE_BAD_PARAMETER) << path;
+            EXPECT_FALSE(factory->create_type_w_uri(path, "AnyType", include_paths)) << path;
+        }
+    }
+}
+
 int main(
         int argc,
         char** argv)
