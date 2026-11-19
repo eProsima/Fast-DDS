@@ -132,9 +132,9 @@ SubscriberApp::SubscriberApp(
 
     // Create the data writer
     DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
+    publisher_->get_default_datawriter_qos(writer_qos);
     writer_qos.reliability().kind = config.reliability;
     writer_qos.durability().kind = config.durability;
-    publisher_->get_default_datawriter_qos(writer_qos);
     writer_ = publisher_->create_datawriter(topic_pub_, writer_qos, this, StatusMask::all());
     if (writer_ == nullptr)
     {

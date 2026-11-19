@@ -85,8 +85,8 @@ PublisherApp::PublisherApp(
 
     // Create the data writer
     DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
-    writer_qos.history().depth = 5;
     publisher_->get_default_datawriter_qos(writer_qos);
+    writer_qos.history().depth = 5;
     writer_ = publisher_->create_datawriter(topic_, writer_qos, this, StatusMask::all());
     if (writer_ == nullptr)
     {
