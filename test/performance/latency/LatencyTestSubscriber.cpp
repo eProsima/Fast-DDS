@@ -469,9 +469,10 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
 
     while (RETCODE_OK == ret_code)
     {
-        // Bounce back the message from the Publisher as fast as possible
-        // dynamic_data_ and latency_data_type do not require locks
-        // because the command message exchange assures this calls atomicity
+        // Bounce back the message from the Publisher as fast as possible.
+        // Note that the command message exchange does NOT make these calls atomic with respect to
+        // the main thread: data keeps flowing on the data topic after the STOP command is received
+        // on the command topic. The sample lifetime is handled below.
         if (sub->data_loans_)
         {
             SampleInfoSeq infos;
@@ -573,6 +574,19 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
         }
         else
         {
+            // On dynamic types the data endpoints outlive the test iteration, so the sample buffer
+            // may be destroyed by the main thread while this callback is running. Synchronize its
+            // lifetime explicitly.
+            std::unique_lock<std::mutex> data_lock(sub->data_sample_mutex_, std::defer_lock);
+            if (sub->dynamic_types_)
+            {
+                data_lock.lock();
+                if (nullptr == sub->dynamic_data_)
+                {
+                    return;
+                }
+            }
+
             SampleInfo info;
             void* data = sub->dynamic_types_ ?
                     (void*)sub->dynamic_data_ :
@@ -660,6 +674,10 @@ bool LatencyTestSubscriber::test(
 
     if (dynamic_types_)
     {
+        // The data endpoints are created once and kept alive for the whole run, so the listener
+        // may be running while the sample is created and filled in.
+        std::lock_guard<std::mutex> data_lock(data_sample_mutex_);
+
         // Create the data sample
         dynamic_data_ = static_cast<DynamicData::_ref_type*>(dynamic_pub_sub_type_->create_data());
 
@@ -684,10 +702,24 @@ bool LatencyTestSubscriber::test(
         (*dynamic_data_)->return_loaned_value(member_data);
     }
     // Create the static type for the given buffer size and the endpoints
-    else if (init_static_types(datasize) && create_data_endpoints())
+    else if (init_static_types(datasize))
     {
-        // Create the data sample as buffer
+        // Create the data sample as buffer.
+        // It is created before the endpoints on purpose: the DataReader listener uses it as
+        // reception buffer as soon as the endpoints are created and data starts flowing in.
         latency_data_ = static_cast<LatencyType*>(latency_data_type_.create_data());
+
+        if (nullptr == latency_data_ || !create_data_endpoints())
+        {
+            EPROSIMA_LOG_ERROR(LatencyTest, "Error preparing static types and endpoints for testing");
+
+            if (nullptr != latency_data_)
+            {
+                latency_data_type_->delete_data(latency_data_);
+                latency_data_ = nullptr;
+            }
+            return false;
+        }
 
         // Wait for new endponts discovery from the LatencyTestPublisher
         wait_for_discovery(
@@ -727,7 +759,13 @@ bool LatencyTestSubscriber::test(
 
     if (dynamic_types_)
     {
-        dynamic_pub_sub_type_->delete_data(dynamic_data_);
+        {
+            // The data endpoints are kept alive between iterations, so the listener may still be
+            // using the sample. Serialize its destruction with LatencyDataReaderListener.
+            std::lock_guard<std::mutex> data_lock(data_sample_mutex_);
+            dynamic_pub_sub_type_->delete_data(dynamic_data_);
+            dynamic_data_ = nullptr;
+        }
         //
         // Reset history for the new test
         size_t removed;
@@ -735,15 +773,20 @@ bool LatencyTestSubscriber::test(
     }
     else
     {
-        // release the buffer next iteration will require different size
-        latency_data_type_->delete_data(latency_data_);
+        // Keep the type alive: destroy_data_endpoints() releases latency_data_type_, and the
+        // buffer must be returned to the very same TopicDataType that created it.
+        TypeSupport data_type = latency_data_type_;
 
-        // Remove endpoints associated to the given payload size
+        // Remove endpoints associated to the given payload size *before* releasing the sample buffer
         if (!destroy_data_endpoints())
         {
             EPROSIMA_LOG_ERROR(LatencyTest,
                     "Static endpoints for payload size " << datasize << " could not been removed");
         }
+
+        // release the buffer next iteration will require different size
+        data_type->delete_data(latency_data_);
+        latency_data_ = nullptr;
     }
 
     if (test_status_ == -1)
@@ -955,16 +998,9 @@ bool LatencyTestSubscriber::destroy_data_endpoints()
     assert(nullptr != publisher_);
     assert(nullptr != subscriber_);
 
-    // Delete the endpoints
-    if (nullptr == data_writer_
-            || RETCODE_OK != publisher_->delete_datawriter(data_writer_))
-    {
-        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR destroying the DataWriter");
-        return false;
-    }
-    data_writer_ = nullptr;
-    data_writer_listener_.reset();
-
+    // Delete the endpoints.
+    // The DataReader is deleted first because its listener echoes the received samples
+    // through the DataWriter, so the DataWriter must outlive any ongoing callback.
     if (nullptr == data_reader_
             || RETCODE_OK != subscriber_->delete_datareader(data_reader_))
     {
@@ -973,6 +1009,15 @@ bool LatencyTestSubscriber::destroy_data_endpoints()
     }
     data_reader_ = nullptr;
     data_reader_listener_.reset();
+
+    if (nullptr == data_writer_
+            || RETCODE_OK != publisher_->delete_datawriter(data_writer_))
+    {
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR destroying the DataWriter");
+        return false;
+    }
+    data_writer_ = nullptr;
+    data_writer_listener_.reset();
 
     // Delete the Topics
     if (nullptr == latency_data_pub_topic_
