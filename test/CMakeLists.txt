@@ -97,6 +97,9 @@ if(EPROSIMA_BUILD_TESTS)
 
     # Fast DDS basic is identified with a tweak version of 0
     if (PROJECT_VERSION_TWEAK EQUAL 0)
+		# Mock libraries and target_link_units(), used by the test suites below.
+		add_subdirectory(mock)
+
 		add_subdirectory(feature)
 		add_subdirectory(unittest)
 		add_subdirectory(dds/communication)

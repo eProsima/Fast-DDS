@@ -50,18 +50,17 @@ TYPED_TEST(FlowControllerPublishModes, limited_async_publish_mode)
     async.init();
 
     // Instantiate writers.
-    BaseWriter writer1;
-    BaseWriter writer2;
+    TestBaseWriter writer1;
+    TestBaseWriter writer2;
 
     // Initialize callback to get info.
     auto send_functor = [&](
         CacheChange_t* change,
-        RTPSMessageGroup&,
+        RTPSMessageGroup& group,
         LocatorSelectorSender& sender,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
-                FlowControllerLimitedAsyncPublishModeMock::get_publish_mode().add_sent_bytes_by_group(
-                    change->serializedPayload.length, sender);
+                group.limitation()->add_sent_bytes_by_group(change->serializedPayload.length, sender);
                 this->last_thread_delivering_sample = std::this_thread::get_id();
                 {
                     std::unique_lock<std::mutex> lock(this->changes_delivered_mutex);

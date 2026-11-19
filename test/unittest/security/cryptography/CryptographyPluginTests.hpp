@@ -26,8 +26,8 @@
 #include <security/accesscontrol/AccessPermissionsHandle.h>
 #include <security/authentication/PKIIdentityHandle.h>
 #include <security/cryptography/AESGCMGMAC.h>
-#include <security/MockAccessControlPlugin.h>
-#include <security/MockAuthenticationPlugin.h>
+#include <mock/rtps/security/MockAccessControlPlugin.h>
+#include <mock/rtps/security/MockAuthenticationPlugin.h>
 
 class CryptographyPluginTest : public ::testing::Test
 {

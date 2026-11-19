@@ -239,6 +239,15 @@ public:
         limitation_ = limitation;
     }
 
+    /**
+     * Get the limitation policy applied to this group.
+     * @return Pointer to the limitation policy, or nullptr when no limitation is set.
+     */
+    IRTPSMessageGroupLimitation* limitation() const
+    {
+        return limitation_;
+    }
+
     uint32_t current_buffer_bytes() const
     {
         return buffers_bytes_;

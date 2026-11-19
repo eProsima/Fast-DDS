@@ -66,10 +66,20 @@ class BuiltinProtocols
 {
     friend class RTPSParticipantImpl;
 
-private:
+public:
 
+    /**
+     * Constructor. The builtin protocols are created by the RTPSParticipantImpl, and are not usable until
+     * initBuiltinProtocols() is called.
+     */
     BuiltinProtocols();
+
+    /**
+     * Destructor. Stops and destroys the discovery and liveliness protocols, if they were created.
+     */
     virtual ~BuiltinProtocols();
+
+private:
 
     /*
      * Mutex to protect the m_DiscoveryServers collection. Element access is not protected by this mutex, the PDP mutex

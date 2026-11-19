@@ -246,6 +246,9 @@ TEST_F(TCPv6Tests, opening_and_closing_input_channel)
     ASSERT_TRUE  (transportUnderTest.CloseInputChannel(multicastFilterLocator));
     ASSERT_FALSE (transportUnderTest.IsInputChannelOpen(multicastFilterLocator));
     ASSERT_FALSE (transportUnderTest.CloseInputChannel(multicastFilterLocator));
+
+    // Closes the input channel of the factory transport, as the participant does before destroying its receivers.
+    receiver->disable();
 }
 
 // This test verifies that the autofill port feature correctly sets an automatic port when

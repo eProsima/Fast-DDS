@@ -19,7 +19,7 @@
 #include <vector>
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
-
+#include <rtps/history/TopicPayloadPool.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry_impl/TopicPayloadPoolProxy.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry_impl/TopicPayloadPoolRegistryEntry.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry_impl/TopicPayloadPoolRegistry.hpp>
@@ -55,13 +55,16 @@ TEST(TopicPayloadPoolRegistryTests, basic_checks)
 
     // Releasing all references to a topic pool should automatically release the entry
     std::weak_ptr<ITopicPayloadPool> pool_wa = pool_a1;
+    std::weak_ptr<ITopicPayloadPool> pool_wa3 = pool_a3;
+    std::weak_ptr<ITopicPayloadPool> pool_wb = pool_b1;
     pool_a1.reset();
     pool_a2.reset();
     pool_a3.reset();
     EXPECT_TRUE(pool_wa.expired());
 
-    // Destructor should have been called a certain number of times
-    EXPECT_EQ(detail::TopicPayloadPoolProxy::DestructorHelper::instance().get(), 2u);
+    // Only the pools of topic_a should have been destroyed
+    EXPECT_TRUE(pool_wa3.expired());
+    EXPECT_FALSE(pool_wb.expired());
 }
 
 // get() used to answer an empty pool when the last reference to the proxy of the topic

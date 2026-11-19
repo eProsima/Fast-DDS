@@ -20,13 +20,15 @@
 #define _FASTDDS_UTILS_QOS_CONVERTERS_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantExtendedQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/domain/qos/ReplierQos.hpp>
 #include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 
 #include <xmlparser/attributes/ParticipantAttributes.hpp>

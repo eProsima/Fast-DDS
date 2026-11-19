@@ -17,8 +17,10 @@
 
 #include <gtest/gtest.h>
 
+#include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
+#include <mock/fastdds/rtps/history/WriterHistoryMock.hpp>
 
 #include <rtps/common/GuidUtils.hpp>
 #include <rtps/history/CacheChangePool.h>
@@ -28,6 +30,22 @@
 #include <utils/SystemInfo.hpp>
 
 using namespace eprosima::fastdds::rtps;
+namespace mock = eprosima::fastdds::mock;
+
+/**
+ * WriterHistory exposing the changes the persistence service loads into it.
+ */
+class TestWriterHistory : public WriterHistory
+{
+public:
+
+    TestWriterHistory()
+        : WriterHistory(HistoryAttributes())
+    {
+    }
+
+    using WriterHistory::m_changes;
+};
 
 class NoOpPayloadPool : public IPayloadPool
 {
@@ -277,7 +295,7 @@ TEST_F(PersistenceTest, Writer)
     SequenceNumber_t max_seq;
     CacheChange_t change;
     GUID_t guid(GuidPrefix_t::unknown(), 1U);
-    WriterHistory history;
+    TestWriterHistory history;
     change.kind = ALIVE;
     change.writerGUID = guid;
     change.serializedPayload.length = 0;
@@ -287,7 +305,7 @@ TEST_F(PersistenceTest, Writer)
                 CacheChange_t* ch = nullptr;
                 return pool->reserve_cache(ch) ? ch : nullptr;
             };
-    EXPECT_CALL(history, create_change(_, _, _))
+    EXPECT_CALL(mock::mock_of<WriterHistory>(&history), create_change(_, _, _))
             .Times(testing::AnyNumber())
             .WillRepeatedly(testing::Invoke(create_change));
 
@@ -399,7 +417,7 @@ TEST_P(PersistenceTest, SchemaVersionUpdate)
     auto pool = std::make_shared<CacheChangePool>(cfg, init_cache);
     CacheChange_t change;
     GUID_t guid(GuidPrefix_t::unknown(), 1U);
-    WriterHistory history;
+    TestWriterHistory history;
     SequenceNumber_t last_seq_number;
     change.kind = ALIVE;
     change.writerGUID = guid;
@@ -410,7 +428,7 @@ TEST_P(PersistenceTest, SchemaVersionUpdate)
                 CacheChange_t* ch = nullptr;
                 return pool->reserve_cache(ch) ? ch : nullptr;
             };
-    EXPECT_CALL(history, create_change(_, _, _))
+    EXPECT_CALL(mock::mock_of<WriterHistory>(&history), create_change(_, _, _))
             .Times(testing::AnyNumber())
             .WillRepeatedly(testing::Invoke(create_change));
 

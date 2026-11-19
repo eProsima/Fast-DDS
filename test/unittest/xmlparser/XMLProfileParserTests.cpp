@@ -38,6 +38,7 @@
 #include <fastdds/rtps/transport/UDPTransportDescriptor.hpp>
 #include <fastdds/utils/IPLocator.hpp>
 
+#include <mock/fastdds/dds/log/LogMock.hpp>
 #include <xmlparser/XMLProfileManager.h>
 
 #include "../common/env_var_utils.hpp"
@@ -47,32 +48,9 @@ using namespace eprosima::fastdds::rtps;
 using namespace eprosima::testing;
 using namespace ::testing;
 
-using eprosima::fastdds::dds::Log;
 using eprosima::fastdds::dds::LogMock;
-using eprosima::fastdds::dds::LogConsumer;
 
 LogMock* log_mock = nullptr;
-
-// Initialize Log mock
-void TestRegisterConsumerFunc(
-        std::unique_ptr<LogConsumer>&& c)
-{
-    log_mock->RegisterConsumer(std::move(c));
-}
-
-void TestClearConsumersFunc()
-{
-    log_mock->ClearConsumers();
-}
-
-void TestSetThreadConfigFunc()
-{
-    log_mock->SetThreadConfig();
-}
-
-std::function<void(std::unique_ptr<LogConsumer>&&)> Log::RegisterConsumerFunc = TestRegisterConsumerFunc;
-std::function<void()> Log::ClearConsumersFunc = TestClearConsumersFunc;
-std::function<void()> Log::SetThreadConfigFunc = TestSetThreadConfigFunc;
 
 class XMLProfileParserBasicTests : public ::testing::Test
 {

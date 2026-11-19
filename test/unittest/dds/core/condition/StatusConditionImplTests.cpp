@@ -14,8 +14,8 @@
 
 #include <gtest/gtest.h>
 
-// Include mocks first
 #include <fastdds/core/condition/ConditionNotifier.hpp>
+#include <mock/fastdds/core/condition/ConditionNotifierMock.hpp>
 
 // Include UUT
 #include <fastdds/core/condition/StatusConditionImpl.hpp>
@@ -49,7 +49,7 @@ TEST(StatusConditionImplTests, enabled_status_management)
 
 TEST(StatusConditionImplTests, notify_trigger)
 {
-    ::testing::StrictMock<ConditionNotifier> notifier;
+    ConditionNotifier notifier;
     StatusConditionImpl uut(&notifier);
 
     StatusMask mask_none = StatusMask::none();
@@ -65,7 +65,7 @@ TEST(StatusConditionImplTests, notify_trigger)
     EXPECT_EQ(mask_none.to_string(), uut.get_raw_status().to_string());
 
     // Triggering other_mask should trigger
-    auto& call1 = EXPECT_CALL(notifier, notify()).Times(1);
+    auto& call1 = EXPECT_CALL(mock::mock_of(&notifier), notify()).Times(1);
     uut.set_status(other_mask, true);
     EXPECT_EQ(other_mask.to_string(), uut.get_raw_status().to_string());
     EXPECT_TRUE(uut.get_trigger_value());
@@ -76,7 +76,7 @@ TEST(StatusConditionImplTests, notify_trigger)
     EXPECT_FALSE(uut.get_trigger_value());
 
     // Triggering one_mask should trigger
-    auto& call2 = EXPECT_CALL(notifier, notify()).Times(1).After(call1);
+    auto& call2 = EXPECT_CALL(mock::mock_of(&notifier), notify()).Times(1).After(call1);
     uut.set_status(one_mask, true);
     EXPECT_EQ(both_mask.to_string(), uut.get_raw_status().to_string());
     EXPECT_TRUE(uut.get_trigger_value());
@@ -112,7 +112,7 @@ TEST(StatusConditionImplTests, notify_trigger)
     EXPECT_FALSE(uut.get_trigger_value());
 
     // Setting mask to other_mask should trigger
-    auto& call3 = EXPECT_CALL(notifier, notify()).Times(1).After(call2);
+    auto& call3 = EXPECT_CALL(mock::mock_of(&notifier), notify()).Times(1).After(call2);
     EXPECT_EQ(RETCODE_OK, uut.set_enabled_statuses(other_mask));
     EXPECT_EQ(other_mask.to_string(), uut.get_enabled_statuses().to_string());
 
@@ -137,7 +137,7 @@ TEST(StatusConditionImplTests, notify_trigger)
     EXPECT_FALSE(uut.get_trigger_value());
 
     // Setting mask to one_mask should trigger
-    EXPECT_CALL(notifier, notify()).Times(1).After(call3);
+    EXPECT_CALL(mock::mock_of(&notifier), notify()).Times(1).After(call3);
     EXPECT_EQ(RETCODE_OK, uut.set_enabled_statuses(one_mask));
     EXPECT_EQ(one_mask.to_string(), uut.get_enabled_statuses().to_string());
     EXPECT_TRUE(uut.get_trigger_value());

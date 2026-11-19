@@ -14,8 +14,8 @@
 
 #include <gtest/gtest.h>
 
-// Include mocks first
 #include <fastdds/core/condition/WaitSetImpl.hpp>
+#include <mock/fastdds/core/condition/WaitSetImplMock.hpp>
 
 // Include UUT
 #include <fastdds/core/condition/ConditionNotifier.hpp>
@@ -26,6 +26,7 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::dds::detail;
 using ::testing::_;
+namespace mock = eprosima::fastdds::mock;
 
 class TestCondition : public Condition
 {
@@ -74,18 +75,18 @@ TEST(ConditionNotifierTests, basic_test)
                 notifier.will_be_deleted(condition);
             };
 
-    EXPECT_CALL(wait_set, wake_up()).Times(4);
-    EXPECT_CALL(wait_set, will_be_deleted(_)).Times(4);
+    EXPECT_CALL(mock::mock_of(&wait_set), wake_up()).Times(4);
+    EXPECT_CALL(mock::mock_of(&wait_set), will_be_deleted(_)).Times(4);
     test_steps();
-    testing::Mock::VerifyAndClearExpectations(&wait_set);
+    testing::Mock::VerifyAndClearExpectations(&mock::mock_of(&wait_set));
 
     WaitSetImpl other_waitset;
     notifier.attach_to(&other_waitset);
 
-    EXPECT_CALL(wait_set, wake_up()).Times(4);
-    EXPECT_CALL(wait_set, will_be_deleted(_)).Times(4);
-    EXPECT_CALL(other_waitset, wake_up()).Times(7);
-    EXPECT_CALL(other_waitset, will_be_deleted(_)).Times(7);
+    EXPECT_CALL(mock::mock_of(&wait_set), wake_up()).Times(4);
+    EXPECT_CALL(mock::mock_of(&wait_set), will_be_deleted(_)).Times(4);
+    EXPECT_CALL(mock::mock_of(&other_waitset), wake_up()).Times(7);
+    EXPECT_CALL(mock::mock_of(&other_waitset), will_be_deleted(_)).Times(7);
     test_steps();
 }
 

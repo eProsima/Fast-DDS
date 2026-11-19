@@ -22,6 +22,7 @@
 #include <vector>
 
 #include <fastdds/config.hpp>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
 
 #include <rtps/transport/shared_mem/MultiProducerConsumerRingBuffer.hpp>
