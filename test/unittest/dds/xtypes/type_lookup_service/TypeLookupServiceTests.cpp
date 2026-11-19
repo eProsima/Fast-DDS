@@ -571,6 +571,8 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_UNSUPPORTED)
     CacheChange_t* change {new CacheChange_t()};
     change->writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
     stateful_reader_.get_history()->add_change(change);
+    EXPECT_CALL(fastdds::mock::mock_of(stateful_reader_.history_), remove_change(change)).Times(1).
+            WillOnce(::testing::DoAll(::testing::DeleteArg<0>(), ::testing::Return(true)));
 
     TypeLookup_Reply expectedReply;
     expectedReply.header().remoteEx(rpc::RemoteExceptionCode_t::REMOTE_EX_UNSUPPORTED);
@@ -598,6 +600,8 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_INVALID_ARGUMEN
     CacheChange_t* change {new CacheChange_t()};
     change->writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
     stateful_reader_.get_history()->add_change(change);
+    EXPECT_CALL(fastdds::mock::mock_of(stateful_reader_.history_), remove_change(change)).Times(1).
+            WillOnce(::testing::DoAll(::testing::DeleteArg<0>(), ::testing::Return(true)));
 
     TypeLookup_Reply expectedReply;
     expectedReply.header().remoteEx(rpc::RemoteExceptionCode_t::REMOTE_EX_INVALID_ARGUMENT);
@@ -625,6 +629,8 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_OUT_OF_RESOURCE
     CacheChange_t* change {new CacheChange_t()};
     change->writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
     stateful_reader_.get_history()->add_change(change);
+    EXPECT_CALL(fastdds::mock::mock_of(stateful_reader_.history_), remove_change(change)).Times(1).
+            WillOnce(::testing::DoAll(::testing::DeleteArg<0>(), ::testing::Return(true)));
 
     TypeLookup_Reply expectedReply;
     expectedReply.header().remoteEx(rpc::RemoteExceptionCode_t::REMOTE_EX_OUT_OF_RESOURCES);
@@ -651,6 +657,8 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_UNKNOWN_OPERATI
     CacheChange_t* change {new CacheChange_t()};
     change->writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
     stateful_reader_.get_history()->add_change(change);
+    EXPECT_CALL(fastdds::mock::mock_of(stateful_reader_.history_), remove_change(change)).Times(1).
+            WillOnce(::testing::DoAll(::testing::DeleteArg<0>(), ::testing::Return(true)));
 
     TypeLookup_Reply expectedReply;
     expectedReply.header().remoteEx(rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_OPERATION);
@@ -677,6 +685,8 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_UNKNOWN_EXCEPTI
     CacheChange_t* change {new CacheChange_t()};
     change->writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
     stateful_reader_.get_history()->add_change(change);
+    EXPECT_CALL(fastdds::mock::mock_of(stateful_reader_.history_), remove_change(change)).Times(1).
+            WillOnce(::testing::DoAll(::testing::DeleteArg<0>(), ::testing::Return(true)));
 
     TypeLookup_Reply expectedReply;
     expectedReply.header().remoteEx(rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_EXCEPTION);
