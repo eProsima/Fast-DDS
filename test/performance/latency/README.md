@@ -166,7 +166,10 @@ The python scripts offers several options:
 | --reliability                       | Set the Reliability QoS of the DDS entities to reliable. Default Reliability is best-effort                                                |
 | --data_loans                        | Enable the use of the loan sample API. Default is disable                                                                                  |
 | --shared_memory [on/off]            | Explicitly enable/disable shared memory transport. Fast DDS default is *on*                                                                |
+| --data_sharing [on/off]             | Explicitly enable/disable data sharing. Fast DDS default is *AUTO*                                                                         |
 | --interprocess                      | Publisher and subscriber in separate processes. Default is both in the sample process and using intraprocess communications                |
+| --number_of_subscribers \<number>   | Number of subscribers in the interprocess mode test. Default is *1 subscriber*                                                             |
 | --security                          | Enable security. Default disable                                                                                                           |
-| -n \<number>                        | Number of samples sent in the test. Default is *10000 samples*
+| -n \<number>                        | Number of samples sent in the test. Default is *10000 samples*                                                                             |
 | -f \<file>                          | A file containing the demands                                                                                                              |
+| -x \<file>                          | A file containing the Fast DDS XML configuration                                                                                           |
