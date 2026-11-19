@@ -281,7 +281,9 @@ jobs:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.meta
           colcon_test_args: ${{ inputs.colcon-args }}
           colcon_test_args_default: --event-handlers=console_direct+
-          ctest_args: ${{ inputs.ctest-args }}
+          # TEMPORARY (flake hunt, revert before merge): run only large_data_topology, 100 consecutive
+          # passes required. Replaces: ctest_args: ${{ inputs.ctest-args }}
+          ctest_args: '-R large_data_topology/TransportTCPv4 --repeat until-fail:100 --output-on-failure'
           packages_names: fastdds
           workspace: ${{ github.workspace }}
           test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
@@ -299,7 +301,8 @@ jobs:
   fastdds_python_build:
     needs: fastdds_build
     runs-on: ${{ inputs.os-image }}
-    if: ${{ inputs.security == true }}
+    # TEMPORARY (flake hunt, revert before merge): disabled (was: if: ${{ inputs.security == true }})
+    if: false
     strategy:
       fail-fast: false
       matrix:
@@ -398,7 +401,8 @@ jobs:
   fastdds_python_test:
     needs: fastdds_python_build
     runs-on: ${{ inputs.os-image }}
-    if: ${{ inputs.security == true }}
+    # TEMPORARY (flake hunt, revert before merge): disabled (was: if: ${{ inputs.security == true }})
+    if: false
     strategy:
       fail-fast: false
       matrix:
@@ -504,7 +508,8 @@ jobs:
   fastdds_docs_test:
     needs: fastdds_python_build
     runs-on: ${{ inputs.os-image }}
-    if: ${{ inputs.security == true }}
+    # TEMPORARY (flake hunt, revert before merge): disabled (was: if: ${{ inputs.security == true }})
+    if: false
     strategy:
       fail-fast: false
       matrix:
@@ -633,6 +638,8 @@ jobs:
   fastdds_shapesdemo_build:
     needs: fastdds_build
     runs-on: ${{ inputs.os-image }}
+    # TEMPORARY (flake hunt, revert before merge): disabled
+    if: false
     strategy:
       fail-fast: false
       matrix:
@@ -729,6 +736,8 @@ jobs:
   fastdds_alternative_builds:
     needs: fastdds_build
     runs-on: ${{ inputs.os-image }}
+    # TEMPORARY (flake hunt, revert before merge): disabled
+    if: false
     strategy:
       fail-fast: false
       matrix:

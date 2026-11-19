@@ -204,6 +204,8 @@ TEST_P(TransportTCP, large_data_topology)
 {
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
 
+    EPROSIMA_LOG_WARNING(TRANSPORT_TCP_TEST, "This test is very sensitive to the system's file descriptor limit. If it fails, try increasing the limit with 'ulimit -n'.");
+    std::cout << "cout: This is to check if the stdcout is being printed in the test." << std::endl;
     // Limited to 12 readers and 12 writers so as not to exceed the system's file descriptor limit.
     uint16_t n_participants = 12;
     constexpr uint32_t samples_per_participant = 10;
@@ -227,6 +229,12 @@ TEST_P(TransportTCP, large_data_topology)
     auto rng = std::default_random_engine{};
     std::shuffle(ports.begin(), ports.end(), rng);
 
+    // Configure the socket buffer sizes explicitly instead of relying on OS autotuning.
+    // Autotuned buffers start at the system minimum and only grow with forward progress,
+    // so a discovery burst can fill both directions at once and wedge the pair.
+    BuiltinTransportsOptions transport_options;
+    transport_options.sockets_buffer_size = 1024 * 1024;
+
     // Reliable Keep_all to wait for all acked as end condition
     for (uint16_t i = 0; i < n_participants; i++)
     {
@@ -245,8 +253,8 @@ TEST_P(TransportTCP, large_data_topology)
                 .resource_limits_max_samples_per_instance(samples_per_participant);
 
         // Force TCP EDP discovery & data communication and UDP PDP discovery (NO SHM)
-        writers[i]->setup_large_data_tcp(use_ipv6, ports[i]);
-        readers[i]->setup_large_data_tcp(use_ipv6, ports[n_participants + i]);
+        writers[i]->setup_large_data_tcp(use_ipv6, ports[i], transport_options);
+        readers[i]->setup_large_data_tcp(use_ipv6, ports[n_participants + i], transport_options);
     }
 
     // Init participants
@@ -1302,4 +1310,3 @@ GTEST_INSTANTIATE_TEST_MACRO(TransportTCP,
             }
 
         });
-
