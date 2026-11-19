@@ -467,6 +467,41 @@ bool EDPStatic::enable_writer_on_v2_property(
     return ret_value;
 }
 
+/**
+ * Parse an EntityId_t from a stream of 4 dot-separated octets.
+ * @param[in,out] is Stream containing the entity ID representation.
+ * @param[out] entity_id Resulting EntityId_t when successfully parsed.
+ * @return True if the stream contained valid dot-separated octets in range [0, 255]
+ *         and reached EOF; false otherwise.
+ */
+static bool parse_entity_id(
+        std::istream& is,
+        EntityId_t& entity_id)
+{
+    int a = 0;
+    int b = 0;
+    int c = 0;
+    int d = 0;
+    char ch1 = 0;
+    char ch2 = 0;
+    char ch3 = 0;
+    is >> a >> ch1 >> b >> ch2 >> c >> ch3 >> d;
+    bool success = !is.fail() && is.eof() &&
+            '.' == ch1 && '.' == ch2 && '.' == ch3 &&
+            0 <= a && a <= 255 &&
+            0 <= b && b <= 255 &&
+            0 <= c && c <= 255 &&
+            0 <= d && d <= 255;
+    if (success)
+    {
+        entity_id.value[0] = static_cast<octet>(a);
+        entity_id.value[1] = static_cast<octet>(b);
+        entity_id.value[2] = static_cast<octet>(c);
+        entity_id.value[3] = static_cast<octet>(d);
+    }
+    return success;
+}
+
 bool EDPStaticProperty::fromProperty(
         std::pair<std::string, std::string> prop)
 {
@@ -481,18 +516,7 @@ bool EDPStaticProperty::fromProperty(
         ss.clear();
         ss.str(std::string());
         ss << prop.second;
-        int a, b, c, d;
-        char ch;
-        ss >> a >> ch >> b >> ch >> c >> ch >> d;
-        bool success = !ss.fail() && ss.eof();
-        if (success)
-        {
-            m_entityId.value[0] = (octet)a;
-            m_entityId.value[1] = (octet)b;
-            m_entityId.value[2] = (octet)c;
-            m_entityId.value[3] = (octet)d;
-        }
-        return success;
+        return parse_entity_id(ss, m_entityId);
     }
     else if (0 == prop.first.compare(0, 4, "EDS_"))
     {
@@ -541,18 +565,7 @@ bool EDPStaticProperty::fromProperty(
             ss << "0.";
         }
         ss << prop.second;
-        int a, b, c, d;
-        char ch;
-        ss >> a >> ch >> b >> ch >> c >> ch >> d;
-        bool success = !ss.fail() && ss.eof();
-        if (success)
-        {
-            m_entityId.value[0] = (octet)a;
-            m_entityId.value[1] = (octet)b;
-            m_entityId.value[2] = (octet)c;
-            m_entityId.value[3] = (octet)d;
-        }
-        return success;
+        return parse_entity_id(ss, m_entityId);
     }
     return false;
 }
