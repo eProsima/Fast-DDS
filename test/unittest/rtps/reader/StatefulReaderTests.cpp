@@ -132,6 +132,66 @@ TEST(StatefulReaderTests, EmptyPayloadUnregisterDisposeProcessing)
     RTPSDomain::removeRTPSParticipant(part);
 }
 
+/* Regression test: a DATA message from a writer that the reader has not matched yet must be
+   reported as not processed. An intraprocess StatefulWriter uses the return value of
+   processDataMsg() to decide whether the change was delivered. If it is told the change was
+   delivered, the change is acknowledged and never resent once the reader matches the writer,
+   so the sample is lost.
+ */
+TEST(StatefulReaderTests, DataFromUnmatchedWriterIsNotProcessed)
+{
+    RTPSParticipantAttributes part_attrs;
+    RTPSParticipant* part = RTPSDomain::createParticipant(0, false, part_attrs, nullptr);
+
+    HistoryAttributes hatt{};
+    ReaderHistory reader_history(hatt);
+    WriterHistory writer_history(hatt);
+
+    ReaderAttributes reader_att{};
+    reader_att.endpoint.endpointKind = READER;
+    reader_att.endpoint.reliabilityKind = RELIABLE;
+    reader_att.endpoint.durabilityKind = VOLATILE;
+
+    RTPSReader* reader = RTPSDomain::createRTPSReader(part, reader_att, &reader_history, nullptr);
+    StatefulReader* uut = dynamic_cast<StatefulReader*>(reader);
+    ASSERT_NE(uut, nullptr);
+
+    WriterAttributes writer_att{};
+    writer_att.endpoint.endpointKind = WRITER;
+    writer_att.endpoint.reliabilityKind = RELIABLE;
+    writer_att.endpoint.durabilityKind = VOLATILE;
+
+    RTPSWriter* writer = RTPSDomain::createRTPSWriter(part, writer_att, &writer_history, nullptr);
+    ASSERT_NE(writer, nullptr);
+
+    // The endpoints are not registered yet, so the reader does not know the writer
+    auto writer_guid = writer->getGuid();
+    EXPECT_FALSE(uut->matched_writer_is_matched(writer_guid));
+
+    CacheChange_t change;
+    change.writerGUID = writer_guid;
+    change.sequenceNumber = {0, 1};
+    change.serializedPayload.length = 0;
+    change.instanceHandle.value[0] = 1;
+    change.kind = ChangeKind_t::NOT_ALIVE_DISPOSED;
+    EXPECT_FALSE(uut->processDataMsg(&change));
+
+    // Once the endpoints are matched, the same change is processed
+    TopicAttributes topic_desc;
+    topic_desc.topicKind = rtps::WITH_KEY;
+    topic_desc.topicName = "topic";
+    topic_desc.topicDataType = "string";
+    part->registerReader(reader, topic_desc, fastdds::dds::ReaderQos());
+    part->registerWriter(writer, topic_desc, fastdds::dds::WriterQos());
+    EXPECT_TRUE(uut->matched_writer_is_matched(writer_guid));
+    EXPECT_TRUE(uut->processDataMsg(&change));
+
+    // Destroy the writer
+    RTPSDomain::removeRTPSWriter(writer);
+    // Destroy the reader
+    RTPSDomain::removeRTPSReader(reader);
+}
+
 /* Vulnerability reproducer for GHSA-f4hw-9j9g-j8xj: an excessive-iteration CPU-exhaustion DoS in
  * WriterProxy::process_gap.
  *
