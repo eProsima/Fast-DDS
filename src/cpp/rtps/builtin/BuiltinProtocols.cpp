@@ -159,6 +159,13 @@ void BuiltinProtocols::enable()
     if (nullptr != mp_PDP)
     {
         mp_PDP->enable();
+    }
+}
+
+void BuiltinProtocols::start_participant_announcement()
+{
+    if (nullptr != mp_PDP)
+    {
         mp_PDP->announceParticipantState(true);
         mp_PDP->resetParticipantAnnouncement();
     }
