@@ -15,6 +15,9 @@
 #ifndef __TEST_UNITTEST_RTPS_SECURITY_SECURITYTESTS_HPP__
 #define __TEST_UNITTEST_RTPS_SECURITY_SECURITYTESTS_HPP__
 
+#include <memory>
+#include <vector>
+
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/core/ReturnCode.hpp>
@@ -202,6 +205,9 @@ public:
     TestPDP pdp_;
     ::testing::NiceMock<PDPMock>& pdp_mock_ {eprosima::fastdds::mock::mock_of<PDP>(&pdp_)};
     SecurityPluginFactory plugin_factory_;
+    //! Changes the helpers created and did not return. They are kept until the manager is destroyed, which removes
+    //! them from the writer history.
+    std::vector<std::unique_ptr<CacheChange_t>> owned_changes_;
     SecurityManager manager_;
 
     // handles

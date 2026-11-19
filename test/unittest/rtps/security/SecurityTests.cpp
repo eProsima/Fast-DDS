@@ -119,7 +119,7 @@ void SecurityTest::request_process_ok(
     }
     else
     {
-        delete change;
+        owned_changes_.emplace_back(change);
     }
 }
 
@@ -184,7 +184,7 @@ void SecurityTest::reply_process_ok(
     }
     else
     {
-        delete change2;
+        owned_changes_.emplace_back(change2);
     }
 }
 
@@ -273,7 +273,7 @@ void SecurityTest::final_message_process_ok(
 
     if (final_message_change == nullptr)
     {
-        delete change2;
+        owned_changes_.emplace_back(change2);
     }
     else
     {

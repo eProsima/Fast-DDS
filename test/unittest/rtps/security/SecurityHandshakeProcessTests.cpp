@@ -199,7 +199,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_not_expecting_reques
     EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle, _)).Times(1).
             WillRepeatedly(Return(true));
     EXPECT_CALL(mock::mock_of(stateless_reader_->history_), remove_change(change)).Times(1).
-            WillOnce(Return(true));
+            WillOnce(DoAll(DeleteArg<0>(), Return(true)));
 
     stateless_reader_->history_->add_change(change);
     stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
