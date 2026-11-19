@@ -22,6 +22,10 @@
 
 #include "BoostAtExitRegistry.hpp"
 
+#ifdef __APPLE__
+#include "RobustInterprocessSemaphore.hpp"
+#endif // __APPLE__
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -209,7 +213,13 @@ private:
 
     struct SemaphoreNode
     {
+#ifdef __APPLE__
+        // Boost cannot use process-shared POSIX semaphores on macOS and falls back to a
+        // sleep-polling emulation, adding milliseconds of latency to every SHM notification.
+        RobustInterprocessSemaphore sem {0};
+#else
         bi::interprocess_semaphore sem {0};
+#endif // __APPLE__
         uint32_t next;
         uint32_t prev;
     };
