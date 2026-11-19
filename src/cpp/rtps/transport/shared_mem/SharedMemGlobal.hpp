@@ -498,7 +498,8 @@ public:
                             port_segment_.reset();
 
                             SharedMemSegment::remove(segment_name.c_str());
-                            SharedMemSegment::named_mutex::remove((segment_name + "_mutex").c_str());
+                            // Other openers may still hold this mutex or be waiting on it.
+                            // Keep its name so a new port uses the same synchronization object.
                         }
                     }
                 }
