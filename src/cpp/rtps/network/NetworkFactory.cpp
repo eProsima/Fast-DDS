@@ -28,6 +28,7 @@
 #include <rtps/network/NetworkConfiguration.hpp>
 #include <rtps/transport/MulticastTransportInterface.hpp>
 #include <rtps/transport/TCPTransportInterface.h>
+#include <rtps/transport/shared_mem/SharedMemTransport.h>
 
 using namespace std;
 
@@ -136,7 +137,8 @@ bool NetworkFactory::BuildReceiverResources(
 bool NetworkFactory::RegisterTransport(
         const TransportDescriptorInterface* descriptor,
         const fastdds::rtps::PropertyPolicy* properties,
-        const uint32_t& max_msg_size_no_frag)
+        const uint32_t& max_msg_size_no_frag,
+        const GuidPrefix_t& participant_prefix)
 {
     bool wasRegistered = false;
 
@@ -146,6 +148,19 @@ bool NetworkFactory::RegisterTransport(
 
     if (transport)
     {
+#ifndef FASTDDS_SHM_TRANSPORT_DISABLED
+        // Not part of TransportInterface to keep the public ABI unchanged
+        TransportInterface* current = transport.get();
+        while (auto* chaining = dynamic_cast<ChainingTransport*>(current))
+        {
+            current = chaining->low_level_transport_.get();
+        }
+        if (auto* shm_transport = dynamic_cast<SharedMemTransport*>(current))
+        {
+            shm_transport->participant_prefix(participant_prefix);
+        }
+#endif // ifndef FASTDDS_SHM_TRANSPORT_DISABLED
+
         int32_t kind = transport->kind();
         bool is_localhost_allowed = transport->is_localhost_allowed();
 

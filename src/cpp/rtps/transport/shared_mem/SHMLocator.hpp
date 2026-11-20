@@ -43,13 +43,13 @@ public:
      */
     static Locator create_locator(
             uint32_t port,
-            Type type)
+            Type type,
+            uint16_t host_id = Host::instance().id())
     {
         Locator_t locator(LOCATOR_KIND_SHM, port);
 
         locator.get_address()[0] = (type == Type::UNICAST) ? 'U' : 'M';
 
-        auto host_id = Host::instance().id();
         locator.get_address()[1] = octet(host_id);
         locator.get_address()[2] = octet(host_id >> 8);
 
@@ -62,12 +62,11 @@ public:
      * @return boolean
      */
     static bool is_shm_and_from_this_host(
-            const Locator& locator)
+            const Locator& locator,
+            uint16_t host_id = Host::instance().id())
     {
         if (locator.kind == LOCATOR_KIND_SHM)
         {
-            auto host_id = Host::instance().id();
-
             return locator.address[1] == octet(host_id) && locator.address[2] == octet(host_id >> 8);
         }
 
