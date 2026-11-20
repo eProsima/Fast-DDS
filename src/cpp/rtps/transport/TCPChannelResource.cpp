@@ -249,8 +249,8 @@ void TCPChannelResource::add_logical_port_response(
     }
     else
     {
-        EPROSIMA_LOG_WARNING(RTCP, "Received add_logical_port_response, but the transaction id wasn't registered " <<
-                "(maybe removed" << " while negotiating?).");
+        EPROSIMA_LOG_WARNING(RTCP, "Received add_logical_port_response, but the transaction id wasn't registered "
+                << "(maybe removed" << " while negotiating?).");
     }
 }
 
@@ -381,7 +381,8 @@ void TCPChannelResource::set_socket_options(
 
     uint32_t minimum_value = options->maxMessageSize;
 
-    // Set the send buffer size
+    // Set the send buffer size, unless left to OS autotuning
+    if (!parent_->autotune_send_buffer())
     {
         uint32_t desired_value = options->sendBufferSize;
         uint32_t configured_value = 0;
@@ -399,7 +400,8 @@ void TCPChannelResource::set_socket_options(
         }
     }
 
-    // Set the receive buffer size
+    // Set the receive buffer size, unless left to OS autotuning
+    if (!parent_->autotune_receive_buffer())
     {
         uint32_t desired_value = options->receiveBufferSize;
         uint32_t configured_value = 0;

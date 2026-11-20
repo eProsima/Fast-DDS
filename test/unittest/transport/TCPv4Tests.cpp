@@ -156,6 +156,49 @@ TEST_F(TCPv4Tests, wrong_configuration_values)
     }
 }
 
+/**
+ * @test Socket buffers are left to OS autotuning only when their size is not configured.
+ * Enabling non_blocking_send without a configured sendBufferSize disables the send buffer autotuning,
+ * as the non-blocking check requires a fixed send buffer size.
+ */
+TEST_F(TCPv4Tests, autotune_buffers_and_non_blocking_send)
+{
+    // No sizes configured: both buffers autotuned
+    {
+        TCPv4Transport transportUnderTest(descriptor);
+        ASSERT_TRUE(transportUnderTest.init());
+        EXPECT_TRUE(transportUnderTest.autotune_send_buffer());
+        EXPECT_TRUE(transportUnderTest.autotune_receive_buffer());
+        eprosima::fastdds::dds::Log::Flush();
+    }
+
+    // Sizes configured: no autotuning
+    {
+        auto test_descriptor = descriptor;
+        test_descriptor.sendBufferSize = 100000;
+        test_descriptor.receiveBufferSize = 100000;
+        TCPv4Transport transportUnderTest(test_descriptor);
+        ASSERT_TRUE(transportUnderTest.init());
+        EXPECT_FALSE(transportUnderTest.autotune_send_buffer());
+        EXPECT_FALSE(transportUnderTest.autotune_receive_buffer());
+        eprosima::fastdds::dds::Log::Flush();
+    }
+
+    // non_blocking_send without sendBufferSize: send buffer fixed to the system default, receive buffer autotuned
+    {
+        auto test_descriptor = descriptor;
+        test_descriptor.non_blocking_send = true;
+        TCPv4Transport transportUnderTest(test_descriptor);
+        ASSERT_TRUE(transportUnderTest.init());
+        EXPECT_FALSE(transportUnderTest.autotune_send_buffer());
+        EXPECT_TRUE(transportUnderTest.autotune_receive_buffer());
+        auto* final_cfg = transportUnderTest.configuration();
+        EXPECT_TRUE(final_cfg->non_blocking_send);
+        EXPECT_GE(final_cfg->sendBufferSize, final_cfg->maxMessageSize);
+        eprosima::fastdds::dds::Log::Flush();
+    }
+}
+
 TEST_F(TCPv4Tests, locators_with_kind_1_supported)
 {
     // Given
