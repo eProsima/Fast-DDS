@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <cstdio>
 #include <fstream>
 #include <iostream>
 #include <iterator>
@@ -26,6 +27,8 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
 #include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
 #include <fastdds/dds/xtypes/utils.hpp>
 
@@ -124,6 +127,98 @@ INSTANTIATE_TEST_SUITE_P(
     DynTypeIDLTests,
     ::testing::ValuesIn(test::supported_types)
     );
+
+/**
+ * Verify that array aliases keep bounds after their names,
+ * and that the serialized IDL can be parsed back into the same type.
+ */
+TEST(DynTypeIDLRegressionTests, array_aliases)
+{
+    const std::string input_file = "types/array_declarations/array_declarations.idl";
+    std::ifstream file(input_file);
+    ASSERT_TRUE(file.is_open());
+    const std::string expected{std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()};
+
+    auto factory = DynamicTypeBuilderFactory::get_instance();
+    auto builder = factory->create_type_w_uri(input_file, "ArrayDeclarations", {});
+    ASSERT_NE(builder, nullptr);
+    auto type = builder->build();
+    ASSERT_NE(type, nullptr);
+
+    std::stringstream serialized;
+    ASSERT_EQ(idl_serialize(type, serialized), RETCODE_OK);
+    EXPECT_EQ(expected, serialized.str());
+
+    const std::string output_file = "array_declarations_roundtrip.idl";
+    {
+        std::ofstream output(output_file);
+        ASSERT_TRUE(output.is_open());
+        output << serialized.str();
+    }
+    auto reparsed = factory->create_type_w_uri(output_file, "ArrayDeclarations", {});
+    std::remove(output_file.c_str());
+    ASSERT_NE(reparsed, nullptr);
+    EXPECT_TRUE(type->equals(reparsed->build()));
+}
+
+/**
+ * Verify array declarators in both labelled and default union members.
+ */
+TEST(DynTypeIDLRegressionTests, array_union_members)
+{
+    auto factory = DynamicTypeBuilderFactory::get_instance();
+    auto float64_type = factory->get_primitive_type(TK_FLOAT64);
+    auto array_builder = factory->create_array_type(float64_type, {9});
+    auto matrix_builder = factory->create_array_type(float64_type, {2, 3});
+    ASSERT_NE(array_builder, nullptr);
+    ASSERT_NE(matrix_builder, nullptr);
+
+    auto descriptor = traits<TypeDescriptor>::make_shared();
+    descriptor->kind(TK_UNION);
+    descriptor->name("ArrayUnion");
+    descriptor->discriminator_type(factory->get_primitive_type(TK_INT32));
+    auto union_builder = factory->create_type(descriptor);
+    ASSERT_NE(union_builder, nullptr);
+
+    auto member = traits<MemberDescriptor>::make_shared();
+    member->name("values");
+    member->type(array_builder->build());
+    member->label({0, 1});
+    ASSERT_EQ(union_builder->add_member(member), RETCODE_OK);
+
+    member = traits<MemberDescriptor>::make_shared();
+    member->name("matrix");
+    member->type(matrix_builder->build());
+    member->is_default_label(true);
+    ASSERT_EQ(union_builder->add_member(member), RETCODE_OK);
+
+    descriptor = traits<TypeDescriptor>::make_shared();
+    descriptor->kind(TK_STRUCTURE);
+    descriptor->name("ArrayUnionStruct");
+    auto struct_builder = factory->create_type(descriptor);
+    ASSERT_NE(struct_builder, nullptr);
+    member = traits<MemberDescriptor>::make_shared();
+    member->name("selection");
+    member->type(union_builder->build());
+    ASSERT_EQ(struct_builder->add_member(member), RETCODE_OK);
+
+    std::stringstream serialized;
+    ASSERT_EQ(idl_serialize(struct_builder->build(), serialized), RETCODE_OK);
+    EXPECT_EQ(serialized.str(),
+            "union ArrayUnion switch (long)\n"
+            "{\n"
+            "    case 0:\n"
+            "    case 1:\n"
+            "        double values[9];\n"
+            "    default:\n"
+            "        double matrix[2][3];\n"
+            "};\n\n"
+            "@extensibility(APPENDABLE)\n"
+            "struct ArrayUnionStruct\n"
+            "{\n"
+            "    ArrayUnion selection;\n"
+            "};\n");
+}
 
 int main(
         int argc,
