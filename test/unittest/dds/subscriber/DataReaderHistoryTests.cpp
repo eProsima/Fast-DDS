@@ -233,6 +233,69 @@ TEST(DataReaderHistory, exclusive_ownership_keyed_sample_reception)
     ASSERT_EQ(18u, history.getHistorySize());
 }
 
+/*!
+ * Regression test for https://github.com/eProsima/Fast-DDS/issues/6567
+ *
+ * A fragmented change of a non-keyed topic is stored in the instance only when it is completed, as is done for keyed
+ * topics. Until then it does not replace the oldest sample of a KEEP_LAST instance.
+ */
+TEST(DataReaderHistory, non_keyed_fragmented_change_added_to_instance_when_completed)
+{
+    using eprosima::fastdds::rtps::CacheChange_t;
+    using eprosima::fastdds::rtps::SerializedPayload_t;
+
+    const TypeSupport type(new TestType());
+    const Topic topic("test", "test");
+    DataReaderQos qos;
+    qos.history().kind = KEEP_LAST_HISTORY_QOS;
+    qos.history().depth = 1;
+    qos.endpoint().history_memory_policy = eprosima::fastdds::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
+    DataReaderHistory history(type, nullptr, topic, qos);
+    eprosima::fastdds::RecursiveTimedMutex mutex;
+    eprosima::fastdds::rtps::StatelessReader reader(&history, &mutex);
+
+    auto instance_changes = [&history]()
+            {
+                auto instance = history.lookup_available_instance(InstanceHandle_t(), false);
+                EXPECT_TRUE(instance.first);
+                std::vector<CacheChange_t*> ret;
+                for (CacheChange_t* change : instance.second->second->cache_changes)
+                {
+                    ret.push_back(change);
+                }
+                return ret;
+            };
+
+    CacheChange_t complete_change;
+    complete_change.writerGUID = {{}, 1};
+    complete_change.sequenceNumber = {0, 1};
+    eprosima::fastdds::rtps::Time_t::now(complete_change.sourceTimestamp);
+    ASSERT_TRUE(history.received_change(&complete_change, 0));
+
+    constexpr uint16_t fragment_size = 4;
+    CacheChange_t fragmented_change;
+    fragmented_change.writerGUID = {{}, 1};
+    fragmented_change.sequenceNumber = {0, 2};
+    eprosima::fastdds::rtps::Time_t::now(fragmented_change.sourceTimestamp);
+    fragmented_change.serializedPayload.reserve(2 * fragment_size);
+    fragmented_change.serializedPayload.length = 2 * fragment_size;
+    fragmented_change.setFragmentSize(fragment_size, true);
+    SerializedPayload_t fragment(fragment_size);
+    fragment.length = fragment_size;
+
+    // First fragment: the change is kept in the history only
+    ASSERT_FALSE(fragmented_change.add_fragments(fragment, 1, 1));
+    ASSERT_TRUE(history.received_change(&fragmented_change, 0));
+    EXPECT_EQ(2u, history.getHistorySize());
+    EXPECT_EQ(std::vector<CacheChange_t*>{&complete_change}, instance_changes());
+
+    // Last fragment: the change replaces the oldest sample in the instance
+    ASSERT_TRUE(fragmented_change.add_fragments(fragment, 2, 1));
+    ASSERT_TRUE(history.completed_change(&fragmented_change));
+    EXPECT_EQ(1u, history.getHistorySize());
+    EXPECT_EQ(std::vector<CacheChange_t*>{&fragmented_change}, instance_changes());
+}
+
 int main(
         int argc,
         char** argv)
