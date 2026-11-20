@@ -39,7 +39,7 @@ namespace external_locators {
  * @param [in,out]  external_locators   The external locators collection to be updated.
  * @param [in]      listening_locators  The list of listening locators to set on externality index 0.
  */
-void set_listening_locators(
+inline void set_listening_locators(
         ExternalLocators& /*external_locators*/,
         const LocatorList& /*listening_locators*/)
 {
@@ -54,7 +54,7 @@ void set_listening_locators(
  * @param [in]      default_external_locators      The external locators collection with the external default locators
  *                                                 to announce.
  */
-void add_external_locators(
+inline void add_external_locators(
         ParticipantProxyData& /*data*/,
         const ExternalLocators& /*metatraffic_external_locators*/,
         const ExternalLocators& /*default_external_locators*/)
@@ -67,7 +67,7 @@ void add_external_locators(
  * @param [in,out]  data               WriterProxyData of the local writer to update.
  * @param [in]      external_locators  The external locators collection with the external locators to announce.
  */
-void add_external_locators(
+inline void add_external_locators(
         WriterProxyData& /*data*/,
         const ExternalLocators& /*external_locators*/)
 {
@@ -79,13 +79,13 @@ void add_external_locators(
  * @param [in,out]  data               ReaderProxyData of the local reader to update.
  * @param [in]      external_locators  The external locators collection with the external locators to announce.
  */
-void add_external_locators(
+inline void add_external_locators(
         ReaderProxyData& /*data*/,
         const ExternalLocators& /*external_locators*/)
 {
 }
 
-void add_external_locators(
+inline void add_external_locators(
         LocatorList&,
         const ExternalLocators&)
 {
@@ -102,7 +102,7 @@ void add_external_locators(
  * @param [in]      ignore_non_matching            Whether addresses not matching any of the input external locators
  *                                                 should be filtered out.
  */
-void filter_remote_locators(
+inline void filter_remote_locators(
         ParticipantProxyData& /*data*/,
         const ExternalLocators& /*metatraffic_external_locators*/,
         const ExternalLocators& /*default_external_locators*/,
@@ -118,7 +118,7 @@ void filter_remote_locators(
  * @param [in]      ignore_non_matching  Whether addresses not matching any of the input external locators should be
  *                                       filtered out.
  */
-void filter_remote_locators(
+inline void filter_remote_locators(
         LocatorSelectorEntry& /*locators*/,
         const ExternalLocators& /*external_locators*/,
         bool /*ignore_non_matching*/)

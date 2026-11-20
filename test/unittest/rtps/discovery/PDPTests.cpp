@@ -26,15 +26,22 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
+#include <fastdds/rtps/common/CacheChange.hpp>
+#include <fastdds/rtps/common/SerializedPayload.hpp>
+#include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/reader/ReaderListener.hpp>
 
 #include <rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>
+#include <rtps/builtin/discovery/participant/PDPListener.h>
 #include <rtps/participant/RTPSParticipantImpl.hpp>
+#include <rtps/reader/StatelessReader.hpp>
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
 
@@ -94,16 +101,24 @@ class TesterPDPEndpoints : public fastdds::rtps::PDPEndpoints
     void remove_from_pdp_reader_history(
             const fastdds::rtps::InstanceHandle_t&) override
     {
-
+        ++removed_instances_;
     }
 
     void remove_from_pdp_reader_history(
             fastdds::rtps::CacheChange_t*) override
     {
-
+        ++removed_changes_;
     }
 
     std::unique_ptr<fastdds::rtps::ReaderListener> no_listener_;
+
+public:
+
+    //! Number of calls to remove_from_pdp_reader_history(InstanceHandle_t)
+    size_t removed_instances_ = 0;
+
+    //! Number of calls to remove_from_pdp_reader_history(CacheChange_t*)
+    size_t removed_changes_ = 0;
 
 };
 
@@ -233,6 +248,11 @@ public:
 
 #endif // HAVE_SECURITY
 
+    TesterPDPEndpoints* endpoints() const
+    {
+        return endpoints_;
+    }
+
 protected:
 
     void update_builtin_locators() override
@@ -303,6 +323,53 @@ protected:
     ::testing::NiceMock<BuiltinProtocols> bp_;
     ::testing::NiceMock<RTPSParticipantImpl> participant_;
 };
+
+/*!
+ * A DATA(p) received from a participant belonging to another domain is rejected by
+ * \c PDPListener::check_discovery_conditions and shall be removed from the PDP reader history.
+ * Otherwise, periodic SPDP announcements from participants in other domains sharing the same
+ * multicast locators would accumulate in the history indefinitely.
+ */
+TEST_F(PDPTests, rejected_participant_is_removed_from_pdp_reader_history)
+{
+    // The local participant belongs to domain 0.
+    GUID_t local_guid;
+    local_guid.guidPrefix.value[0] = 0x01;
+    local_guid.entityId = c_EntityId_RTPSParticipant;
+    EXPECT_CALL(participant_, get_domain_id()).WillRepeatedly(Return(0u));
+    EXPECT_CALL(participant_, getGuid()).WillRepeatedly(ReturnRef(local_guid));
+
+    // Build the DATA(p) payload of a remote participant belonging to another domain.
+    ParticipantProxyData remote_data(participant_.get_const_attributes().allocation);
+    remote_data.guid.guidPrefix.value[0] = 0x02;
+    remote_data.guid.entityId = c_EntityId_RTPSParticipant;
+    remote_data.domain_id = 1;
+
+    uint32_t serialized_size = remote_data.get_serialized_size(true);
+    SerializedPayload_t payload(serialized_size);
+    payload.encapsulation = DEFAULT_ENCAPSULATION;
+    CDRMessage_t msg(payload);
+    ASSERT_TRUE(remote_data.write_to_cdr_message(&msg, true));
+    payload.length = msg.length;
+
+    CacheChange_t change;
+    change.kind = ALIVE;
+    change.writerGUID = remote_data.guid;
+    change.writerGUID.entityId = c_EntityId_SPDPWriter;
+    change.sequenceNumber = SequenceNumber_t(0, 1);
+    change.vendor_id = c_VendorId_eProsima;
+    change.serializedPayload = std::move(payload);
+
+    ReaderHistory history{HistoryAttributes{}};
+    RecursiveTimedMutex reader_mutex;
+    ::testing::NiceMock<StatelessReader> reader(&history, &reader_mutex);
+    PDPListener listener(pdp_);
+
+    listener.on_new_cache_change_added(&reader, &change);
+
+    // The rejected change shall not be kept in the PDP reader history.
+    EXPECT_EQ(1u, pdp_->endpoints()->removed_changes_);
+}
 
 TEST_F(PDPTests, iproxy_queryable_get_all_local_proxies)
 {
