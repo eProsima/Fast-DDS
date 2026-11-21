@@ -1,0 +1,13 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+includedir=@includedir_for_pc_file@
+libdir=@libdir_for_pc_file@
+
+Name: fastdds
+Description: C++ implementation of the DDS (Data Distribution Service) standard
+URL: https://github.com/eProsima/Fast-DDS
+Version: @PROJECT_VERSION@
+
+Requires: fastcdr
+Requires.private: @private_requires_for_pc_file@
+Cflags: -I${includedir}
+Libs: -L${libdir} -lfastdds
