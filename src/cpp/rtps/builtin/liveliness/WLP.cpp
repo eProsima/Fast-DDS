@@ -841,6 +841,17 @@ bool WLP::remove_local_reader(
 bool WLP::automatic_liveliness_assertion()
 {
     std::unique_lock<std::recursive_mutex> lock(*mp_builtinProtocols->mp_PDP->getMutex());
+ 
+    // Assert liveliness for local readers (ADDED)
+    if (automatic_readers_)
+    {
+        for (auto& writer : automatic_writers_)
+        {
+            sub_liveliness_manager_->assert_liveliness(
+                dds::AUTOMATIC_LIVELINESS_QOS,
+                writer->getGuid().guidPrefix);
+        }
+    }
 
     if (0 < automatic_writers_.size())
     {
