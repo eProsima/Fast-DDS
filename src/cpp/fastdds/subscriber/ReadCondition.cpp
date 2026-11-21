@@ -16,6 +16,7 @@
  * @file ReadCondition.cpp
  */
 
+#include <fastdds/core/condition/ConditionNotifier.hpp>
 #include <fastdds/subscriber/ReadConditionImpl.hpp>
 
 namespace eprosima {
@@ -28,6 +29,8 @@ ReadCondition::ReadCondition()
 
 ReadCondition::~ReadCondition()
 {
+    // See the note in GuardCondition::~GuardCondition().
+    notifier_->will_be_deleted(*this);
 }
 
 bool ReadCondition::get_trigger_value() const noexcept
