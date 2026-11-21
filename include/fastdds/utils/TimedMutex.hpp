@@ -26,7 +26,7 @@
 
 #if defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 193632528
 #include <mutex>
-#elif defined(MINGW_COMPILER)
+#elif defined(MINGW_COMPILER) || defined(__MINGW32__)
 #include <mutex>
 #else
 #include <thread>
@@ -49,7 +49,7 @@ namespace fastdds {
 #if defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 193632528
 using TimedMutex = std::timed_mutex;
 using RecursiveTimedMutex = std::recursive_timed_mutex;
-#elif defined(MINGW_COMPILER)
+#elif defined(MINGW_COMPILER) || defined(__MINGW32__)
 using TimedMutex = std::timed_mutex;
 using RecursiveTimedMutex = std::recursive_timed_mutex;
 #else
