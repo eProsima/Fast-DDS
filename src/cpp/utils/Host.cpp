@@ -24,6 +24,7 @@
 #include <windows.h>
 #include <process.h>
 #elif defined(__APPLE__)
+#include <AvailabilityMacros.h>
 #include <IOKit/IOKitLib.h>
 #else
 #include <unistd.h>
@@ -46,7 +47,11 @@ fastcdr::string_255 Host::compute_machine_id()
     }
     return "";
     #elif defined(__APPLE__)
+    #if MAC_OS_X_VERSION_MIN_REQUIRED < 120000
+    io_registry_entry_t ioRegistryRoot = IORegistryEntryFromPath(kIOMasterPortDefault, "IOService:/");
+    #else
     io_registry_entry_t ioRegistryRoot = IORegistryEntryFromPath(kIOMainPortDefault, "IOService:/");
+    #endif
     if (!ioRegistryRoot)
     {
         return "";
