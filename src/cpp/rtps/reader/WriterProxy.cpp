@@ -33,7 +33,7 @@
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/writer/BaseWriter.hpp>
 
-#if !defined(NDEBUG) && !defined(ANDROID) && defined(FASTDDS_SOURCE) && defined(__unix__)
+#if !defined(NDEBUG) && !defined(ANDROID) && defined(FASTDDS_SOURCE) && defined(__linux__)
 #define SHOULD_DEBUG_LINUX
 #endif // SHOULD_DEBUG_LINUX
 
