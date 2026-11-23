@@ -71,25 +71,27 @@ target_link_libraries(StatisticsQosTests
 gtest_discover_tests(StatisticsQosTests)
 
 ## StatisticsDomainParticipantListenerTests
-set(DOMAINPARTICIPANTSTATISTICSLISTENER_TESTS_SOURCE
-    DomainParticipantStatisticsListenerTests.cpp)
+if (FASTDDS_STATISTICS)
+    set(DOMAINPARTICIPANTSTATISTICSLISTENER_TESTS_SOURCE
+        DomainParticipantStatisticsListenerTests.cpp)
 
-add_executable(DomainParticipantStatisticsListenerTests ${DOMAINPARTICIPANTSTATISTICSLISTENER_TESTS_SOURCE})
-target_link_units(DomainParticipantStatisticsListenerTests UNITS statistics::types dds::condition dds::participant-qos
-    rtps::common xtypes xmlparser::common statistics::participant-listener MOCKS DataWriter
-    DomainParticipantFactory RTPSDomainImpl TypeSupport xtypes::TypeObjectUtils XMLProfileManager)
-target_include_directories(DomainParticipantStatisticsListenerTests PRIVATE
-    ${Asio_INCLUDE_DIR}
-    ${PROJECT_SOURCE_DIR}/include
-    ${PROJECT_BINARY_DIR}/include
-    ${PROJECT_SOURCE_DIR}/src/cpp
-    ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl)
-target_link_libraries(DomainParticipantStatisticsListenerTests
-    ${TINYXML2_LIBRARY}
-    fastcdr
-    GTest::gmock
-    )
-gtest_discover_tests(DomainParticipantStatisticsListenerTests)
+    add_executable(DomainParticipantStatisticsListenerTests ${DOMAINPARTICIPANTSTATISTICSLISTENER_TESTS_SOURCE})
+    target_link_units(DomainParticipantStatisticsListenerTests UNITS statistics::types dds::condition dds::participant-qos
+        rtps::common xtypes xmlparser::common statistics::participant-listener MOCKS DataWriter
+        DomainParticipantFactory RTPSDomainImpl TypeSupport xtypes::TypeObjectUtils XMLProfileManager)
+    target_include_directories(DomainParticipantStatisticsListenerTests PRIVATE
+        ${Asio_INCLUDE_DIR}
+        ${PROJECT_SOURCE_DIR}/include
+        ${PROJECT_BINARY_DIR}/include
+        ${PROJECT_SOURCE_DIR}/src/cpp
+        ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl)
+    target_link_libraries(DomainParticipantStatisticsListenerTests
+        ${TINYXML2_LIBRARY}
+        fastcdr
+        GTest::gmock
+        )
+    gtest_discover_tests(DomainParticipantStatisticsListenerTests)
+endif()
 
 ## StatisticsDomainParticipantMockTests
 if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)

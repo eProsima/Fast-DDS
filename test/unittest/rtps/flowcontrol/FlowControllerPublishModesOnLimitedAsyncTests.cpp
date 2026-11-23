@@ -21,31 +21,12 @@
 using namespace eprosima::fastdds::rtps;
 using namespace testing;
 
-struct FlowControllerLimitedAsyncPublishModeMock : public FlowControllerLimitedAsyncPublishMode
-{
-    FlowControllerLimitedAsyncPublishModeMock(
-            RTPSParticipantImpl* participant,
-            const FlowControllerDescriptor* descriptor)
-        : FlowControllerLimitedAsyncPublishMode(participant, descriptor)
-    {
-        publish_mode = this;
-    }
-
-    static FlowControllerLimitedAsyncPublishMode& get_publish_mode()
-    {
-        return *publish_mode;
-    }
-
-    static FlowControllerLimitedAsyncPublishMode* publish_mode;
-};
-FlowControllerLimitedAsyncPublishMode* FlowControllerLimitedAsyncPublishModeMock::publish_mode {nullptr};
-
 TYPED_TEST(FlowControllerPublishModes, limited_async_publish_mode)
 {
     FlowControllerDescriptor flow_controller_descr;
     flow_controller_descr.max_bytes_per_period = 10200;
     flow_controller_descr.period_ms = 10;
-    FlowControllerImpl<FlowControllerLimitedAsyncPublishModeMock, TypeParam> async(nullptr,
+    FlowControllerImpl<FlowControllerLimitedAsyncPublishMode, TypeParam> async(nullptr,
             &flow_controller_descr, 0, ThreadSettings{});
     async.init();
 

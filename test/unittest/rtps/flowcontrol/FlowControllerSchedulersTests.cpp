@@ -41,25 +41,6 @@ std::ostream& operator <<(
 
 using namespace testing;
 
-struct FlowControllerLimitedAsyncPublishModeMock : public FlowControllerLimitedAsyncPublishMode
-{
-    FlowControllerLimitedAsyncPublishModeMock(
-            RTPSParticipantImpl* participant,
-            const FlowControllerDescriptor* descriptor)
-        : FlowControllerLimitedAsyncPublishMode(participant, descriptor)
-    {
-        publish_mode = this;
-    }
-
-    static FlowControllerLimitedAsyncPublishMode& get_publish_mode()
-    {
-        return *publish_mode;
-    }
-
-    static FlowControllerLimitedAsyncPublishMode* publish_mode;
-};
-FlowControllerLimitedAsyncPublishMode* FlowControllerLimitedAsyncPublishModeMock::publish_mode {nullptr};
-
 class FlowControllerSchedulers :  public testing::Test
 {
 protected:
@@ -98,7 +79,7 @@ TEST_F(FlowControllerSchedulers, Fifo)
     FlowControllerDescriptor flow_controller_descr;
     flow_controller_descr.max_bytes_per_period = 102000;
     flow_controller_descr.period_ms = 10;
-    FlowControllerImpl<FlowControllerLimitedAsyncPublishModeMock, FlowControllerFifoSchedule> async(nullptr,
+    FlowControllerImpl<FlowControllerLimitedAsyncPublishMode, FlowControllerFifoSchedule> async(nullptr,
             &flow_controller_descr, 0, ThreadSettings{});
     async.init();
 
@@ -637,7 +618,7 @@ TEST_F(FlowControllerSchedulers, RoundRobin)
     FlowControllerDescriptor flow_controller_descr;
     flow_controller_descr.max_bytes_per_period = 10200;
     flow_controller_descr.period_ms = 10;
-    FlowControllerImpl<FlowControllerLimitedAsyncPublishModeMock, FlowControllerRoundRobinSchedule> async(nullptr,
+    FlowControllerImpl<FlowControllerLimitedAsyncPublishMode, FlowControllerRoundRobinSchedule> async(nullptr,
             &flow_controller_descr, 0, ThreadSettings{});
     async.init();
 
@@ -1176,7 +1157,7 @@ TEST_F(FlowControllerSchedulers, HighPriority)
     FlowControllerDescriptor flow_controller_descr;
     flow_controller_descr.max_bytes_per_period = 10200;
     flow_controller_descr.period_ms = 10;
-    FlowControllerImpl<FlowControllerLimitedAsyncPublishModeMock, FlowControllerHighPrioritySchedule> async(nullptr,
+    FlowControllerImpl<FlowControllerLimitedAsyncPublishMode, FlowControllerHighPrioritySchedule> async(nullptr,
             &flow_controller_descr, 0, ThreadSettings{});
     async.init();
 
@@ -1737,7 +1718,7 @@ TEST_F(FlowControllerSchedulers, PriorityWithReservation)
     FlowControllerDescriptor flow_controller_descr;
     flow_controller_descr.max_bytes_per_period = 102000;
     flow_controller_descr.period_ms = 10;
-    FlowControllerImpl<FlowControllerLimitedAsyncPublishModeMock,
+    FlowControllerImpl<FlowControllerLimitedAsyncPublishMode,
             FlowControllerPriorityWithReservationSchedule> async(nullptr,
             &flow_controller_descr, 0, ThreadSettings{});
     async.init();
