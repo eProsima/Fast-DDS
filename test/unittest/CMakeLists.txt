@@ -23,7 +23,29 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND
     message(STATUS "Applied GCC 13 workaround to all unit tests")
 endif()
 
-add_compile_definitions(FASTDDS_NO_LIB)
+# Unit tests link the objects of the library units (see fastdds_add_unit()) and of the mocks (see add_mock_library()),
+# so every unit test target uses the compile definitions of the fastdds target, the ones those objects are built with.
+# FASTDDS_DYN_LINK is excluded because those objects are linked into the test, not imported from the library.
+# FASTDDS_SOURCE is excluded because it enables debug checks that do not hold with mocks, so only the tests that need
+# it set it on their own.
+# Only definitions a test really needs on its own belong in its CMakeLists.
+get_target_property(FASTDDS_UNITTEST_COMPILE_DEFINITIONS fastdds COMPILE_DEFINITIONS)
+list(FILTER FASTDDS_UNITTEST_COMPILE_DEFINITIONS EXCLUDE REGEX "DYN_LINK")
+# On Windows, FASTDDS_SOURCE also turns FASTDDS_EXPORTED_API into dllexport, which breaks the tests linking the
+# fastdds library: they need dllimport.
+list(FILTER FASTDDS_UNITTEST_COMPILE_DEFINITIONS EXCLUDE REGEX "^FASTDDS_SOURCE$")
+add_compile_definitions(
+    ${FASTDDS_UNITTEST_COMPILE_DEFINITIONS}
+    FASTDDS_NO_LIB # Only an INTERFACE definition of fastdds
+    $<$<BOOL:${WIN32}>:_CRT_SECURE_NO_WARNINGS>
+    )
+
+# The statistics::types unit, only created with FASTDDS_STATISTICS, for the unit tests whose code uses the statistics
+# types when the statistics module is enabled.
+set(STATISTICS_TYPES_UNIT)
+if(FASTDDS_STATISTICS)
+    set(STATISTICS_TYPES_UNIT statistics::types)
+endif()
 
 add_subdirectory(cmake)
 add_subdirectory(dds/collections)

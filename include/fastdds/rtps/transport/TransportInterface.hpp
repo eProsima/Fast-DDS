@@ -30,10 +30,10 @@
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
 #include <fastdds/rtps/common/LocatorWithMask.hpp>
 #include <fastdds/rtps/common/PortParameters.hpp>
-#include <fastdds/rtps/transport/network/AllowedNetworkInterface.hpp>
 #include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/SenderResource.hpp>
 #include <fastdds/rtps/transport/TransportDescriptorInterface.hpp>
+#include <fastdds/rtps/transport/TransportInterfaceTypes.hpp>
 #include <fastdds/rtps/transport/TransportReceiverInterface.hpp>
 
 namespace eprosima {
@@ -50,8 +50,6 @@ static const std::string s_IPv4AddressAny = "0.0.0.0";
 static const std::string s_IPv6AddressAny = "::";
 
 using SendResourceList = std::vector<std::unique_ptr<fastdds::rtps::SenderResource>>;
-using NetmaskFilterInfo = std::pair<NetmaskFilterKind, std::vector<AllowedNetworkInterface>>;
-using TransportNetmaskFilterInfo = std::pair<int32_t, NetmaskFilterInfo>;
 
 /**
  * Interface against which to implement a transport layer, decoupled from Fast DDS internals.

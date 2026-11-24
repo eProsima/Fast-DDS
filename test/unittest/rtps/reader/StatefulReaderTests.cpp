@@ -58,12 +58,6 @@ void register_types_type_objects()
 namespace eprosima {
 
 namespace fastdds {
-namespace dds {
-
-const InstanceHandle_t HANDLE_NIL;
-
-} // namespace dds
-
 namespace rtps {
 
 /* Regression Test for improving gaps processing

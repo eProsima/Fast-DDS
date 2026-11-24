@@ -43,15 +43,7 @@ set(
         ${DATATYPE_SOURCES_CXX}
     )
 
-if(WIN32)
-    add_definitions(-D_WIN32_WINNT=0x0601)
-endif()
-
 add_executable(DynDataJSONTests ${SERIALIZE_JSON_SOURCE} ${EXAMPLE_SOURCES})
-target_compile_definitions(DynDataJSONTests PRIVATE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(DynDataJSONTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(DynDataJSONTests

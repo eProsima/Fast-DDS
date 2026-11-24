@@ -110,7 +110,7 @@ void test_add_external_locators_participant(
                     single_locator[externality][cost].emplace_back(test_locator);
                     accum_locators[externality][cost].emplace_back(test_locator);
 
-                    working_data = initial_data;
+                    working_data.copy(initial_data);
                     single_participant_check(
                         working_data,
                         accum_locators, empty_locators,
@@ -120,7 +120,7 @@ void test_add_external_locators_participant(
                         single_locator, empty_locators,
                         def_test_list, meta_empty_test_list);
 
-                    working_data = initial_data;
+                    working_data.copy(initial_data);
                     single_participant_check(
                         working_data,
                         single_locator, empty_locators,
@@ -130,7 +130,7 @@ void test_add_external_locators_participant(
                         accum_locators, empty_locators,
                         def_test_list, meta_empty_test_list);
 
-                    working_data = initial_data;
+                    working_data.copy(initial_data);
                     single_participant_check(
                         working_data,
                         empty_locators, accum_locators,
@@ -140,7 +140,7 @@ void test_add_external_locators_participant(
                         empty_locators, single_locator,
                         def_empty_test_list, meta_test_list);
 
-                    working_data = initial_data;
+                    working_data.copy(initial_data);
                     single_participant_check(
                         working_data,
                         empty_locators, single_locator,
@@ -150,7 +150,7 @@ void test_add_external_locators_participant(
                         empty_locators, accum_locators,
                         def_empty_test_list, meta_test_list);
 
-                    working_data = initial_data;
+                    working_data.copy(initial_data);
                     single_participant_check(
                         working_data,
                         accum_locators, single_locator,
@@ -160,7 +160,7 @@ void test_add_external_locators_participant(
                         single_locator, accum_locators,
                         def_test_list, meta_test_list);
 
-                    working_data = initial_data;
+                    working_data.copy(initial_data);
                     single_participant_check(
                         working_data,
                         single_locator, accum_locators,
@@ -190,43 +190,43 @@ TEST(ExternalLocatorsTests, add_external_locators_participant)
     }
 
     {
-        ParticipantProxyData data;
+        ParticipantProxyData data(c_default_RTPSParticipantAllocationAttributes);
         test_add_external_locators_participant(data);
     }
 
     {
-        ParticipantProxyData data;
+        ParticipantProxyData data(c_default_RTPSParticipantAllocationAttributes);
         data.default_locators.add_multicast_locator(multicast_loc);
         test_add_external_locators_participant(data);
     }
 
     {
-        ParticipantProxyData data;
+        ParticipantProxyData data(c_default_RTPSParticipantAllocationAttributes);
         data.default_locators.add_unicast_locator(unicast_loc);
         test_add_external_locators_participant(data);
     }
 
     {
-        ParticipantProxyData data;
+        ParticipantProxyData data(c_default_RTPSParticipantAllocationAttributes);
         data.default_locators.add_unicast_locator(unicast_loc);
         data.default_locators.add_multicast_locator(multicast_loc);
         test_add_external_locators_participant(data);
     }
 
     {
-        ParticipantProxyData data;
+        ParticipantProxyData data(c_default_RTPSParticipantAllocationAttributes);
         data.metatraffic_locators.add_multicast_locator(multicast_loc);
         test_add_external_locators_participant(data);
     }
 
     {
-        ParticipantProxyData data;
+        ParticipantProxyData data(c_default_RTPSParticipantAllocationAttributes);
         data.metatraffic_locators.add_unicast_locator(unicast_loc);
         test_add_external_locators_participant(data);
     }
 
     {
-        ParticipantProxyData data;
+        ParticipantProxyData data(c_default_RTPSParticipantAllocationAttributes);
         data.metatraffic_locators.add_unicast_locator(unicast_loc);
         data.metatraffic_locators.add_multicast_locator(multicast_loc);
         test_add_external_locators_participant(data);
@@ -465,7 +465,7 @@ struct BasicNodeConfig
     // User and metatraffic locators for externality 0
     ExternalAddress container_locators;
 
-    ParticipantProxyData announced_data;
+    ParticipantProxyData announced_data{c_default_RTPSParticipantAllocationAttributes};
 };
 
 /* All nodes except Node_ZZ, which has no external locators */
@@ -609,7 +609,7 @@ void test_matching_locators_scenario(
 
         // Test against Node_ZZ
         ExternalAddress zz_address("100.10.10.1", 7410, 7411);
-        ParticipantProxyData zz_discovered_data;
+        ParticipantProxyData zz_discovered_data(c_default_RTPSParticipantAllocationAttributes);
         ExternalLocators zz_meta_locators;
         ExternalLocators zz_user_locators;
         zz_meta_locators[0][0].push_back(zz_address.metatraffic);
@@ -663,7 +663,7 @@ void test_matching_locators_scenario(
             }
 
             // Node_ZZ -> Node
-            filtered_data = node.announced_data;
+            filtered_data.copy(node.announced_data);
             entry.multicast = filtered_data.metatraffic_locators.multicast;
             entry.unicast = filtered_data.metatraffic_locators.unicast;
 

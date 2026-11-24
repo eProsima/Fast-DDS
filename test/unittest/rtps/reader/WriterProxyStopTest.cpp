@@ -21,6 +21,7 @@
 
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/participant/RTPSParticipantImpl.hpp>
+#include <mock/rtps/reader/StatefulReaderMock.hpp>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/reader/WriterProxy.h>
 #include <rtps/reader/WriterProxy.cpp>
@@ -105,11 +106,11 @@ TEST(WriterProxyTests, WriterProxyStop)
 
     // Create and initialize WriterProxyTest
     WriterProxyData wattr(4u, 1u);
-    StatefulReader readerMock;
+    TestStatefulReader readerMock;
 
-    ON_CALL(readerMock, getEventResource())
+    ON_CALL(mock::mock_of(&readerMock), getEventResource())
             .WillByDefault(::testing::ReturnRef(*service));
-    EXPECT_CALL(readerMock, getEventResource()).Times(1u);
+    EXPECT_CALL(mock::mock_of(&readerMock), getEventResource()).Times(1u);
     testing::internal::WriterProxyTest* wproxy = new testing::internal::WriterProxyTest(&readerMock,
                     RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig(), *service, promise);
     wproxy->start(wattr, SequenceNumber_t());
