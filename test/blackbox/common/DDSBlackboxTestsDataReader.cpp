@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <algorithm>
+#include <array>
+#include <atomic>
+#include <cstdlib>
+#include <future>
 #include <mutex>
 #include <thread>
 #include <type_traits>
@@ -31,12 +36,14 @@
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 
 #include "../utils/filter_helpers.hpp"
 #include "BlackboxTests.hpp"
 #include "PubSubParticipant.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
+#include "UDPMessageSender.hpp"
 
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
@@ -1431,6 +1438,382 @@ TEST(DDSDataReader, reception_timestamp_for_resent_samples)
     auto reception_ts_3 = reader.reception_timestamps[3];
     EXPECT_TRUE(reception_ts_1 <= reception_ts_2);
     EXPECT_TRUE(reception_ts_2 <= reception_ts_3);
+}
+
+/*
+ * Regression test for https://github.com/eProsima/Fast-DDS/issues/6567
+ *
+ * A reader can match a writer before the writer matches it. In that window it accepts the fragments
+ * the writer addresses to ENTITYID_UNKNOWN, so it can hold a sample half assembled when the writer
+ * matches it and sends the positioning GAP covering that sample.
+ * The GAP must remove the change from the DataReader instance too, otherwise take() keeps finding a
+ * change that has already been released and never returns.
+ */
+TEST(DDSDataReader, positioning_gap_removes_partially_received_sample)
+{
+    using namespace eprosima::fastdds::dds;
+
+    // Fragment 2 of the first sample never arrives, so the readers keep that sample half assembled.
+    auto writer_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    writer_transport->drop_data_frag_messages_filter_ = [](CDRMessage_t& msg) -> bool
+            {
+                uint32_t old_pos = msg.pos;
+
+                // see RTPS DDS 9.4.5.4 DataFrag Submessage
+                SequenceNumber_t sn;
+                msg.pos += 2; // flags
+                msg.pos += 2; // octets to inline qos
+                msg.pos += 4; // reader ID
+                msg.pos += 4; // writer ID
+                sn.high = (int32_t)eprosima::fastdds::helpers::cdr_parse_u32(
+                    (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+                sn.low = eprosima::fastdds::helpers::cdr_parse_u32(
+                    (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+                uint32_t fragment_starting_num = eprosima::fastdds::helpers::cdr_parse_u32(
+                    (char*)&msg.buffer[msg.pos]);
+
+                // restore buffer pos
+                msg.pos = old_pos;
+
+                return SequenceNumber_t{0, 1} == sn && 2u == fragment_starting_num;
+            };
+
+    // While set, the discovery data of the readers' participant is lost, so the writer does not
+    // learn of a reader that has already matched it.
+    std::atomic<bool> hide_readers{false};
+    auto reader_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    reader_transport->drop_builtin_data_messages_filter_ = [&hide_readers](CDRMessage_t&) -> bool
+            {
+                return hide_readers.load();
+            };
+
+    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
+    writer.disable_builtin_transport()
+            .add_user_transport_to_pparams(writer_transport)
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .durability_kind(VOLATILE_DURABILITY_QOS)
+            .history_depth(10)
+            .init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    DomainParticipantQos participant_qos;
+    participant_qos.transport().use_builtin_transports = false;
+    participant_qos.transport().user_transports.push_back(reader_transport);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, participant_qos);
+    ASSERT_NE(nullptr, participant);
+    TypeSupport type(new Data1mbPubSubType());
+    ASSERT_EQ(RETCODE_OK, type.register_type(participant));
+    Topic* topic = participant->create_topic(writer.topic_name(), type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(nullptr, topic);
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, subscriber);
+
+    DataReaderQos reader_qos;
+    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    reader_qos.history().depth = 10;
+    reader_qos.data_sharing().off();
+
+    auto has_matched_writer = [](DataReader* reader) -> bool
+            {
+                SubscriptionMatchedStatus status;
+                for (int i = 0; i < 1000; ++i)
+                {
+                    if (RETCODE_OK == reader->get_subscription_matched_status(status) &&
+                            0 < status.current_count)
+                    {
+                        return true;
+                    }
+                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                }
+                return false;
+            };
+
+    // With two readers matched the writer addresses its fragments to ENTITYID_UNKNOWN, which the
+    // participant hands to every reader that has matched the writer.
+    DataReader* reader_1 = subscriber->create_datareader(topic, reader_qos);
+    DataReader* reader_2 = subscriber->create_datareader(topic, reader_qos);
+    ASSERT_NE(nullptr, reader_1);
+    ASSERT_NE(nullptr, reader_2);
+    writer.wait_discovery(2u, std::chrono::seconds(10));
+    ASSERT_EQ(2u, writer.get_matched());
+    ASSERT_TRUE(has_matched_writer(reader_1));
+    ASSERT_TRUE(has_matched_writer(reader_2));
+
+    hide_readers.store(true);
+    DataReader* late_reader = subscriber->create_datareader(topic, reader_qos);
+    ASSERT_NE(nullptr, late_reader);
+    ASSERT_TRUE(has_matched_writer(late_reader));
+
+    auto data = default_data300kb_data_generator(2);
+    ASSERT_TRUE(writer.send_sample(data.front()));
+
+    // Once the writer matches the late reader it sends a GAP covering the half assembled sample.
+    hide_readers.store(false);
+    writer.wait_discovery(3u, std::chrono::seconds(20));
+    ASSERT_EQ(3u, writer.get_matched());
+
+    ASSERT_TRUE(writer.send_sample(data.back()));
+    ASSERT_TRUE(late_reader->wait_for_unread_message(Duration_t(10, 0)));
+
+    // A hang fails the test instead of blocking the whole suite.
+    std::vector<Data1mb> taken;
+    auto take_all = std::async(std::launch::async, [&taken, late_reader]()
+                    {
+                        Data1mb sample;
+                        SampleInfo info;
+                        for (int i = 0; i < 3 && RETCODE_OK == late_reader->take_next_sample(&sample, &info); ++i)
+                        {
+                            if (info.valid_data)
+                            {
+                                taken.push_back(sample);
+                            }
+                        }
+                    });
+    if (std::future_status::ready != take_all.wait_for(std::chrono::seconds(10)))
+    {
+        ADD_FAILURE() << "take() on the late reader never returned";
+        // The reader's mutex is held by the stuck take(), so destroying the entities would hang too.
+        std::_Exit(1);
+    }
+    ASSERT_EQ(1u, taken.size());
+    EXPECT_TRUE(data.back() == taken.front());
+
+    ASSERT_EQ(RETCODE_OK, participant->delete_contained_entities());
+    ASSERT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+}
+
+/*
+ * Fast DDS writers send one fragment per DATA_FRAG submessage, but a DATA_FRAG may carry several, so a reader can
+ * receive every fragment of a sample in its first DATA_FRAG and create the change already complete.
+ * The change must be added to its instance once, otherwise take() finds it again after it has been released.
+ */
+template<typename PubSubType>
+static void take_sample_received_in_single_data_frag(
+        const std::array<uint8_t, 17>& serialized_sample,
+        std::vector<typename PubSubType::type>& taken)
+{
+    using namespace eprosima::fastdds::dds;
+
+    PubSubWriter<PubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<PubSubType> reader(TEST_TOPIC_NAME);
+
+    // Set a known reader locator so the hand-crafted message can be sent to it
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+    Locator_t reader_locator;
+    ASSERT_TRUE(IPLocator::setIPv4(reader_locator, "127.0.0.1"));
+    reader_locator.port = 7000;
+    reader.add_to_unicast_locator_list("127.0.0.1", 7000)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(udp_transport)
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .history_depth(10)
+            .datasharing_off()
+            .init();
+    ASSERT_TRUE(reader.isInitialized());
+    writer.disable_builtin_transport()
+            .add_user_transport_to_pparams(udp_transport)
+            .init();
+    ASSERT_TRUE(writer.isInitialized());
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Sequence number 1 from the writer, in 3 fragments of 8, 8 and 1 bytes, all in one DATA_FRAG submessage
+    struct SingleDataFragPacket
+    {
+        std::array<char, 4> rtps_id{ {'R', 'T', 'P', 'S'} };
+        std::array<uint8_t, 2> protocol_version{ {2, 3} };
+        std::array<uint8_t, 2> vendor_id{ {0x01, 0x0F} };
+        GuidPrefix_t sender_prefix{};
+
+        uint8_t submessage_id = 0x16;
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
+        uint8_t flags = 0x00;
+#else
+        uint8_t flags = 0x01;
+#endif  // FASTDDS_IS_BIG_ENDIAN_TARGET
+        uint16_t octets_to_next_header = 32 + 20;
+        uint16_t extra_flags = 0;
+        uint16_t octets_to_inline_qos = 28;
+        EntityId_t reader_id{};
+        EntityId_t writer_id{};
+        SequenceNumber_t sn{ 1 };
+        uint32_t fragment_starting_num = 1;
+        uint16_t fragments_in_submessage = 3;
+        uint16_t fragment_size = 8;
+        uint32_t sample_size = 17;
+        std::array<uint8_t, 20> payload{};
+    };
+
+    SingleDataFragPacket packet{};
+    packet.sender_prefix = writer.datawriter_guid().guidPrefix;
+    packet.writer_id = writer.datawriter_guid().entityId;
+    packet.reader_id = reader.datareader_guid().entityId;
+    std::copy(serialized_sample.begin(), serialized_sample.end(), packet.payload.begin());
+
+    CDRMessage_t msg(0);
+    uint32_t msg_len = static_cast<uint32_t>(sizeof(packet));
+    msg.init(reinterpret_cast<octet*>(&packet), msg_len);
+    msg.length = msg_len;
+    msg.pos = msg_len;
+    UDPMessageSender fake_msg_sender;
+    fake_msg_sender.send(msg, reader_locator);
+
+    DataReader& native_reader = reader.get_native_reader();
+    ASSERT_TRUE(native_reader.wait_for_unread_message(Duration_t(10, 0)));
+
+    // A hang fails the test instead of blocking the whole suite.
+    auto take_all = std::async(std::launch::async, [&taken, &native_reader]()
+                    {
+                        typename PubSubType::type sample;
+                        SampleInfo info;
+                        for (int i = 0; i < 3 && RETCODE_OK == native_reader.take_next_sample(&sample, &info); ++i)
+                        {
+                            if (info.valid_data)
+                            {
+                                taken.push_back(sample);
+                            }
+                        }
+                    });
+    if (std::future_status::ready != take_all.wait_for(std::chrono::seconds(10)))
+    {
+        ADD_FAILURE() << "take() never returned";
+        // The reader's mutex is held by the stuck take(), so destroying the entities would hang too.
+        std::_Exit(1);
+    }
+}
+
+TEST(DDSDataReader, single_data_frag_with_all_fragments_non_keyed)
+{
+    // CDR_LE encapsulation, index 7, message "frag"
+    const std::array<uint8_t, 17> serialized_sample{ {
+        0x00, 0x01, 0x00, 0x00, 0x07, 0x00, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00, 'f', 'r', 'a', 'g', 0x00} };
+    std::vector<HelloWorld> taken;
+    take_sample_received_in_single_data_frag<HelloWorldPubSubType>(serialized_sample, taken);
+    ASSERT_EQ(1u, taken.size());
+    EXPECT_EQ(7u, taken.front().index());
+    EXPECT_STREQ("frag", taken.front().message().c_str());
+}
+
+TEST(DDSDataReader, single_data_frag_with_all_fragments_keyed)
+{
+    // CDR_LE encapsulation, key 1, index 7, message "frag"
+    const std::array<uint8_t, 17> serialized_sample{ {
+        0x00, 0x01, 0x00, 0x00, 0x01, 0x00, 0x07, 0x00, 0x05, 0x00, 0x00, 0x00, 'f', 'r', 'a', 'g', 0x00} };
+    std::vector<KeyedHelloWorld> taken;
+    take_sample_received_in_single_data_frag<KeyedHelloWorldPubSubType>(serialized_sample, taken);
+    ASSERT_EQ(1u, taken.size());
+    EXPECT_EQ(1u, taken.front().key());
+    EXPECT_EQ(7u, taken.front().index());
+    EXPECT_STREQ("frag", taken.front().message().c_str());
+}
+
+/*
+ * A KEEP_LAST 1 reader receives sample 2 while it is still reassembling sample 1.
+ * When sample 1 completes, older than the sample in the instance, it must be discarded. It must not stay in the
+ * history, counted as unread, where take() cannot reach it.
+ */
+template<typename PubSubType>
+static void keep_last_discards_sample_completed_after_newer_one(
+        std::list<typename PubSubType::type> data)
+{
+    using namespace eprosima::fastdds::dds;
+
+    // Hold fragment 2 of sample 1 back, so it completes after sample 2
+    std::atomic<bool> dropped{false};
+    std::atomic<bool> hold{true};
+    auto writer_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    writer_transport->drop_data_frag_messages_filter_ = [&dropped, &hold](CDRMessage_t& msg) -> bool
+            {
+                uint32_t old_pos = msg.pos;
+
+                // see RTPS DDS 9.4.5.4 DataFrag Submessage
+                SequenceNumber_t sn;
+                msg.pos += 2; // flags
+                msg.pos += 2; // octets to inline qos
+                msg.pos += 4; // reader ID
+                msg.pos += 4; // writer ID
+                sn.high = (int32_t)eprosima::fastdds::helpers::cdr_parse_u32(
+                    (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+                sn.low = eprosima::fastdds::helpers::cdr_parse_u32(
+                    (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+                uint32_t fragment_starting_num = eprosima::fastdds::helpers::cdr_parse_u32(
+                    (char*)&msg.buffer[msg.pos]);
+
+                // restore buffer pos
+                msg.pos = old_pos;
+
+                bool drop = SequenceNumber_t{0, 1} == sn && 2u == fragment_starting_num && hold.load();
+                if (drop)
+                {
+                    dropped.store(true);
+                }
+                return drop;
+            };
+
+    PubSubWriter<PubSubType> writer(TEST_TOPIC_NAME);
+    writer.disable_builtin_transport()
+            .add_user_transport_to_pparams(writer_transport)
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .history_depth(10)
+            .heartbeat_period_seconds(0)
+            .heartbeat_period_nanosec(100000000)
+            .datasharing_off()
+            .init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    PubSubReader<PubSubType> reader(TEST_TOPIC_NAME);
+    reader.reliability(RELIABLE_RELIABILITY_QOS)
+            .history_depth(1)
+            .datasharing_off()
+            .init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    ASSERT_TRUE(writer.send_sample(data.front()));
+    ASSERT_TRUE(writer.send_sample(data.back()));
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    hold.store(false);
+    ASSERT_TRUE(writer.waitForAllAcked(std::chrono::seconds(10)));
+    ASSERT_TRUE(dropped.load());
+
+    DataReader& native_reader = reader.get_native_reader();
+    EXPECT_EQ(1u, native_reader.get_unread_count());
+
+    std::vector<typename PubSubType::type> taken;
+    typename PubSubType::type sample;
+    SampleInfo info;
+    while (RETCODE_OK == native_reader.take_next_sample(&sample, &info))
+    {
+        if (info.valid_data)
+        {
+            taken.push_back(sample);
+        }
+    }
+    ASSERT_EQ(1u, taken.size());
+    EXPECT_TRUE(data.back() == taken.front());
+    EXPECT_EQ(0u, native_reader.get_unread_count());
+}
+
+TEST(DDSDataReader, keep_last_discards_sample_completed_after_newer_one_non_keyed)
+{
+    keep_last_discards_sample_completed_after_newer_one<Data1mbPubSubType>(default_data300kb_data_generator(2));
+}
+
+TEST(DDSDataReader, keep_last_discards_sample_completed_after_newer_one_keyed)
+{
+    auto data = default_keyeddata300kb_data_generator(2);
+    for (auto& sample : data)
+    {
+        sample.key(1);
+    }
+    keep_last_discards_sample_completed_after_newer_one<KeyedData1mbPubSubType>(data);
 }
 
 /* This is a regression test for redmine issue 22929.
