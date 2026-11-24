@@ -24,6 +24,10 @@
 // We have patched part of the boost code, protecting all changes with this define
 #define BOOST_FASTDDS_PATCHES
 
+// Every segment is opened after its creator initialized it, or under a port mutex its creator held
+// throughout, so one still uninitialized after this long was left by a creator that died.
+#define BOOST_INTERPROCESS_MANAGED_OPEN_OR_CREATE_INITIALIZE_TIMEOUT_SEC 1
+
 // Starting on boost 1.76.0, this will force native emulation, which is what we want as
 // it is more performant
 #define BOOST_INTERPROCESS_FORCE_NATIVE_EMULATION
