@@ -1,0 +1,1 @@
+double_field > 1.5e3 AND long_double_field < -0.25
