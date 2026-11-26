@@ -22,6 +22,7 @@
 
 #include <chrono>
 #include <condition_variable>
+#include <mutex>
 
 #include <asio.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
@@ -183,6 +184,9 @@ private:
     int data_msg_count_ = 0;
     unsigned int received_count_ = 0;
     int test_status_ = 0;
+
+    //! Protects the lifetime of the dynamic data samples against the DataReader listener thread
+    std::mutex data_sample_mutex_;
 
     /* Files */
     constexpr static uint32_t MINIMUM_INDEX = 0;
