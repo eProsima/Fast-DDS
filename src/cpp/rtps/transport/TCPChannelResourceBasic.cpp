@@ -138,10 +138,12 @@ size_t TCPChannelResourceBasic::send(
 {
     size_t bytes_sent = 0;
 
+    // Status checked under the lock: close() needs send_mutex_, so socket_ cannot be closed and replaced by a
+    // reconnection while sending.
+    std::lock_guard<std::mutex> send_guard(send_mutex_);
+
     if (connected())
     {
-        std::lock_guard<std::mutex> send_guard(send_mutex_);
-
         if (parent_->configuration()->non_blocking_send &&
                 !check_socket_send_buffer(header_size + total_bytes, socket_->native_handle()))
         {

@@ -19,6 +19,7 @@
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
 
+#include <mock/rtps/writer/BaseWriterMock.hpp>
 #include <rtps/flowcontrol/FlowControllerImpl.hpp>
 
 namespace eprosima {
@@ -39,25 +40,6 @@ std::ostream& operator <<(
 }
 
 using namespace testing;
-
-struct FlowControllerLimitedAsyncPublishModeMock : public FlowControllerLimitedAsyncPublishMode
-{
-    FlowControllerLimitedAsyncPublishModeMock(
-            RTPSParticipantImpl* participant,
-            const FlowControllerDescriptor* descriptor)
-        : FlowControllerLimitedAsyncPublishMode(participant, descriptor)
-    {
-        publish_mode = this;
-    }
-
-    static FlowControllerLimitedAsyncPublishMode& get_publish_mode()
-    {
-        return *publish_mode;
-    }
-
-    static FlowControllerLimitedAsyncPublishMode* publish_mode;
-};
-FlowControllerLimitedAsyncPublishMode* FlowControllerLimitedAsyncPublishModeMock::publish_mode {nullptr};
 
 class FlowControllerSchedulers :  public testing::Test
 {
@@ -97,31 +79,30 @@ TEST_F(FlowControllerSchedulers, Fifo)
     FlowControllerDescriptor flow_controller_descr;
     flow_controller_descr.max_bytes_per_period = 102000;
     flow_controller_descr.period_ms = 10;
-    FlowControllerImpl<FlowControllerLimitedAsyncPublishModeMock, FlowControllerFifoSchedule> async(nullptr,
+    FlowControllerImpl<FlowControllerLimitedAsyncPublishMode, FlowControllerFifoSchedule> async(nullptr,
             &flow_controller_descr, 0, ThreadSettings{});
     async.init();
 
     // Instantiate writers.
-    BaseWriter writer1;
-    BaseWriter writer2;
-    BaseWriter writer3;
-    BaseWriter writer4;
-    BaseWriter writer5;
-    BaseWriter writer6;
-    BaseWriter writer7;
-    BaseWriter writer8;
-    BaseWriter writer9;
-    BaseWriter writer10;
+    TestBaseWriter writer1;
+    TestBaseWriter writer2;
+    TestBaseWriter writer3;
+    TestBaseWriter writer4;
+    TestBaseWriter writer5;
+    TestBaseWriter writer6;
+    TestBaseWriter writer7;
+    TestBaseWriter writer8;
+    TestBaseWriter writer9;
+    TestBaseWriter writer10;
 
     // Initialize callback to get info.
     auto send_functor = [&](
         CacheChange_t* change,
-        RTPSMessageGroup&,
+        RTPSMessageGroup& group,
         LocatorSelectorSender& sender,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
-                FlowControllerLimitedAsyncPublishModeMock::get_publish_mode().add_sent_bytes_by_group(
-                    change->serializedPayload.length, sender);
+                group.limitation()->add_sent_bytes_by_group(change->serializedPayload.length, sender);
                 {
                     std::unique_lock<std::mutex> lock(this->changes_delivered_mutex);
                     this->changes_delivered.push_back(change);
@@ -637,31 +618,30 @@ TEST_F(FlowControllerSchedulers, RoundRobin)
     FlowControllerDescriptor flow_controller_descr;
     flow_controller_descr.max_bytes_per_period = 10200;
     flow_controller_descr.period_ms = 10;
-    FlowControllerImpl<FlowControllerLimitedAsyncPublishModeMock, FlowControllerRoundRobinSchedule> async(nullptr,
+    FlowControllerImpl<FlowControllerLimitedAsyncPublishMode, FlowControllerRoundRobinSchedule> async(nullptr,
             &flow_controller_descr, 0, ThreadSettings{});
     async.init();
 
     // Instantiate writers.
-    BaseWriter writer1;
-    BaseWriter writer2;
-    BaseWriter writer3;
-    BaseWriter writer4;
-    BaseWriter writer5;
-    BaseWriter writer6;
-    BaseWriter writer7;
-    BaseWriter writer8;
-    BaseWriter writer9;
-    BaseWriter writer10;
+    TestBaseWriter writer1;
+    TestBaseWriter writer2;
+    TestBaseWriter writer3;
+    TestBaseWriter writer4;
+    TestBaseWriter writer5;
+    TestBaseWriter writer6;
+    TestBaseWriter writer7;
+    TestBaseWriter writer8;
+    TestBaseWriter writer9;
+    TestBaseWriter writer10;
 
     // Initialize callback to get info.
     auto send_functor = [&](
         CacheChange_t* change,
-        RTPSMessageGroup&,
+        RTPSMessageGroup& group,
         LocatorSelectorSender& sender,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
-                FlowControllerLimitedAsyncPublishModeMock::get_publish_mode().add_sent_bytes_by_group(
-                    change->serializedPayload.length, sender);
+                group.limitation()->add_sent_bytes_by_group(change->serializedPayload.length, sender);
                 {
                     std::unique_lock<std::mutex> lock(this->changes_delivered_mutex);
                     this->changes_delivered.push_back(change);
@@ -1177,53 +1157,52 @@ TEST_F(FlowControllerSchedulers, HighPriority)
     FlowControllerDescriptor flow_controller_descr;
     flow_controller_descr.max_bytes_per_period = 10200;
     flow_controller_descr.period_ms = 10;
-    FlowControllerImpl<FlowControllerLimitedAsyncPublishModeMock, FlowControllerHighPrioritySchedule> async(nullptr,
+    FlowControllerImpl<FlowControllerLimitedAsyncPublishMode, FlowControllerHighPrioritySchedule> async(nullptr,
             &flow_controller_descr, 0, ThreadSettings{});
     async.init();
 
     // Instantiate writers.
     Property priority_property;
-    BaseWriter writer1;
+    TestBaseWriter writer1;
     priority_property.name("fastdds.sfc.priority");
     priority_property.value("1");
-    writer1.m_att.endpoint.properties.properties().push_back(priority_property);
-    BaseWriter writer2;
+    writer1.getAttributes().properties.properties().push_back(priority_property);
+    TestBaseWriter writer2;
     priority_property.value("2");
-    writer2.m_att.endpoint.properties.properties().push_back(priority_property);
-    BaseWriter writer3;
+    writer2.getAttributes().properties.properties().push_back(priority_property);
+    TestBaseWriter writer3;
     priority_property.value("3");
-    writer3.m_att.endpoint.properties.properties().push_back(priority_property);
-    BaseWriter writer4;
+    writer3.getAttributes().properties.properties().push_back(priority_property);
+    TestBaseWriter writer4;
     priority_property.value("4");
-    writer4.m_att.endpoint.properties.properties().push_back(priority_property);
-    BaseWriter writer5;
+    writer4.getAttributes().properties.properties().push_back(priority_property);
+    TestBaseWriter writer5;
     priority_property.value("5");
-    writer5.m_att.endpoint.properties.properties().push_back(priority_property);
-    BaseWriter writer6;
+    writer5.getAttributes().properties.properties().push_back(priority_property);
+    TestBaseWriter writer6;
     priority_property.value("6");
-    writer6.m_att.endpoint.properties.properties().push_back(priority_property);
-    BaseWriter writer7;
+    writer6.getAttributes().properties.properties().push_back(priority_property);
+    TestBaseWriter writer7;
     priority_property.value("7");
-    writer7.m_att.endpoint.properties.properties().push_back(priority_property);
-    BaseWriter writer8;
+    writer7.getAttributes().properties.properties().push_back(priority_property);
+    TestBaseWriter writer8;
     priority_property.value("8");
-    writer8.m_att.endpoint.properties.properties().push_back(priority_property);
-    BaseWriter writer9;
+    writer8.getAttributes().properties.properties().push_back(priority_property);
+    TestBaseWriter writer9;
     priority_property.value("9");
-    writer9.m_att.endpoint.properties.properties().push_back(priority_property);
-    BaseWriter writer10;
+    writer9.getAttributes().properties.properties().push_back(priority_property);
+    TestBaseWriter writer10;
     priority_property.value("10");
-    writer10.m_att.endpoint.properties.properties().push_back(priority_property);
+    writer10.getAttributes().properties.properties().push_back(priority_property);
 
     // Initialize callback to get info.
     auto send_functor = [&](
         CacheChange_t* change,
-        RTPSMessageGroup&,
+        RTPSMessageGroup& group,
         LocatorSelectorSender& sender,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
-                FlowControllerLimitedAsyncPublishModeMock::get_publish_mode().add_sent_bytes_by_group(
-                    change->serializedPayload.length, sender);
+                group.limitation()->add_sent_bytes_by_group(change->serializedPayload.length, sender);
                 {
                     std::unique_lock<std::mutex> lock(this->changes_delivered_mutex);
                     this->changes_delivered.push_back(change);
@@ -1739,62 +1718,61 @@ TEST_F(FlowControllerSchedulers, PriorityWithReservation)
     FlowControllerDescriptor flow_controller_descr;
     flow_controller_descr.max_bytes_per_period = 102000;
     flow_controller_descr.period_ms = 10;
-    FlowControllerImpl<FlowControllerLimitedAsyncPublishModeMock,
+    FlowControllerImpl<FlowControllerLimitedAsyncPublishMode,
             FlowControllerPriorityWithReservationSchedule> async(nullptr,
             &flow_controller_descr, 0, ThreadSettings{});
     async.init();
 
     // Instantiate writers.
     Property priority_property;
-    BaseWriter writer1;
+    TestBaseWriter writer1;
     priority_property.name("fastdds.sfc.priority");
     priority_property.value("1");
-    writer1.m_att.endpoint.properties.properties().push_back(priority_property);
-    BaseWriter writer2;
+    writer1.getAttributes().properties.properties().push_back(priority_property);
+    TestBaseWriter writer2;
     priority_property.value("2");
-    writer2.m_att.endpoint.properties.properties().push_back(priority_property);
-    BaseWriter writer3;
+    writer2.getAttributes().properties.properties().push_back(priority_property);
+    TestBaseWriter writer3;
     priority_property.value("3");
-    writer3.m_att.endpoint.properties.properties().push_back(priority_property);
-    BaseWriter writer4;
+    writer3.getAttributes().properties.properties().push_back(priority_property);
+    TestBaseWriter writer4;
     priority_property.value("4");
-    writer4.m_att.endpoint.properties.properties().push_back(priority_property);
-    BaseWriter writer5;
+    writer4.getAttributes().properties.properties().push_back(priority_property);
+    TestBaseWriter writer5;
     priority_property.value("5");
-    writer5.m_att.endpoint.properties.properties().push_back(priority_property);
-    BaseWriter writer6;
+    writer5.getAttributes().properties.properties().push_back(priority_property);
+    TestBaseWriter writer6;
     priority_property.value("6");
-    writer6.m_att.endpoint.properties.properties().push_back(priority_property);
-    BaseWriter writer7;
+    writer6.getAttributes().properties.properties().push_back(priority_property);
+    TestBaseWriter writer7;
     priority_property.value("7");
-    writer7.m_att.endpoint.properties.properties().push_back(priority_property);
-    BaseWriter writer8;
+    writer7.getAttributes().properties.properties().push_back(priority_property);
+    TestBaseWriter writer8;
     priority_property.value("8");
-    writer8.m_att.endpoint.properties.properties().push_back(priority_property);
-    BaseWriter writer9;
+    writer8.getAttributes().properties.properties().push_back(priority_property);
+    TestBaseWriter writer9;
     priority_property.value("9");
-    writer9.m_att.endpoint.properties.properties().push_back(priority_property);
-    BaseWriter writer10;
+    writer9.getAttributes().properties.properties().push_back(priority_property);
+    TestBaseWriter writer10;
     priority_property.value("10");
-    writer10.m_att.endpoint.properties.properties().push_back(priority_property);
+    writer10.getAttributes().properties.properties().push_back(priority_property);
     Property reservation_property;
     reservation_property.name("fastdds.sfc.bandwidth_reservation");
     reservation_property.value("30");
-    writer10.m_att.endpoint.properties.properties().push_back(reservation_property);
+    writer10.getAttributes().properties.properties().push_back(reservation_property);
     reservation_property.value("20");
-    writer9.m_att.endpoint.properties.properties().push_back(reservation_property);
+    writer9.getAttributes().properties.properties().push_back(reservation_property);
     reservation_property.value("10");
-    writer8.m_att.endpoint.properties.properties().push_back(reservation_property);
+    writer8.getAttributes().properties.properties().push_back(reservation_property);
 
     // Initialize callback to get info.
     auto send_functor = [&](
         CacheChange_t* change,
-        RTPSMessageGroup&,
+        RTPSMessageGroup& group,
         LocatorSelectorSender& sender,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
-                FlowControllerLimitedAsyncPublishModeMock::get_publish_mode().add_sent_bytes_by_group(
-                    change->serializedPayload.length, sender);
+                group.limitation()->add_sent_bytes_by_group(change->serializedPayload.length, sender);
                 {
                     std::unique_lock<std::mutex> lock(this->changes_delivered_mutex);
                     this->changes_delivered.push_back(change);

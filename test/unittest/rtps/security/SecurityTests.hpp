@@ -15,21 +15,34 @@
 #ifndef __TEST_UNITTEST_RTPS_SECURITY_SECURITYTESTS_HPP__
 #define __TEST_UNITTEST_RTPS_SECURITY_SECURITYTESTS_HPP__
 
+#include <memory>
+#include <vector>
+
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 
+#include <mock/fastdds/rtps/history/ReaderHistoryMock.hpp>
+#include <mock/fastdds/rtps/history/WriterHistoryMock.hpp>
+#include <mock/rtps/participant/RTPSParticipantImplMock.hpp>
+#include <mock/rtps/reader/StatefulReaderMock.hpp>
+#include <mock/rtps/reader/StatelessReaderMock.hpp>
+#include <mock/rtps/writer/StatefulWriterMock.hpp>
+#include <mock/rtps/writer/StatelessWriterMock.hpp>
+#include <mock/rtps/builtin/discovery/participant/PDPMock.hpp>
+#include <mock/rtps/security/MockAuthenticationPlugin.h>
+#include <mock/rtps/security/MockCryptographyPlugin.h>
+#include <mock/rtps/security/SecurityPluginFactoryMock.hpp>
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/discovery/participant/PDP.h>
+#include <rtps/messages/CDRMessage.hpp>
 #include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/reader/StatelessReader.hpp>
 #include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <rtps/security/common/Handle.h>
-#include <rtps/security/MockAuthenticationPlugin.h>
-#include <rtps/security/MockCryptographyPlugin.h>
 #include <rtps/security/SecurityManager.h>
 #include <rtps/security/SecurityPluginFactory.h>
 #include <rtps/writer/StatefulWriter.hpp>
@@ -38,6 +51,7 @@
 using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastdds::rtps::security;
 using namespace ::testing;
+namespace mock = eprosima::fastdds::mock;
 
 class SecurityTest;
 
@@ -91,36 +105,36 @@ protected:
     virtual void SetUp()
     {
         ::testing::DefaultValue<const NetworkFactory&>::Set(network);
-        SecurityPluginFactory::set_auth_plugin(auth_plugin_);
-        SecurityPluginFactory::set_crypto_plugin(crypto_plugin_);
+        SecurityPluginFactoryMock::set_auth_plugin(auth_plugin_);
+        SecurityPluginFactoryMock::set_crypto_plugin(crypto_plugin_);
         fill_participant_key(guid);
     }
 
     virtual void TearDown()
     {
-        SecurityPluginFactory::release_auth_plugin();
-        SecurityPluginFactory::release_crypto_plugin();
+        SecurityPluginFactoryMock::release_auth_plugin();
+        SecurityPluginFactoryMock::release_crypto_plugin();
 
         ::testing::DefaultValue<const GUID_t&>::Clear();
         ::testing::DefaultValue<CDRMessage_t>::Clear();
         ::testing::DefaultValue<const ParticipantSecurityAttributes&>::Clear();
     }
 
+    //! Prefix of the participant keys used by the tests, which is also the one of the local participant.
+    static GuidPrefix_t participant_key_prefix()
+    {
+        GuidPrefix_t prefix;
+        for (octet i = 0; i < 12; ++i)
+        {
+            prefix.value[i] = i + 1;
+        }
+        return prefix;
+    }
+
     void fill_participant_key(
             GUID_t& participant_key)
     {
-        participant_key.guidPrefix.value[0] = 1;
-        participant_key.guidPrefix.value[1] = 2;
-        participant_key.guidPrefix.value[2] = 3;
-        participant_key.guidPrefix.value[3] = 4;
-        participant_key.guidPrefix.value[4] = 5;
-        participant_key.guidPrefix.value[5] = 6;
-        participant_key.guidPrefix.value[6] = 7;
-        participant_key.guidPrefix.value[7] = 8;
-        participant_key.guidPrefix.value[8] = 9;
-        participant_key.guidPrefix.value[9] = 10;
-        participant_key.guidPrefix.value[10] = 11;
-        participant_key.guidPrefix.value[11] = 12;
+        participant_key.guidPrefix = participant_key_prefix();
         participant_key.entityId.value[0] = 0x0;
         participant_key.entityId.value[1] = 0x0;
         participant_key.entityId.value[2] = 0x1;
@@ -141,8 +155,7 @@ protected:
             CacheChange_t** final_message_change = nullptr);
 
     void expect_kx_exchange(
-            CacheChange_t& kx_change_to_add,
-            CacheChange_t* kx_change_to_remove);
+            CacheChange_t& kx_change_to_add);
 
     void destroy_manager_and_change(
             CacheChange_t*& change,
@@ -160,6 +173,7 @@ public:
             const RTPSParticipantAttributes& pattr)
         : auth_plugin_(new MockAuthenticationPlugin())
         , crypto_plugin_(new MockCryptographyPlugin())
+        , participant_(participant_key_prefix())
         , stateless_writer_(nullptr)
         , stateless_reader_(nullptr)
         , volatile_writer_(nullptr)
@@ -183,13 +197,17 @@ public:
 
     MockAuthenticationPlugin* auth_plugin_;
     MockCryptographyPlugin* crypto_plugin_;
-    ::testing::NiceMock<RTPSParticipantImpl> participant_;
-    ::testing::NiceMock<StatelessWriter>* stateless_writer_;
-    ::testing::NiceMock<StatelessReader>* stateless_reader_;
-    ::testing::StrictMock<StatefulWriter>* volatile_writer_;
-    ::testing::NiceMock<StatefulReader>* volatile_reader_;
-    PDP pdp_;
+    TestRTPSParticipantImpl participant_;
+    TestStatelessWriter* stateless_writer_;
+    TestStatelessReader* stateless_reader_;
+    TestStatefulWriter* volatile_writer_;
+    TestStatefulReader* volatile_reader_;
+    TestPDP pdp_;
+    ::testing::NiceMock<PDPMock>& pdp_mock_ {eprosima::fastdds::mock::mock_of<PDP>(&pdp_)};
     SecurityPluginFactory plugin_factory_;
+    //! Changes the helpers created and did not return. They are kept until the manager is destroyed, which removes
+    //! them from the writer history.
+    std::vector<std::unique_ptr<CacheChange_t>> owned_changes_;
     SecurityManager manager_;
 
     // handles

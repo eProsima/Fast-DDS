@@ -131,7 +131,7 @@ public:
             const GUID_t& original) override;
 
     std::chrono::system_clock::time_point get_identity_expiration(
-            const IdentityHandle& handle) const;
+            const IdentityHandle& handle) const override;
 
     GUID_t get_participant_guid(
             const IdentityHandle& handle) const override;

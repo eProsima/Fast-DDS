@@ -24,7 +24,7 @@
 
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
-#include <fastdds/rtps/transport/TransportInterface.hpp>
+#include <fastdds/rtps/transport/TransportInterfaceTypes.hpp>
 
 namespace eprosima {
 namespace fastdds {

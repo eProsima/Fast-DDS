@@ -29,8 +29,8 @@ TYPED_TEST(FlowControllerPublishModes, async_publish_mode)
     async.init();
 
     // Instantiate writers.
-    BaseWriter writer1;
-    BaseWriter writer2;
+    TestBaseWriter writer1;
+    TestBaseWriter writer2;
 
     // Initialize callback to get info.
     auto send_functor = [&](

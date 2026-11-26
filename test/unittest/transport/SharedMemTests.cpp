@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <cstring>
 #include <fstream>
 #include <memory>
+#include <stdexcept>
 #include <sstream>
 #include <streambuf>
 #include <string>
@@ -30,6 +32,8 @@
 #include "../../../src/cpp/rtps/transport/shared_mem/SharedMemGlobal.hpp"
 #include "../../../src/cpp/rtps/transport/shared_mem/SharedMemManager.hpp"
 #include "../../../src/cpp/rtps/transport/shared_mem/SharedMemSenderResource.hpp"
+#include <boost/interprocess/detail/tree_sanity.hpp>
+#include <boost/intrusive/set.hpp>
 
 #include <MockReceiverResource.h>
 #include <SharedMemGlobalMock.hpp>
@@ -871,6 +875,62 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
     sem.disable();
 }
 
+// Opening a healthy port must not wait for the next listener heartbeat.
+// The watchdog task that verifies the listeners leaves last_verified_counter
+// equal to counter, so a health check performed right afterwards finds no
+// evidence of progress and used to wait for port_wait_timeout_ms (333 ms with
+// the default 1000 ms timeout) even though the listener was healthy.
+TEST_F(SHMTransportTests, healthy_idle_port_open_latency)
+{
+    auto shared_mem_manager = SharedMemManager::create(domain_name);
+    SharedMemGlobal* shared_mem_global = shared_mem_manager->global_segment();
+
+    shared_mem_global->remove_port(0);
+
+    auto port = shared_mem_global->open_port(0, 4, 1000,
+                    SharedMemGlobal::Port::OpenMode::ReadExclusive);
+    uint32_t listener_index;
+    auto listener = port->create_listener(&listener_index);
+    std::atomic<bool> is_listener_closed(false);
+    std::thread listener_thread([&]
+            {
+                port->wait_pop(*listener, is_listener_closed, listener_index);
+            }
+            );
+
+    double worst_ms = 0;
+    for (unsigned i = 0; i < 100; ++i)
+    {
+        // Let the watchdog verify the listener in between, which is what makes
+        // the counter equality permanent for the opener.
+        std::this_thread::sleep_for(std::chrono::milliseconds(23));
+
+        auto start = std::chrono::steady_clock::now();
+
+        // A sender that does not know the port yet has to open it.
+        auto sender_port = shared_mem_global->open_port(0, 4, 1000,
+                        SharedMemGlobal::Port::OpenMode::Write);
+
+        const double elapsed_ms = std::chrono::duration<double, std::milli>(
+            std::chrono::steady_clock::now() - start).count();
+        worst_ms = (std::max)(worst_ms, elapsed_ms);
+
+        sender_port.reset();
+    }
+
+    is_listener_closed.exchange(true);
+    port->close_listener(&is_listener_closed);
+    listener_thread.join();
+    port->unregister_listener(&listener, listener_index);
+    port.reset();
+    shared_mem_global->remove_port(0);
+
+    // The wait timeout is healthy_check_timeout_ms / 3, so a regression shows
+    // up as ~333 ms. Keep a wide margin over the microseconds of a healthy
+    // open to avoid depending on machine load.
+    EXPECT_LT(worst_ms, 100.0) << "worst port open was " << worst_ms << " ms";
+}
+
 TEST_F(SHMTransportTests, port_mutex_deadlock_recover)
 {
     auto shared_mem_manager = SharedMemManager::create(domain_name);
@@ -1392,24 +1452,163 @@ TEST_F(SHMTransportTests, port_corrupt_segment_recovers_on_open)
     shared_mem_global->remove_port(0);
 
     auto test_case = [&](uint8_t corrupt_byte)
-    {
-        auto port = shared_mem_global->open_port(0, 1, 1000);
-        ASSERT_NO_THROW(port->healthy_check());
+            {
+                auto port = shared_mem_global->open_port(0, 1, 1000);
+                ASSERT_NO_THROW(port->healthy_check());
 
-        // Damage the allocator structures the way an abruptly terminated peer can.
-        port_mocker.corrupt_segment_allocator(*port, corrupt_byte);
+                // Damage the allocator structures the way an abruptly terminated peer can.
+                port_mocker.corrupt_segment_allocator(*port, corrupt_byte);
 
-        // Opening the port again should not walk those structures.
-        auto recovered = shared_mem_global->open_port(0, 1, 1000);
-        ASSERT_TRUE(recovered != nullptr);
-        ASSERT_NO_THROW(recovered->healthy_check());
-    };
+                // Opening the port again should not walk those structures.
+                auto recovered = shared_mem_global->open_port(0, 1, 1000);
+                ASSERT_TRUE(recovered != nullptr);
+                ASSERT_NO_THROW(recovered->healthy_check());
+            };
 
     for (uint8_t corrupt_byte = 0xFF; corrupt_byte > 0x00; corrupt_byte--)
     {
         test_case(corrupt_byte);
     }
     test_case(0x00);
+}
+
+// check_sanity() must not only validate the allocator: the named-object index is
+// an intrusive tree of offset pointers inside the segment too, and open_port_internal
+// walks it right after check_sanity() succeeds (find<PortNode>). Damage only the index
+// node of a named object and expect check_sanity() to report it instead of passing and
+// letting the lookup fault on a wild pointer.
+TEST_F(SHMTransportTests, segment_corrupt_named_index_fails_sanity_check)
+{
+    const std::string segment_name = domain_name + "_index_sanity";
+    SharedMemSegment::remove(segment_name.c_str());
+
+    {
+        SharedMemSegment segment(boost::interprocess::create_only, segment_name.c_str(), 4096);
+        auto* victim = segment.get().construct<uint32_t>("victim")(7u);
+        ASSERT_TRUE(segment.check_sanity());
+
+        // The index hook (parent/left/right offsets) is the first thing in the allocation and is
+        // followed by the block header of the named object. Leave the block header alone.
+        using BlockHeader = boost::interprocess::ipcdetail::block_header<SharedSegmentBase::Offset>;
+        auto* header = BlockHeader::block_header_from_value(victim);
+        constexpr size_t hook_bytes = 3 * sizeof(SharedSegmentBase::Offset);
+        std::memset(reinterpret_cast<char*>(header) - hook_bytes, 0xEF, hook_bytes);
+
+        EXPECT_FALSE(segment.check_sanity());
+    }
+
+    SharedMemSegment::remove(segment_name.c_str());
+}
+
+namespace {
+
+struct SanityNode : public boost::intrusive::set_base_hook<boost::intrusive::link_mode<boost::intrusive::normal_link>>
+{
+    int key = 0;
+
+    bool operator <(
+            const SanityNode& other) const
+    {
+        return key < other.key;
+    }
+
+};
+
+using SanityTree = boost::intrusive::set<SanityNode>;
+using SanityTraits = SanityTree::node_traits;
+
+// Tree header and nodes share one block, as the index and its nodes share a segment
+struct SanityRegion
+{
+    SanityTree tree;
+    SanityNode nodes[8];
+};
+
+} // namespace
+
+class TreeSanityTests : public ::testing::Test
+{
+protected:
+
+    void fill(
+            size_t count)
+    {
+        for (size_t i = 0; i < count; ++i)
+        {
+            region_.nodes[i].key = static_cast<int>(i);
+            region_.tree.insert(region_.nodes[i]);
+        }
+    }
+
+    bool sane()
+    {
+        return boost::interprocess::ipcdetail::tree_links_in_range(
+            region_.tree, &region_, &region_ + 1);
+    }
+
+    SanityTraits::node_ptr node_of(
+            SanityNode& node)
+    {
+        return region_.tree.iterator_to(node).pointed_node();
+    }
+
+    // First node that has a left child (a tree of 8 nodes has several)
+    SanityNode& parent_with_left_child()
+    {
+        for (SanityNode& node : region_.nodes)
+        {
+            if (SanityTraits::get_left(node_of(node)))
+            {
+                return node;
+            }
+        }
+        throw std::logic_error("no node with a left child");
+    }
+
+    SanityRegion region_;
+    SanityNode outside_;
+};
+
+TEST_F(TreeSanityTests, empty_and_valid_trees_pass)
+{
+    EXPECT_TRUE(sane());
+    fill(8);
+    EXPECT_TRUE(sane());
+}
+
+TEST_F(TreeSanityTests, link_outside_range_fails)
+{
+    fill(8);
+    SanityNode& parent = parent_with_left_child();
+    SanityTraits::set_left(node_of(parent), region_.tree.iterator_to(outside_).pointed_node());
+    EXPECT_FALSE(sane());
+}
+
+TEST_F(TreeSanityTests, misaligned_link_fails)
+{
+    fill(8);
+    SanityNode& parent = parent_with_left_child();
+    auto child = SanityTraits::get_left(node_of(parent));
+    SanityTraits::set_left(node_of(parent),
+            reinterpret_cast<SanityTraits::node_ptr>(reinterpret_cast<char*>(child) + 1));
+    EXPECT_FALSE(sane());
+}
+
+TEST_F(TreeSanityTests, inconsistent_parent_link_fails)
+{
+    fill(8);
+    SanityNode& parent = parent_with_left_child();
+    // A link back to itself stays in range but its parent link does not point back
+    SanityTraits::set_left(node_of(parent), node_of(parent));
+    EXPECT_FALSE(sane());
+}
+
+TEST_F(TreeSanityTests, root_outside_range_fails)
+{
+    fill(8);
+    SanityTraits::set_parent(region_.tree.end().pointed_node(),
+            region_.tree.iterator_to(outside_).pointed_node());
+    EXPECT_FALSE(sane());
 }
 
 TEST_F(SHMTransportTests, port_not_ok_listener_recover)

@@ -24,22 +24,15 @@ file(GLOB_RECURSE ALL_HEADERS
     ${PROJECT_SOURCE_DIR}/src/cpp/**/*.hpp
     )
 
-add_definitions(-DNOMINMAX)
-
 endif(WIN32)
 
-set(FASTDDS_DIR ${PROJECT_SOURCE_DIR})
-set(FASTDDS_SOURCE_DIR .)
 include(source.cmake)
+
+include(${PROJECT_SOURCE_DIR}/cmake/common/fastdds_units.cmake)
 
 foreach(MODULE_DIR ${${PROJECT_NAME}_module_dirs})
     add_subdirectory(${MODULE_DIR})
 endforeach()
-
-list(APPEND ${PROJECT_NAME}_source_files
-    rtps/domain/RTPSDomainExtras.cpp
-    xmlparser/XMLParserExtras.cpp
-	)
 
 # Option to enable strict real-time. In this case, several API functions have a real-time behaviour.
 # * Publisher::write() - Uses ReliabilityQosPolicy.max_blocking_time
@@ -116,11 +109,52 @@ unset(CMAKE_ATOMIC_LIB)
 configure_file(${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/config.hpp.in
     ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/config.hpp)
 
-#Create library
-add_library(${PROJECT_NAME} ${${PROJECT_NAME}_source_files})
+# The Windows resource file uses fastdds_EXPORTS, only defined for the fastdds library.
+set(fastdds_resource_files ${${PROJECT_NAME}_source_files})
+list(FILTER fastdds_resource_files INCLUDE REGEX "\\.rc$")
+set(fastdds_core_source_files ${${PROJECT_NAME}_source_files})
+list(FILTER fastdds_core_source_files EXCLUDE REGEX "\\.rc$")
+
+# The rest of the fastdds sources, depending on every unit created so far.
+get_property(fastdds_other_units GLOBAL PROPERTY FASTDDS_UNITS)
+list(TRANSFORM fastdds_other_units REPLACE "^fastdds::" "")
+
+fastdds_add_unit(core
+    SOURCES
+    ${fastdds_core_source_files}
+    DEPENDS
+    ${fastdds_other_units}
+    INCLUDE_DIRECTORIES
+    ${Asio_INCLUDE_DIR}
+    $<$<BOOL:${TINYXML2_INCLUDE_DIR}>:${TINYXML2_INCLUDE_DIR}>
+    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
+    ${THIRDPARTY_BOOST_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
+    LINK_LIBRARIES
+    PUBLIC
+    fastcdr
+    foonathan_memory
+    eProsima_atomic
+    ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
+    ${TINYXML2_LIBRARY}
+    $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto$<$<BOOL:${WIN32}>:$<SEMICOLON>crypt32.lib>>
+    $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+    ${THIRDPARTY_BOOST_LINK_LIBS}
+    )
+
+if(APPLE)
+    target_link_libraries(fastdds-core PUBLIC
+        "-framework CoreFoundation"
+        "-framework IOKit"
+        )
+endif()
+
+#Create library: its objects come from the units it links.
+add_library(${PROJECT_NAME} ${fastdds_resource_files})
 set_target_properties(${PROJECT_NAME} PROPERTIES
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+    LINKER_LANGUAGE CXX
     )
 
 option(INTERNAL_DEBUG "Activate developer debug messages" OFF)
@@ -135,6 +169,7 @@ target_compile_definitions(${PROJECT_NAME}
     SQLITE_WIN32_GETVERSIONEX=0
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    $<$<BOOL:${WIN32}>:NOMINMAX> # Avoid macro clash with std::min and std::max
     $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:_WIN32_WINNT=0x0603>
     $<$<AND:$<BOOL:${WIN32}>,$<NOT:$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>>:_WIN32_WINNT=0x0601>
     $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:SQLITE_OS_WINRT>
@@ -164,6 +199,10 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     )
 
+# Units created by fastdds_add_unit() in the module directories.
+get_property(fastdds_units GLOBAL PROPERTY FASTDDS_UNITS)
+list(TRANSFORM fastdds_units REPLACE "^(.+)$" "$<BUILD_INTERFACE:\\1>")
+
 # Link library to external libraries.
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
@@ -171,6 +210,7 @@ target_link_libraries(${PROJECT_NAME}
     foonathan_memory
 
     PRIVATE
+    ${fastdds_units} # Objects are embedded in fastdds, so not exported
     eProsima_atomic
     ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
     ${TINYXML2_LIBRARY}

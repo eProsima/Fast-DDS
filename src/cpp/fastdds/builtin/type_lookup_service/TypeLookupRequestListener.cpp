@@ -19,6 +19,12 @@
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupRequestListener.hpp>
 
+#include <algorithm>
+#include <limits>
+#include <vector>
+
+#include <fastcdr/exceptions/Exception.h>
+
 #include <fastdds/dds/log/Log.hpp>
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
@@ -39,22 +45,29 @@ namespace builtin {
 
 //! Constant that specifies the maximum number of dependent types to be included per reply.
 //! This number is calculated considering the MTU.
-const int32_t MAX_DEPENDENCIES_PER_REPLY = 75;
+const size_t MAX_DEPENDENCIES_PER_REPLY = 75;
 
 /**
- * @brief Calculates the opaque value of continuation point.
+ * @brief Calculates the opaque value of continuation point, which is the index of the requested page.
  * @param continuation_point[in] The continuation point.
- * @return The value of the continuation_point.
+ * @param value[out] The value of the continuation_point.
+ * @return false if the value is not representable in size_t, true otherwise.
  */
-inline size_t calculate_continuation_point(
-        const std::vector<uint8_t>& continuation_point)
+inline bool calculate_continuation_point(
+        const std::vector<uint8_t>& continuation_point,
+        size_t& value)
 {
-    size_t result = 0;
+    value = 0;
     for (size_t i = 0; i < continuation_point.size(); ++i)
     {
-        result = (result << 8) | continuation_point[i];
+        // Shifting would discard the most significant bytes
+        if (value > (std::numeric_limits<size_t>::max() >> 8))
+        {
+            return false;
+        }
+        value = (value << 8) | continuation_point[i];
     }
-    return result;
+    return true;
 }
 
 /**
@@ -67,23 +80,37 @@ inline std::vector<uint8_t> create_continuation_point(
 {
     std::vector<uint8_t> continuation_point(32, 0);
 
-    for (size_t value_i = 0; value_i < value; value_i++)
+    // Big endian encoding of the value in the last bytes
+    for (size_t i = 0; i < sizeof(size_t); ++i)
     {
-        for (size_t i = continuation_point.size() - 1; i != SIZE_MAX; --i)
-        {
-            if (continuation_point[i] < 255)
-            {
-                ++continuation_point[i];
-                // Break after successful increment
-                break;
-            }
-            else
-            {
-                continuation_point[i] = 0;
-            }
-        }
+        continuation_point[continuation_point.size() - 1 - i] = static_cast<uint8_t>(value >> (8 * i));
     }
     return continuation_point;
+}
+
+/**
+ * @brief Strict weak ordering of TypeIdentfierWithSize, so dependencies are paginated in a deterministic order.
+ * @param lhs[in] Left hand side TypeIdentfierWithSize.
+ * @param rhs[in] Right hand side TypeIdentfierWithSize.
+ * @return true if lhs goes before rhs.
+ */
+inline bool type_identifier_with_size_less(
+        const xtypes::TypeIdentfierWithSize& lhs,
+        const xtypes::TypeIdentfierWithSize& rhs)
+{
+    const xtypes::TypeIdentifier& lhs_id {lhs.type_id()};
+    const xtypes::TypeIdentifier& rhs_id {rhs.type_id()};
+    if (lhs_id._d() != rhs_id._d())
+    {
+        return lhs_id._d() < rhs_id._d();
+    }
+    // Dependencies are direct hash TypeIdentifiers, so the EquivalenceHash makes the order total
+    if ((xtypes::EK_COMPLETE == lhs_id._d() || xtypes::EK_MINIMAL == lhs_id._d()) &&
+            lhs_id.equivalence_hash() != rhs_id.equivalence_hash())
+    {
+        return lhs_id.equivalence_hash() < rhs_id.equivalence_hash();
+    }
+    return lhs.typeobject_serialized_size() < rhs.typeobject_serialized_size();
 }
 
 TypeLookupRequestListener::TypeLookupRequestListener(
@@ -139,47 +166,71 @@ void TypeLookupRequestListener::stop_request_processor_thread()
 
 void TypeLookupRequestListener::process_requests()
 {
-    std::unique_lock<std::mutex> guard(request_processor_cv_mutex_);
-
-    while (processing_)
+    while (true)
     {
-        // Wait until either processing is done or there are requests in the queue
-        request_processor_cv_.wait(guard,
-                [&]()
-                {
-                    return !processing_ || !requests_queue_.empty();
-                });
-
-        if (!requests_queue_.empty())
+        std::pair<TypeLookup_Request, rtps::VendorId_t> request;
         {
-            std::pair<TypeLookup_Request, rtps::VendorId_t>& request = requests_queue_.front();
+            std::unique_lock<std::mutex> guard(request_processor_cv_mutex_);
+
+            // Wait until either processing is done or there are requests in the queue
+            request_processor_cv_.wait(guard,
+                    [&]()
+                    {
+                        return !processing_ || !requests_queue_.empty();
+                    });
+
+            if (!processing_)
             {
-                // Process the TypeLookup_Request based on its type
-                switch (request.first.data()._d())
-                {
-                    case TypeLookup_getTypes_HashId:
-                    {
-                        check_get_types_request(request.first.header().requestId(),
-                                request.first.data().getTypes(), request.second);
-                        break;
-                    }
-                    case TypeLookup_getDependencies_HashId:
-                    {
-                        check_get_type_dependencies_request(request.first.header().requestId(),
-                                request.first.data().getTypeDependencies());
-                        break;
-                    }
-                    default:
-                        // If the type of request is not known, log an error and answer with an exception
-                        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER,
-                                "Received unknown request in type lookup service.");
-                        answer_request(request.first.header().requestId(),
-                                rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_OPERATION);
-                        break;
-                }
+                return;
             }
-            // Remove the requests from the queue
+
+            // Take the request out of the queue, as it is processed with the mutex released
+            request = std::move(requests_queue_.front());
             requests_queue_.pop();
+        }
+
+        // Answering takes the writer mutex, while a request is delivered holding that same mutex and taking
+        // this one. Holding it here would invert that order and deadlock both threads
+        try
+        {
+            // Process the TypeLookup_Request based on its type
+            switch (request.first.data()._d())
+            {
+                case TypeLookup_getTypes_HashId:
+                {
+                    check_get_types_request(request.first.header().requestId(),
+                            request.first.data().getTypes(), request.second);
+                    break;
+                }
+                case TypeLookup_getDependencies_HashId:
+                {
+                    check_get_type_dependencies_request(request.first.header().requestId(),
+                            request.first.data().getTypeDependencies());
+                    break;
+                }
+                default:
+                    // If the type of request is not known, log an error and answer with an exception
+                    EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER,
+                            "Received unknown request in type lookup service.");
+                    answer_request(request.first.header().requestId(),
+                            rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_OPERATION);
+                    break;
+            }
+        }
+        catch (const std::exception& exception)
+        {
+            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE_REQUEST_LISTENER,
+                    "Error processing request in type lookup service: " << exception.what());
+        }
+        catch (const eprosima::fastcdr::exception::Exception& exception)
+        {
+            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE_REQUEST_LISTENER,
+                    "Error processing request in type lookup service: " << exception.what());
+        }
+        catch (...)
+        {
+            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE_REQUEST_LISTENER,
+                    "Unknown error processing request in type lookup service.");
         }
     }
 }
@@ -286,47 +337,14 @@ void TypeLookupRequestListener::check_get_type_dependencies_request(
         SampleIdentity request_id,
         const TypeLookup_getTypeDependencies_In& request)
 {
-    std::unordered_set<xtypes::TypeIdentfierWithSize>* type_dependencies_ptr {nullptr};
     std::unordered_set<xtypes::TypeIdentfierWithSize> type_dependencies;
     ReturnCode_t type_dependencies_result = RETCODE_ERROR;
     if (!request.type_ids().empty())
     {
-        // Check if the received request has been done before and needed a continuation point
-        if (!request.continuation_point().empty())
-        {
-            auto requests_it = requests_with_continuation_.find(request.type_ids());
-            if (requests_it != requests_with_continuation_.end())
-            {
-                // Get the dependencies without checking the registry
-                type_dependencies_ptr = &requests_it->second;
-                type_dependencies_result = RETCODE_OK;
-            }
-            else
-            {
-                // If the the received request is not found, log error and answer with exception
-                EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER,
-                        "Error processing ongoing type dependencies request.");
-                answer_request(request_id, rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_EXCEPTION);
-            }
-        }
-        else
-        {
-            // Get the dependencies from the registry
-            type_dependencies_result =
-                    fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
-                            get_type_dependencies(request.type_ids(), type_dependencies);
-
-            // If there are too many dependent types, store the type dependencies for future requests
-            if (type_dependencies_result == RETCODE_OK && type_dependencies.size() > MAX_DEPENDENCIES_PER_REPLY)
-            {
-                auto ret = requests_with_continuation_.emplace(request.type_ids(), std::move(type_dependencies));
-                type_dependencies_ptr = &ret.first->second;
-            }
-            else
-            {
-                type_dependencies_ptr = &type_dependencies;
-            }
-        }
+        // Dependencies are computed on each request, so no state is kept between paginated requests
+        type_dependencies_result =
+                fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+                        get_type_dependencies(request.type_ids(), type_dependencies);
     }
     else
     {
@@ -336,10 +354,19 @@ void TypeLookupRequestListener::check_get_type_dependencies_request(
     // Handle the result based on the type_dependencies_result
     if (RETCODE_OK == type_dependencies_result)
     {
-        // Prepare and send the reply for successful operation
-        TypeLookup_getTypeDependencies_Out out = prepare_get_type_dependencies_response(
-            request.type_ids(), *type_dependencies_ptr, request.continuation_point());
-        answer_request(request_id, rpc::RemoteExceptionCode_t::REMOTE_EX_OK, out);
+        TypeLookup_getTypeDependencies_Out out;
+        if (prepare_get_type_dependencies_response(type_dependencies, request.continuation_point(), out))
+        {
+            // Prepare and send the reply for successful operation
+            answer_request(request_id, rpc::RemoteExceptionCode_t::REMOTE_EX_OK, out);
+        }
+        else
+        {
+            // Log error for invalid continuation point and reply with appropriate exception
+            EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER,
+                    "Invalid continuation point in type dependencies request.");
+            answer_request(request_id, rpc::RemoteExceptionCode_t::REMOTE_EX_INVALID_ARGUMENT);
+        }
     }
     else if (RETCODE_NO_DATA == type_dependencies_result)
     {
@@ -357,56 +384,40 @@ void TypeLookupRequestListener::check_get_type_dependencies_request(
     }
 }
 
-TypeLookup_getTypeDependencies_Out TypeLookupRequestListener::prepare_get_type_dependencies_response(
-        const xtypes::TypeIdentifierSeq& id_seq,
+bool TypeLookupRequestListener::prepare_get_type_dependencies_response(
         const std::unordered_set<xtypes::TypeIdentfierWithSize>& type_dependencies,
-        const std::vector<uint8_t>& continuation_point)
+        const std::vector<uint8_t>& continuation_point,
+        TypeLookup_getTypeDependencies_Out& out) const
 {
-    TypeLookup_getTypeDependencies_Out out;
-
-    // Check if all dependencies can be sent in a single response
-    if (type_dependencies.size() < MAX_DEPENDENCIES_PER_REPLY)
+    // The continuation point is the index of the requested page
+    size_t page {0};
+    if (!calculate_continuation_point(continuation_point, page))
     {
-        for (const auto& type_identifier : type_dependencies)
-        {
-            out.dependent_typeids().emplace_back(type_identifier);
-        }
-    }
-    else
-    {
-        size_t start_index = 0;
-        // Check if a continuation point is provided, and calculate starting point if there is
-        if (!continuation_point.empty())
-        {
-            start_index = calculate_continuation_point(continuation_point) * MAX_DEPENDENCIES_PER_REPLY;
-        }
-
-        // Copy the dependencies within the specified range directly to out
-        auto start_it = std::next(type_dependencies.begin(), start_index);
-        auto end_it = std::next(start_it, std::min<size_t>(MAX_DEPENDENCIES_PER_REPLY,
-                        type_dependencies.size() - start_index));
-        for (auto it = start_it; it != end_it; ++it)
-        {
-            out.dependent_typeids().emplace_back(*it);
-        }
-
-        if ((start_index + MAX_DEPENDENCIES_PER_REPLY) > type_dependencies.size())
-        {
-            // If all dependent types have been sent, remove from map
-            auto requests_it = requests_with_continuation_.find(id_seq);
-            if (requests_it != requests_with_continuation_.end())
-            {
-                requests_with_continuation_.erase(requests_it);
-            }
-        }
-        else
-        {
-            // Set the continuation point for the next request
-            out.continuation_point(create_continuation_point(calculate_continuation_point(continuation_point) + 1));
-        }
+        return false;
     }
 
-    return out;
+    // Checked against the number of pages, so the page offset cannot overflow
+    const size_t pages {(type_dependencies.size() + MAX_DEPENDENCIES_PER_REPLY - 1) / MAX_DEPENDENCIES_PER_REPLY};
+    if (page >= std::max<size_t>(pages, 1))
+    {
+        return false;
+    }
+
+    // Deterministically sorted, so the dependencies of each page are the same when recomputed on the following requests
+    std::vector<xtypes::TypeIdentfierWithSize> sorted_dependencies(type_dependencies.begin(), type_dependencies.end());
+    std::sort(sorted_dependencies.begin(), sorted_dependencies.end(), type_identifier_with_size_less);
+
+    const size_t start_index {page * MAX_DEPENDENCIES_PER_REPLY};
+    const size_t end_index {std::min(start_index + MAX_DEPENDENCIES_PER_REPLY, sorted_dependencies.size())};
+    out.dependent_typeids().assign(sorted_dependencies.begin() + start_index, sorted_dependencies.begin() + end_index);
+
+    if (end_index < sorted_dependencies.size())
+    {
+        // Set the continuation point for the next request
+        out.continuation_point(create_continuation_point(page + 1));
+    }
+
+    return true;
 }
 
 void TypeLookupRequestListener::answer_request(

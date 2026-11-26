@@ -19,8 +19,8 @@
 
 #include <gtest/gtest.h>
 
-// Include mocks first
 #include <fastdds/core/condition/ConditionNotifier.hpp>
+#include <mock/fastdds/core/condition/ConditionNotifierMock.hpp>
 
 // Include UUT
 #include <fastdds/core/condition/WaitSetImpl.hpp>
@@ -31,6 +31,7 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::dds::detail;
 using ::testing::_;
+namespace mock = eprosima::fastdds::mock;
 
 class TestCondition : public Condition
 {
@@ -54,9 +55,9 @@ TEST(WaitSetImplTests, condition_management)
     // The condition is attached, detached, attached again and then deleted.
     // The following calls to the notifier are expected
     auto notifier = condition.get_notifier();
-    EXPECT_CALL(*notifier, attach_to(_)).Times(2);
-    EXPECT_CALL(*notifier, detach_from(_)).Times(1);
-    EXPECT_CALL(*notifier, will_be_deleted(_)).Times(1);
+    EXPECT_CALL(mock::mock_of(notifier), attach_to(_)).Times(2);
+    EXPECT_CALL(mock::mock_of(notifier), detach_from(_)).Times(1);
+    EXPECT_CALL(mock::mock_of(notifier), will_be_deleted(_)).Times(1);
 
     // WaitSetImpl should be created without conditions
     EXPECT_EQ(RETCODE_OK, wait_set.get_conditions(conditions));
@@ -108,8 +109,8 @@ TEST(WaitSetImplTests, wait)
 
         // Expecting calls on the notifier of triggered_condition
         auto notifier = condition.get_notifier();
-        EXPECT_CALL(*notifier, attach_to(_)).Times(1);
-        EXPECT_CALL(*notifier, will_be_deleted(_)).Times(1);
+        EXPECT_CALL(mock::mock_of(notifier), attach_to(_)).Times(1);
+        EXPECT_CALL(mock::mock_of(notifier), will_be_deleted(_)).Times(1);
 
         // Waiting on empty wait set should timeout
         EXPECT_EQ(RETCODE_TIMEOUT, wait_set.wait(conditions, timeout));
@@ -178,8 +179,8 @@ TEST(WaitSetImplTests, wait)
 
             // Expecting calls on the notifier of triggered_condition
             notifier = triggered_condition.get_notifier();
-            EXPECT_CALL(*notifier, attach_to(_)).Times(1);
-            EXPECT_CALL(*notifier, will_be_deleted(_)).Times(1);
+            EXPECT_CALL(mock::mock_of(notifier), attach_to(_)).Times(1);
+            EXPECT_CALL(mock::mock_of(notifier), will_be_deleted(_)).Times(1);
 
             std::thread add_triggered_condition([&]()
                     {
@@ -211,8 +212,8 @@ TEST(WaitSetImplTests, fix_wait_notification_lost)
 
         // Expecting calls on the notifier of triggered_condition.
         auto notifier = triggered_condition.get_notifier();
-        EXPECT_CALL(*notifier, attach_to(_)).Times(1);
-        EXPECT_CALL(*notifier, will_be_deleted(_)).Times(1);
+        EXPECT_CALL(mock::mock_of(notifier), attach_to(_)).Times(1);
+        EXPECT_CALL(mock::mock_of(notifier), will_be_deleted(_)).Times(1);
 
         class AnotherTestCondition : public Condition
         {
@@ -230,8 +231,8 @@ TEST(WaitSetImplTests, fix_wait_notification_lost)
 
         // Expecting calls on the notifier of second_simulator_condition.
         notifier = second_simulator_condition.get_notifier();
-        EXPECT_CALL(*notifier, attach_to(_)).Times(1);
-        EXPECT_CALL(*notifier, will_be_deleted(_)).Times(1);
+        EXPECT_CALL(mock::mock_of(notifier), attach_to(_)).Times(1);
+        EXPECT_CALL(mock::mock_of(notifier), will_be_deleted(_)).Times(1);
 
         wait_set.attach_condition(triggered_condition);
         wait_set.attach_condition(second_simulator_condition);

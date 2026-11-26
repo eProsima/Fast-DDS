@@ -18,6 +18,8 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <rtps/resources/ResourceEvent.h>
+#include <mock/rtps/writer/StatefulWriterMock.hpp>
+#include <rtps/writer/StatefulWriter.hpp>
 
 #include <statistics/rtps/monitor-service/Interfaces.hpp>
 #include <statistics/rtps/monitor-service/MonitorService.hpp>
@@ -67,13 +69,14 @@ public:
             &mock_proxy_q_,
             &mock_conns_q_,
             mock_status_q_,
-            [&](fastdds::rtps::RTPSWriter**,
+            [&](fastdds::rtps::RTPSWriter** created_writer,
             fastdds::rtps::WriterAttributes&,
             fastdds::rtps::WriterHistory*,
             fastdds::rtps::WriterListener*,
             const fastdds::rtps::EntityId_t&,
             bool)->bool
             {
+                *created_writer = &writer;
                 return true;
             },
             [&](
@@ -85,7 +88,6 @@ public:
             },
             mock_event_resource_)
     {
-        monitor_srv_.set_writer(&writer);
         mock_event_resource_.init_thread();
     }
 
@@ -133,10 +135,7 @@ protected:
 
     void block_until_idle()
     {
-        while (monitor_srv_.is_processing())
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
-        }
+        std::this_thread::sleep_for(std::chrono::seconds(5));
     }
 
     testing::NiceMock<MockConnectionsQueryable> mock_conns_q_;
@@ -146,7 +145,7 @@ protected:
     int n_local_entities;
     std::vector<fastdds::rtps::GUID_t> mock_guids;
     fastdds::rtps::ResourceEvent mock_event_resource_;
-    testing::NiceMock<fastdds::rtps::BaseWriter> writer;
+    fastdds::rtps::TestStatefulWriter writer;
     MonitorService monitor_srv_;
 };
 

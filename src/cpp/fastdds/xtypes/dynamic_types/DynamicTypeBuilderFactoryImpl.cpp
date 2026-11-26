@@ -25,11 +25,12 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 #include <fastdds/dds/xtypes/exception/Exception.hpp>
+#include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
 
-#include <fastdds/xtypes/type_representation/TypeObjectRegistry.hpp>
 #include <rtps/domain/RTPSDomainImpl.hpp>
+#include <utils/SystemInfo.hpp>
 
 #include "idl_parser/Idl.hpp"
 
@@ -220,6 +221,12 @@ ReturnCode_t DynamicTypeBuilderFactoryImpl::for_each_type_w_uri(
         const IncludePathSeq& include_paths,
         std::function<bool(traits<DynamicTypeBuilder>::ref_type)> callback) noexcept
 {
+    if (!SystemInfo::file_exists(document_url))
+    {
+        EPROSIMA_LOG_ERROR(IDLPARSER, "IDL file '" << document_url << "' does not exist or cannot be read.");
+        return RETCODE_BAD_PARAMETER;
+    }
+
     try
     {
         idlparser::parse_file(document_url, include_paths, preprocessor_, callback);

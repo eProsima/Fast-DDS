@@ -1,0 +1,49 @@
+{
+    "test_cases": [
+        {
+            "TestCase": "Case_14",
+            "description": [
+                "Regression test: a pending TypeLookup request that is never answered must time out, fail the",
+                "entry and re-request the endpoints queued behind it from their own type server.",
+                "Same setup as Case_13, but the publisher that starves its builtin flow controller announces a",
+                "lease duration longer than the whole test, so the subscriber never detects it as gone and the",
+                "participant removal path cannot resolve the pending request.",
+                "The subscriber sets a short request timeout, so only the timeout can resolve TypeBig and let it",
+                "match the second publisher. On the timeout the first publisher is failed instead of removed, as",
+                "it is still there, so the subscriber pairs with it by type name and ends up matching both.",
+                "Before the fix the subscriber never discovers the second publisher's writer and times out."
+            ],
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "30",
+                    "expected_matches": "1",
+                    "lease_duration": "600",
+                    "known_types": [
+                        "TypeBig"
+                    ],
+                    "builtin_flow_controller_bytes": "6000"
+                },
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "30",
+                    "expected_matches": "1",
+                    "start_delay": "5",
+                    "known_types": [
+                        "TypeBig"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "25",
+                    "expected_matches": "2",
+                    "typelookup_request_timeout": "5000",
+                    "known_types": []
+                }
+            ]
+        }
+    ]
+}

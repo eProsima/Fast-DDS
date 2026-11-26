@@ -61,6 +61,55 @@ static const std::vector<std::vector<DistinguishedName>> DIFFERENT_DISTINGUISHED
         "CN=/pub,O=ROS",
         "CN=/pub, O=ROS",
     },
+
+    // Admin case (check quoted and hex escaped values)
+    {
+        "CN=Admin",
+        "CN=\"Admin\"",
+        "CN=\\41dmin",
+    },
+
+    // Collision case (check escaped backslash)
+    {
+        "CN=A\\\\dmin",
+        "CN=\"A\\\\dmin\"",
+    },
+
+    // Collision case (check escaped quote)
+    {
+        "CN=Ad\\\"min",
+        "CN=\"Ad\\\"min\"",
+    },
+
+    // Collision case (check escaped quotes around value)
+    {
+        "CN=\\\"Admin\\\"",
+    },
+
+    // Collision case (check escaped trailing space)
+    {
+        "CN=Admin\\ ",
+    },
+
+    // Multi-valued case (check + and ; as separators)
+    {
+        "CN=Admin+O=Corp",
+        "O=Corp+CN=Admin",
+        "CN=Admin;O=Corp",
+        "CN=Admin,O=Corp",
+    },
+
+    // Collision case (check escaped plus)
+    {
+        "CN=Admin\\+O=Corp",
+        "CN=\"Admin+O=Corp\"",
+    },
+
+    // Collision case (check escaped semicolon)
+    {
+        "CN=Admin\\;O=Corp",
+        "CN=\"Admin;O=Corp\"",
+    },
 };
 
 } // namespace test
@@ -124,6 +173,9 @@ TEST(DistinguishedNameTests, rfc2253_string_compare_negative)
             }
         }
     }
+
+    // Malformed names never match, not even themselves
+    ASSERT_FALSE(rfc2253_string_compare("CN=Admin\\", "CN=Admin"));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -199,6 +251,24 @@ TEST(DistinguishedNameTests, attribute_compare)
         {
             const char* cc1 = "Hello\\.";
             const char* cc2 = "Hello\\,";
+            detail::Attribute att1(cc1);
+            detail::Attribute att2(cc2);
+            ASSERT_NE(att1, att2)
+                << att1.value << " == " << att2.value;
+        }
+
+        {
+            const char* cc1 = "A\\\\dmin";
+            const char* cc2 = "Admin";
+            detail::Attribute att1(cc1);
+            detail::Attribute att2(cc2);
+            ASSERT_NE(att1, att2)
+                << att1.value << " == " << att2.value;
+        }
+
+        {
+            const char* cc1 = "Ad\\\"min";
+            const char* cc2 = "Admin";
             detail::Attribute att1(cc1);
             detail::Attribute att2(cc2);
             ASSERT_NE(att1, att2)

@@ -60,6 +60,8 @@ struct ReplyWithServerGUID
  */
 class TypeLookupReplyListener : public fastdds::rtps::ReaderListener, public fastdds::rtps::WriterListener
 {
+    friend class TypeLookupManager;
+
 public:
 
     /**
@@ -131,6 +133,13 @@ protected:
     void on_writer_change_received_by_all(
             fastdds::rtps::RTPSWriter*,
             fastdds::rtps::CacheChange_t* change) override;
+
+    /**
+     * @brief Forgets the given requests, so a request that is never answered does not leak its entry.
+     * @param requests[in] SampleIdentities of the requests to forget.
+     */
+    void remove_replies_with_continuation(
+            const std::vector<SampleIdentity>& requests);
 
     //! A pointer to the typelookup manager.
     TypeLookupManager* typelookup_manager_;

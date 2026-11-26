@@ -1,0 +1,52 @@
+{
+    "test_cases": [
+        {
+            "TestCase": "Case_13",
+            "description": [
+                "Regression test: a pending TypeLookup request whose type server is removed must be failed, and",
+                "the endpoints queued behind it re-requested from their own type server.",
+                "The first publisher starves its builtin flow controller, so it announces TypeBig but can never send",
+                "the TypeLookup reply, and its announcements stop once the budget is spent, so the subscriber",
+                "deletes its participant after 10 seconds, before the subscriber can know the type, so it never",
+                "matches and the subscriber detects it as gone. The second publisher",
+                "announces the same TypeBig later, and is queued behind the pending request without a new request",
+                "being sent.",
+                "The subscriber sets a request timeout far longer than its own window, so only the removal of the",
+                "first publisher can resolve TypeBig and let the subscriber match the second publisher.",
+                "Before the fix the subscriber never discovers the second publisher's writer and times out."
+            ],
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "lease_duration": "8",
+                    "expect_no_match": "1",
+                    "known_types": [
+                        "TypeBig"
+                    ],
+                    "builtin_flow_controller_bytes": "6000"
+                },
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "30",
+                    "expected_matches": "1",
+                    "start_delay": "5",
+                    "known_types": [
+                        "TypeBig"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "25",
+                    "expected_matches": "1",
+                    "typelookup_request_timeout": "600000",
+                    "known_types": []
+                }
+            ]
+        }
+    ]
+}

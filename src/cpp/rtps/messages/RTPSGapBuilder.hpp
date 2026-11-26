@@ -21,7 +21,10 @@
 #define FASTDDS_RTPS_MESSAGES__RTPSGAPBUILDER_HPP
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include "RTPSMessageGroup.hpp"
+#include <fastdds/rtps/common/Guid.hpp>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
+
+#include <rtps/messages/RTPSMessageGroup.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -41,10 +44,7 @@ public:
      * @param group Reference to the @ref RTPSMessageGroup that will be used to send GAP messages.
      */
     explicit RTPSGapBuilder(
-            RTPSMessageGroup& group)
-        : group_(group)
-    {
-    }
+            RTPSMessageGroup& group);
 
     /**
      * RTPSGapBuilder constructor.
@@ -54,12 +54,7 @@ public:
      */
     explicit RTPSGapBuilder(
             RTPSMessageGroup& group,
-            const GUID_t& reader_guid)
-        : with_specific_destination_(true)
-        , group_(group)
-        , reader_guid_(reader_guid)
-    {
-    }
+            const GUID_t& reader_guid);
 
     ~RTPSGapBuilder();
 

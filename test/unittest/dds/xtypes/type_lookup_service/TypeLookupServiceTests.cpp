@@ -12,6 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <chrono>
+#include <cstdint>
+#include <string>
+#include <unordered_set>
+#include <vector>
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -26,6 +32,11 @@
 #include <fastdds/builtin/type_lookup_service/TypeLookupReplyListener.hpp>
 #include <fastdds/builtin/type_lookup_service/TypeLookupRequestListener.hpp>
 #include <fastdds/xtypes/type_representation/TypeObjectRegistry.hpp>
+#include <mock/fastdds/builtin/type_lookup_service/TypeLookupManagerMock.hpp>
+#include <mock/fastdds/rtps/history/ReaderHistoryMock.hpp>
+#include <mock/rtps/participant/RTPSParticipantImplMock.hpp>
+#include <mock/rtps/reader/StatefulReaderMock.hpp>
+#include <mock/fastdds/xtypes/type_representation/TypeObjectRegistryMock.hpp>
 
 #include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/reader/StatefulReader.hpp>
@@ -169,23 +180,44 @@ inline std::vector<uint8_t> create_continuation_point(
 {
     std::vector<uint8_t> continuation_point(32, 0);
 
-    for (size_t value_i = 0; value_i < value; value_i++)
+    // Big endian encoding of the value in the last bytes
+    for (size_t i = 0; i < sizeof(size_t); ++i)
     {
-        for (size_t i = continuation_point.size() - 1; i != SIZE_MAX; --i)
-        {
-            if (continuation_point[i] < 255)
-            {
-                ++continuation_point[i];
-                // Break after successful increment
-                break;
-            }
-            else
-            {
-                continuation_point[i] = 0;
-            }
-        }
+        continuation_point[continuation_point.size() - 1 - i] = static_cast<uint8_t>(value >> (8 * i));
     }
     return continuation_point;
+}
+
+//! Mirrors MAX_DEPENDENCIES_PER_REPLY in TypeLookupRequestListener.cpp
+const size_t max_dependencies_per_reply {75};
+
+//! Direct hash TypeIdentifier distinct for each index
+TypeIdentifier hash_type_identifier(
+        uint32_t index)
+{
+    EquivalenceHash hash {};
+    for (size_t i = 0; i < sizeof(index); ++i)
+    {
+        hash[i] = static_cast<uint8_t>(index >> (8 * i));
+    }
+    TypeIdentifier type_id;
+    type_id.equivalence_hash(hash);
+    type_id._d(EK_MINIMAL);
+    return type_id;
+}
+
+std::unordered_set<TypeIdentfierWithSize> create_type_dependencies(
+        size_t amount)
+{
+    std::unordered_set<TypeIdentfierWithSize> type_dependencies;
+    for (size_t i = 0; i < amount; ++i)
+    {
+        TypeIdentfierWithSize type_id_with_size;
+        type_id_with_size.type_id(hash_type_identifier(static_cast<uint32_t>(i)));
+        type_id_with_size.typeobject_serialized_size(100);
+        type_dependencies.insert(type_id_with_size);
+    }
+    return type_dependencies;
 }
 
 SampleIdentity valid_sampleidentity()
@@ -245,6 +277,14 @@ private:
     std::vector<Log::Entry> mEntriesConsumed;
     mutable std::mutex mMutex;
     std::condition_variable cv_;
+};
+
+class TypeLookupManagerTester : public TypeLookupManager
+{
+public:
+
+    using TypeLookupManager::participant_;
+    using TypeLookupManager::async_get_type_requests_;
 };
 
 class MockTypeLookupReplyListener : public TypeLookupReplyListener
@@ -310,6 +350,13 @@ public:
         TypeLookupRequestListener::process_requests();
     }
 
+    void check_get_type_dependencies_request(
+            SampleIdentity request_id,
+            const TypeLookup_getTypeDependencies_In& request)
+    {
+        TypeLookupRequestListener::check_get_type_dependencies_request(request_id, request);
+    }
+
     std::queue<std::pair<TypeLookup_Request, rtps::VendorId_t>>* get_requests_queue()
     {
         return &requests_queue_;
@@ -334,8 +381,9 @@ protected:
 
     void SetUp() override
     {
-        tlm_ = new TypeLookupManager();
+        tlm_ = new TypeLookupManagerTester();
         tlm_->participant_ = &participant_;
+        tlm_mock_ = &fastdds::mock::mock_of<TypeLookupManager>(tlm_);
 
         reply_listener_ = new MockTypeLookupReplyListener(tlm_);
         request_listener_ = new MockTypeLookupRequestListener(tlm_);
@@ -346,22 +394,56 @@ protected:
 
     void TearDown() override
     {
+        // The registry outlives the test, so its expectations are not verified on destruction.
+        Mock::VerifyAndClearExpectations(&registry_mock_);
+
         delete stateful_reader_.history_;
         delete reply_listener_;
         delete request_listener_;
         delete tlm_;
     }
 
-    TypeLookupManager* tlm_;
+    //! Makes the registry return the given dependencies for any query
+    void expect_type_dependencies(
+            const std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
+    {
+        EXPECT_CALL(registry_mock_, get_type_dependencies(_, _)).WillRepeatedly(::testing::DoAll(
+                    ::testing::SetArgReferee<1>(type_dependencies),
+                    ::testing::Return(RETCODE_OK)));
+    }
+
+    //! Processes a getTypeDependencies request for the given TypeIdentifier and returns the reply sent
+    TypeLookup_Reply get_type_dependencies_reply(
+            const TypeIdentifier& type_id,
+            const std::vector<uint8_t>& continuation_point)
+    {
+        TypeIdentifierSeq type_ids;
+        type_ids.push_back(type_id);
+        TypeLookup_getTypeDependencies_In in;
+        in.type_ids(type_ids);
+        in.continuation_point(continuation_point);
+
+        TypeLookup_Reply reply;
+        EXPECT_CALL(*tlm_mock_, send(testing::Matcher<TypeLookup_Reply&>(_))).WillOnce(::testing::DoAll(
+                    ::testing::SaveArg<0>(&reply),
+                    ::testing::Return(true)));
+        request_listener_->check_get_type_dependencies_request(valid_sampleidentity(), in);
+        Mock::VerifyAndClearExpectations(tlm_mock_);
+        return reply;
+    }
+
+    TypeLookupManagerTester* tlm_;
+    TypeLookupManagerMock* tlm_mock_;
     MockTypeLookupReplyListener* reply_listener_;
     MockTypeLookupRequestListener* request_listener_;
     RTPSParticipantAttributes participant_attr_;
     NetworkFactory network_factory_ {participant_attr_};
     ReaderProxyData reader_proxy_{0, 0};
     WriterProxyData writer_proxy_{0, 0};
-    NiceMock<RTPSParticipantImpl> participant_;
-    NiceMock<StatefulReader> stateful_reader_;
+    TestRTPSParticipantImpl participant_;
+    TestStatefulReader stateful_reader_;
     TypeObjectRegistry& registry {RTPSDomainImpl::get_instance()->type_object_registry_observer()};
+    TypeObjectRegistryMock& registry_mock_ {fastdds::mock::mock_of(&registry)};
 };
 
 MockLogConsumer* setup_expect_log_msg(
@@ -448,9 +530,10 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_wrong_EntityId)
     CacheChange_t* change {new CacheChange_t()};
     change->writerGUID.entityId = 0x111111C3;
 
-    EXPECT_CALL(*stateful_reader_.history_, remove_change_mock(change)).Times(1).
-            WillOnce(::testing::Return(true));
+    EXPECT_CALL(fastdds::mock::mock_of(stateful_reader_.history_), remove_change(change)).Times(1).
+            WillOnce(::testing::DoAll(::testing::DeleteArg<0>(), ::testing::Return(true)));
 
+    stateful_reader_.history_->add_change(change);
     reply_listener_->on_new_cache_change_added(&stateful_reader_, change);
 
     EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0u);
@@ -464,13 +547,14 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_malformed_Reply)
     CacheChange_t* change {new CacheChange_t()};
     change->writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
 
-    EXPECT_CALL(*tlm_, receive(
+    EXPECT_CALL(*tlm_mock_, receive(
                 testing::Matcher<fastdds::rtps::CacheChange_t&>(_),
                 testing::Matcher<TypeLookup_Reply&>(_)))
             .WillOnce(testing::Return(false));
-    EXPECT_CALL(*stateful_reader_.history_, remove_change_mock(change)).Times(1).
-            WillOnce(::testing::Return(true));
+    EXPECT_CALL(fastdds::mock::mock_of(stateful_reader_.history_), remove_change(change)).Times(1).
+            WillOnce(::testing::DoAll(::testing::DeleteArg<0>(), ::testing::Return(true)));
 
+    stateful_reader_.history_->add_change(change);
     reply_listener_->on_new_cache_change_added(&stateful_reader_, change);
 
     EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0u);
@@ -484,18 +568,20 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_UNSUPPORTED)
                     std::to_string(static_cast<int>(rpc::RemoteExceptionCode_t::REMOTE_EX_UNSUPPORTED)));
 
 
-    CacheChange_t change;
-    change.writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
-    stateful_reader_.get_history()->add_change(&change);
+    CacheChange_t* change {new CacheChange_t()};
+    change->writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
+    stateful_reader_.get_history()->add_change(change);
+    EXPECT_CALL(fastdds::mock::mock_of(stateful_reader_.history_), remove_change(change)).Times(1).
+            WillOnce(::testing::DoAll(::testing::DeleteArg<0>(), ::testing::Return(true)));
 
     TypeLookup_Reply expectedReply;
     expectedReply.header().remoteEx(rpc::RemoteExceptionCode_t::REMOTE_EX_UNSUPPORTED);
-    EXPECT_CALL(*tlm_, receive(
+    EXPECT_CALL(*tlm_mock_, receive(
                 testing::Matcher<fastdds::rtps::CacheChange_t&>(_),
                 testing::Matcher<TypeLookup_Reply&>(_)))
             .WillOnce(testing::DoAll(testing::SetArgReferee<1>(expectedReply), testing::Return(true)));
 
-    reply_listener_->on_new_cache_change_added(&stateful_reader_, &change);
+    reply_listener_->on_new_cache_change_added(&stateful_reader_, change);
 
     EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0u);
 
@@ -511,18 +597,20 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_INVALID_ARGUMEN
                     std::to_string(static_cast<int>(rpc::RemoteExceptionCode_t::REMOTE_EX_INVALID_ARGUMENT)));
 
 
-    CacheChange_t change;
-    change.writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
-    stateful_reader_.get_history()->add_change(&change);
+    CacheChange_t* change {new CacheChange_t()};
+    change->writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
+    stateful_reader_.get_history()->add_change(change);
+    EXPECT_CALL(fastdds::mock::mock_of(stateful_reader_.history_), remove_change(change)).Times(1).
+            WillOnce(::testing::DoAll(::testing::DeleteArg<0>(), ::testing::Return(true)));
 
     TypeLookup_Reply expectedReply;
     expectedReply.header().remoteEx(rpc::RemoteExceptionCode_t::REMOTE_EX_INVALID_ARGUMENT);
-    EXPECT_CALL(*tlm_, receive(
+    EXPECT_CALL(*tlm_mock_, receive(
                 testing::Matcher<fastdds::rtps::CacheChange_t&>(_),
                 testing::Matcher<TypeLookup_Reply&>(_)))
             .WillOnce(testing::DoAll(testing::SetArgReferee<1>(expectedReply), testing::Return(true)));
 
-    reply_listener_->on_new_cache_change_added(&stateful_reader_, &change);
+    reply_listener_->on_new_cache_change_added(&stateful_reader_, change);
 
     EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0u);
 
@@ -538,18 +626,20 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_OUT_OF_RESOURCE
                     std::to_string(static_cast<int>(rpc::RemoteExceptionCode_t::REMOTE_EX_OUT_OF_RESOURCES)));
 
 
-    CacheChange_t change;
-    change.writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
-    stateful_reader_.get_history()->add_change(&change);
+    CacheChange_t* change {new CacheChange_t()};
+    change->writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
+    stateful_reader_.get_history()->add_change(change);
+    EXPECT_CALL(fastdds::mock::mock_of(stateful_reader_.history_), remove_change(change)).Times(1).
+            WillOnce(::testing::DoAll(::testing::DeleteArg<0>(), ::testing::Return(true)));
 
     TypeLookup_Reply expectedReply;
     expectedReply.header().remoteEx(rpc::RemoteExceptionCode_t::REMOTE_EX_OUT_OF_RESOURCES);
-    EXPECT_CALL(*tlm_, receive(
+    EXPECT_CALL(*tlm_mock_, receive(
                 testing::Matcher<fastdds::rtps::CacheChange_t&>(_),
                 testing::Matcher<TypeLookup_Reply&>(_)))
             .WillOnce(testing::DoAll(testing::SetArgReferee<1>(expectedReply), testing::Return(true)));
 
-    reply_listener_->on_new_cache_change_added(&stateful_reader_, &change);
+    reply_listener_->on_new_cache_change_added(&stateful_reader_, change);
     EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0u);
 
     Log::Flush();
@@ -564,18 +654,20 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_UNKNOWN_OPERATI
                     std::to_string(static_cast<int>(rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_OPERATION)));
 
 
-    CacheChange_t change;
-    change.writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
-    stateful_reader_.get_history()->add_change(&change);
+    CacheChange_t* change {new CacheChange_t()};
+    change->writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
+    stateful_reader_.get_history()->add_change(change);
+    EXPECT_CALL(fastdds::mock::mock_of(stateful_reader_.history_), remove_change(change)).Times(1).
+            WillOnce(::testing::DoAll(::testing::DeleteArg<0>(), ::testing::Return(true)));
 
     TypeLookup_Reply expectedReply;
     expectedReply.header().remoteEx(rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_OPERATION);
-    EXPECT_CALL(*tlm_, receive(
+    EXPECT_CALL(*tlm_mock_, receive(
                 testing::Matcher<fastdds::rtps::CacheChange_t&>(_),
                 testing::Matcher<TypeLookup_Reply&>(_)))
             .WillOnce(testing::DoAll(testing::SetArgReferee<1>(expectedReply), testing::Return(true)));
 
-    reply_listener_->on_new_cache_change_added(&stateful_reader_, &change);
+    reply_listener_->on_new_cache_change_added(&stateful_reader_, change);
     EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0u);
 
     Log::Flush();
@@ -590,18 +682,20 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_UNKNOWN_EXCEPTI
                     std::to_string(static_cast<int>(rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_EXCEPTION)));
 
 
-    CacheChange_t change;
-    change.writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
-    stateful_reader_.get_history()->add_change(&change);
+    CacheChange_t* change {new CacheChange_t()};
+    change->writerGUID.entityId = c_EntityId_TypeLookup_reply_writer;
+    stateful_reader_.get_history()->add_change(change);
+    EXPECT_CALL(fastdds::mock::mock_of(stateful_reader_.history_), remove_change(change)).Times(1).
+            WillOnce(::testing::DoAll(::testing::DeleteArg<0>(), ::testing::Return(true)));
 
     TypeLookup_Reply expectedReply;
     expectedReply.header().remoteEx(rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_EXCEPTION);
-    EXPECT_CALL(*tlm_, receive(
+    EXPECT_CALL(*tlm_mock_, receive(
                 testing::Matcher<fastdds::rtps::CacheChange_t&>(_),
                 testing::Matcher<TypeLookup_Reply&>(_)))
             .WillOnce(testing::DoAll(testing::SetArgReferee<1>(expectedReply), testing::Return(true)));
 
-    reply_listener_->on_new_cache_change_added(&stateful_reader_, &change);
+    reply_listener_->on_new_cache_change_added(&stateful_reader_, change);
     EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0u);
 
     Log::Flush();
@@ -615,7 +709,8 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_wrong_replyid)
                     "Received unknown reply operation type in type lookup service.");
 
     TypeIdentfierWithSize tidws;
-    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(), tidws);
+    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(),
+            AsyncGetTypeRequest{tidws, {}, std::chrono::steady_clock::now()});
 
     TypeLookup_Reply reply;
     reply.header().relatedRequestId(valid_sampleidentity());
@@ -636,7 +731,8 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_getTypes_empty)
             setup_expect_log_msg("TYPELOOKUP_SERVICE_REPLY_LISTENER", "Received reply with no types.");
 
     TypeIdentfierWithSize tidws;
-    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(), tidws);
+    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(),
+            AsyncGetTypeRequest{tidws, {}, std::chrono::steady_clock::now()});
 
     TypeLookup_Reply reply;
     reply.header().relatedRequestId(valid_sampleidentity());
@@ -645,7 +741,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_getTypes_empty)
     ReplyWithServerGUID reply_with_guid;
     reply_with_guid.reply = reply;
 
-    EXPECT_CALL(*tlm_, remove_async_get_type_request(_)).WillOnce(testing::Return(true));
+    EXPECT_CALL(*tlm_mock_, remove_async_get_type_request(_)).WillOnce(testing::Return(true));
 
     reply_listener_->get_replies_queue()->push(reply_with_guid);
     reply_listener_->notify();
@@ -660,7 +756,8 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_getTypes_registry_empty_t
             setup_expect_log_msg("TYPELOOKUP_SERVICE_REPLY_LISTENER", "Error registering remote type.");
 
     TypeIdentfierWithSize tidws;
-    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(), tidws);
+    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(),
+            AsyncGetTypeRequest{tidws, {}, std::chrono::steady_clock::now()});
 
     TypeLookup_Reply reply;
     reply.header().relatedRequestId(valid_sampleidentity());
@@ -676,10 +773,10 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_getTypes_registry_empty_t
     TypeIdentifierPair type_ids;
     type_ids.type_identifier1(pair.type_identifier());
 
-    EXPECT_CALL(registry,
+    EXPECT_CALL(registry_mock_,
             register_type_object(_, ::testing::Eq(type_ids), false)).Times(1).WillOnce(
         ::testing::Return(RETCODE_PRECONDITION_NOT_MET));
-    EXPECT_CALL(*tlm_, remove_async_get_type_request(_)).WillOnce(testing::Return(true));
+    EXPECT_CALL(*tlm_mock_, remove_async_get_type_request(_)).WillOnce(testing::Return(true));
 
     reply_listener_->get_replies_queue()->push(reply_with_guid);
     reply_listener_->notify();
@@ -695,7 +792,8 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_getTypes_registry_inconsi
             setup_expect_log_msg("TYPELOOKUP_SERVICE_REPLY_LISTENER", "Error registering remote type.");
 
     TypeIdentfierWithSize tidws;
-    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(), tidws);
+    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(),
+            AsyncGetTypeRequest{tidws, {}, std::chrono::steady_clock::now()});
 
     TypeLookup_Reply reply;
     reply.header().relatedRequestId(valid_sampleidentity());
@@ -719,10 +817,10 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_getTypes_registry_inconsi
     TypeIdentifierPair type_ids;
     type_ids.type_identifier1(pair.type_identifier());
 
-    EXPECT_CALL(registry,
+    EXPECT_CALL(registry_mock_,
             register_type_object(::testing::Eq(obj), ::testing::Eq(type_ids), false)).Times(1).WillOnce(
         ::testing::Return(RETCODE_PRECONDITION_NOT_MET));
-    EXPECT_CALL(*tlm_, remove_async_get_type_request(_)).WillOnce(testing::Return(true));
+    EXPECT_CALL(*tlm_mock_, remove_async_get_type_request(_)).WillOnce(testing::Return(true));
 
     reply_listener_->get_replies_queue()->push(reply_with_guid);
     reply_listener_->notify();
@@ -738,7 +836,8 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_getDependencies_continuat
                     "Failed to send get_type_dependencies request");
 
     TypeIdentfierWithSize tidws;
-    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(), tidws);
+    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(),
+            AsyncGetTypeRequest{tidws, {}, std::chrono::steady_clock::now()});
 
     TypeLookup_Reply reply;
     reply.header().relatedRequestId(valid_sampleidentity());
@@ -750,11 +849,11 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_getDependencies_continuat
     ReplyWithServerGUID reply_with_guid;
     reply_with_guid.reply = reply;
 
-    EXPECT_CALL(*tlm_,
+    EXPECT_CALL(*tlm_mock_,
             get_type_dependencies(testing::_, testing::_, testing::_)).WillOnce(testing::Return(
                 INVALID_SAMPLE_IDENTITY));
-    EXPECT_CALL(*tlm_, get_types(_, _)).WillOnce(testing::Return(INVALID_SAMPLE_IDENTITY));
-    EXPECT_CALL(*tlm_, remove_async_get_type_request(_)).WillOnce(testing::Return(true));
+    EXPECT_CALL(*tlm_mock_, get_types(_, _)).WillOnce(testing::Return(INVALID_SAMPLE_IDENTITY));
+    EXPECT_CALL(*tlm_mock_, remove_async_get_type_request(_)).WillOnce(testing::Return(true));
 
     reply_listener_->get_replies_queue()->push(reply_with_guid);
     reply_listener_->notify();
@@ -768,11 +867,12 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_getDependencies_get_types
     MockLogConsumer* log_consumer =
             setup_expect_log_msg("TYPELOOKUP_SERVICE_REPLY_LISTENER", "Failed to send get_types request");
 
-    // EXPECT_CALL(*tlm_, get_types(testing::_, testing::_))
+    // EXPECT_CALL(*tlm_mock_, get_types(testing::_, testing::_))
     //         .WillOnce(testing::Return(INVALID_SAMPLE_IDENTITY));
 
     TypeIdentfierWithSize tidws;
-    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(), tidws);
+    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(),
+            AsyncGetTypeRequest{tidws, {}, std::chrono::steady_clock::now()});
 
     TypeLookup_Reply reply;
     reply.header().relatedRequestId(valid_sampleidentity());
@@ -783,8 +883,8 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_getDependencies_get_types
     ReplyWithServerGUID reply_with_guid;
     reply_with_guid.reply = reply;
 
-    EXPECT_CALL(*tlm_, get_types(_, _)).WillOnce(testing::Return(INVALID_SAMPLE_IDENTITY));
-    EXPECT_CALL(*tlm_, remove_async_get_type_request(_)).WillOnce(testing::Return(true));
+    EXPECT_CALL(*tlm_mock_, get_types(_, _)).WillOnce(testing::Return(INVALID_SAMPLE_IDENTITY));
+    EXPECT_CALL(*tlm_mock_, remove_async_get_type_request(_)).WillOnce(testing::Return(true));
 
     reply_listener_->get_replies_queue()->push(reply_with_guid);
     reply_listener_->notify();
@@ -801,9 +901,10 @@ TEST_F(TypeLookupServiceTests, TypeLookupRequestListener_wrong_EntityId)
     CacheChange_t* change {new CacheChange_t()};
     change->writerGUID.entityId = 0x111111C3;
 
-    EXPECT_CALL(*stateful_reader_.history_, remove_change_mock(change)).Times(1).
-            WillOnce(::testing::Return(true));
+    EXPECT_CALL(fastdds::mock::mock_of(stateful_reader_.history_), remove_change(change)).Times(1).
+            WillOnce(::testing::DoAll(::testing::DeleteArg<0>(), ::testing::Return(true)));
 
+    stateful_reader_.history_->add_change(change);
     request_listener_->on_new_cache_change_added(&stateful_reader_, change);
 
     EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0u);
@@ -817,12 +918,13 @@ TEST_F(TypeLookupServiceTests, TypeLookupRequestListener_malformed_Request)
     CacheChange_t* change {new CacheChange_t()};
     change->writerGUID.entityId = c_EntityId_TypeLookup_request_writer;
 
-    EXPECT_CALL(*stateful_reader_.history_, remove_change_mock(change)).Times(1).
-            WillOnce(::testing::Return(true));
+    EXPECT_CALL(fastdds::mock::mock_of(stateful_reader_.history_), remove_change(change)).Times(1).
+            WillOnce(::testing::DoAll(::testing::DeleteArg<0>(), ::testing::Return(true)));
 
-    EXPECT_CALL(*tlm_, receive(::testing::Ref(*change), testing::Matcher<TypeLookup_Request&>(_)))
+    EXPECT_CALL(*tlm_mock_, receive(::testing::Ref(*change), testing::Matcher<TypeLookup_Request&>(_)))
             .WillOnce(testing::Return(false));
 
+    stateful_reader_.history_->add_change(change);
     request_listener_->on_new_cache_change_added(&stateful_reader_, change);
 
     EXPECT_EQ(request_listener_->get_requests_queue()->size(), 0u);
@@ -835,12 +937,13 @@ TEST_F(TypeLookupServiceTests, TypeLookupRequestListener_wrong_requestid)
                     "Received unknown request in type lookup service.");
 
     TypeIdentfierWithSize tidws;
-    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(), tidws);
+    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(),
+            AsyncGetTypeRequest{tidws, {}, std::chrono::steady_clock::now()});
 
     TypeLookup_Request request;
     request.data()._default();
 
-    EXPECT_CALL(*tlm_, send(testing::Matcher<TypeLookup_Reply&>(_))).WillOnce(testing::Return(true));
+    EXPECT_CALL(*tlm_mock_, send(testing::Matcher<TypeLookup_Reply&>(_))).WillOnce(testing::Return(true));
 
     request_listener_->get_requests_queue()->push({request, c_VendorId_eProsima});
     request_listener_->notify();
@@ -856,7 +959,8 @@ TEST_F(TypeLookupServiceTests, TypeLookupRequestListener_getTypes_empty)
                     "Received request with no type identifiers.");
 
     TypeIdentfierWithSize tidws;
-    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(), tidws);
+    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(),
+            AsyncGetTypeRequest{tidws, {}, std::chrono::steady_clock::now()});
 
     TypeLookup_Request request;
     request.data().getTypes({});
@@ -875,7 +979,8 @@ TEST_F(TypeLookupServiceTests, TypeLookupRequestListener_getTypes_registry_empty
                     "Requested TypeIdentifier is not a direct hash.");
 
     TypeIdentfierWithSize tidws;
-    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(), tidws);
+    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(),
+            AsyncGetTypeRequest{tidws, {}, std::chrono::steady_clock::now()});
 
     TypeLookup_Request request;
     TypeLookup_getTypes_In in;
@@ -886,11 +991,11 @@ TEST_F(TypeLookupServiceTests, TypeLookupRequestListener_getTypes_registry_empty
     in.type_ids().push_back(id);
     request.data().getTypes(in);
 
-    EXPECT_CALL(registry,
+    EXPECT_CALL(registry_mock_,
             get_type_object(::testing::Eq(id), _)).Times(1).WillOnce(
         ::testing::Return(RETCODE_PRECONDITION_NOT_MET));
 
-    EXPECT_CALL(*tlm_, send(testing::Matcher<TypeLookup_Reply&>(_))).WillOnce(testing::Return(true));
+    EXPECT_CALL(*tlm_mock_, send(testing::Matcher<TypeLookup_Reply&>(_))).WillOnce(testing::Return(true));
 
     request_listener_->get_requests_queue()->push({request, c_VendorId_eProsima});
     request_listener_->notify();
@@ -906,7 +1011,8 @@ TEST_F(TypeLookupServiceTests, TypeLookupRequestListener_getTypes_registry_unkno
                     "Requested TypeIdentifier is not found in the registry.");
 
     TypeIdentfierWithSize tidws;
-    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(), tidws);
+    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(),
+            AsyncGetTypeRequest{tidws, {}, std::chrono::steady_clock::now()});
 
     TypeLookup_Request request;
     TypeLookup_getTypes_In in;
@@ -919,11 +1025,11 @@ TEST_F(TypeLookupServiceTests, TypeLookupRequestListener_getTypes_registry_unkno
     in.type_ids().push_back(id);
     request.data().getTypes(in);
 
-    EXPECT_CALL(registry,
+    EXPECT_CALL(registry_mock_,
             get_type_object(::testing::Eq(id), _)).Times(1).WillOnce(
         ::testing::Return(RETCODE_NO_DATA));
 
-    EXPECT_CALL(*tlm_, send(testing::Matcher<TypeLookup_Reply&>(_))).WillOnce(testing::Return(true));
+    EXPECT_CALL(*tlm_mock_, send(testing::Matcher<TypeLookup_Reply&>(_))).WillOnce(testing::Return(true));
 
     request_listener_->get_requests_queue()->push({request, c_VendorId_eProsima});
     request_listener_->notify();
@@ -938,7 +1044,8 @@ TEST_F(TypeLookupServiceTests, TypeLookupRequestListener_getDependencies_empty)
             setup_expect_log_msg("TYPELOOKUP_SERVICE_REQUEST_LISTENER", "Type dependencies request is empty.");
 
     TypeIdentfierWithSize tidws;
-    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(), tidws);
+    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(),
+            AsyncGetTypeRequest{tidws, {}, std::chrono::steady_clock::now()});
 
     TypeLookup_Request request;
     request.data().getTypeDependencies({});
@@ -957,7 +1064,8 @@ TEST_F(TypeLookupServiceTests, TypeLookupRequestListener_getDependencies_registr
                     "Requested TypeIdentifier is not found in the registry.");
 
     TypeIdentfierWithSize tidws;
-    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(), tidws);
+    tlm_->async_get_type_requests_.emplace(valid_sampleidentity(),
+            AsyncGetTypeRequest{tidws, {}, std::chrono::steady_clock::now()});
 
     TypeLookup_Request request;
 
@@ -970,17 +1078,75 @@ TEST_F(TypeLookupServiceTests, TypeLookupRequestListener_getDependencies_registr
     in.type_ids().push_back(id);
     request.data().getTypeDependencies(in);
 
-    EXPECT_CALL(registry,
+    EXPECT_CALL(registry_mock_,
             get_type_dependencies(::testing::Eq(in.type_ids()), _)).Times(1).WillOnce(
         ::testing::Return(RETCODE_NO_DATA));
 
-    EXPECT_CALL(*tlm_, send(testing::Matcher<TypeLookup_Reply&>(_))).WillOnce(testing::Return(true));
+    EXPECT_CALL(*tlm_mock_, send(testing::Matcher<TypeLookup_Reply&>(_))).WillOnce(testing::Return(true));
 
     request_listener_->get_requests_queue()->push({request, c_VendorId_eProsima});
     request_listener_->notify();
 
     Log::Flush();
     EXPECT_EQ(log_consumer->wait_for_entries(1, 1), 1);
+}
+
+/**
+ * @test Regression test for #25733.
+ * Continuation points beyond the last page are rejected.
+ */
+TEST_F(TypeLookupServiceTests, TypeLookupRequestListener_getDependencies_continuation_point_out_of_range)
+{
+    expect_type_dependencies(create_type_dependencies(100));
+
+    std::vector<std::vector<uint8_t>> continuation_points {
+        create_continuation_point(2),
+        create_continuation_point(100)
+    };
+    // Value not representable in size_t, whose least significant bytes point to a valid page
+    std::vector<uint8_t> not_representable(32, 0);
+    not_representable.front() = 1;
+    not_representable.back() = 1;
+    continuation_points.push_back(not_representable);
+
+    for (size_t i = 0; i < continuation_points.size(); ++i)
+    {
+        SCOPED_TRACE("Continuation point: " + std::to_string(i));
+        // Regular first request, so a server storing the dependencies has them available
+        ASSERT_EQ(rpc::RemoteExceptionCode_t::REMOTE_EX_OK,
+                get_type_dependencies_reply(hash_type_identifier(0), {}).header().remoteEx());
+
+        TypeLookup_Reply reply {get_type_dependencies_reply(hash_type_identifier(0), continuation_points[i])};
+        EXPECT_EQ(rpc::RemoteExceptionCode_t::REMOTE_EX_INVALID_ARGUMENT, reply.header().remoteEx());
+    }
+
+    Mock::VerifyAndClearExpectations(&registry_mock_);
+}
+
+/**
+ * @test Regression test for #25733.
+ * A continuation point whose offset overflows is rejected instead of wrapping around to a valid page.
+ */
+TEST_F(TypeLookupServiceTests, TypeLookupRequestListener_getDependencies_continuation_point_overflow)
+{
+    expect_type_dependencies(create_type_dependencies(100));
+
+    // Modular inverse of the page size (Newton iteration), so the offset wraps around to 1
+    size_t value {max_dependencies_per_reply};
+    for (int i = 0; i < 5; ++i)
+    {
+        value *= 2 - max_dependencies_per_reply * value;
+    }
+    ASSERT_EQ(1u, value * max_dependencies_per_reply);
+
+    // Regular first request, so a server storing the dependencies has them available
+    ASSERT_EQ(rpc::RemoteExceptionCode_t::REMOTE_EX_OK,
+            get_type_dependencies_reply(hash_type_identifier(0), {}).header().remoteEx());
+
+    TypeLookup_Reply reply {get_type_dependencies_reply(hash_type_identifier(0), create_continuation_point(value))};
+    EXPECT_EQ(rpc::RemoteExceptionCode_t::REMOTE_EX_INVALID_ARGUMENT, reply.header().remoteEx());
+
+    Mock::VerifyAndClearExpectations(&registry_mock_);
 }
 
 } // namespace dds

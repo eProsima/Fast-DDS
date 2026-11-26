@@ -32,6 +32,8 @@ namespace fastdds {
 namespace dds {
 namespace detail {
 
+WaitSetImpl::WaitSetImpl() = default;
+
 WaitSetImpl::~WaitSetImpl()
 {
     eprosima::utilities::collections::unordered_vector<const Condition*> old_entries;

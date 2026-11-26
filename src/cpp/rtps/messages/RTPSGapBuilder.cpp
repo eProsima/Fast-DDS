@@ -23,6 +23,21 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+RTPSGapBuilder::RTPSGapBuilder(
+        RTPSMessageGroup& group)
+    : group_(group)
+{
+}
+
+RTPSGapBuilder::RTPSGapBuilder(
+        RTPSMessageGroup& group,
+        const GUID_t& reader_guid)
+    : with_specific_destination_(true)
+    , group_(group)
+    , reader_guid_(reader_guid)
+{
+}
+
 RTPSGapBuilder::~RTPSGapBuilder()
 {
     flush();

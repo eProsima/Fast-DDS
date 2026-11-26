@@ -87,6 +87,10 @@ def define_args(participant, idx):
     args.extend([f"samples={participant.get('samples', 10)}"])
     args.extend([f"timeout={participant.get('timeout', 10)}"])
     args.extend([f"expected_matches={participant.get('expected_matches', 1)}"])
+    args.extend([f"start_delay={participant.get('start_delay', 0)}"])
+    args.extend([f"expect_no_match={participant.get('expect_no_match', 0)}"])
+    args.extend([f"lease_duration={participant.get('lease_duration', 0)}"])
+    args.extend([f"typelookup_request_timeout={participant.get('typelookup_request_timeout', 0)}"])
     args.extend([f"seed={str(os.getpid() + idx)}"])
     args.extend([f"builtin_flow_controller_bytes={participant.get('builtin_flow_controller_bytes', 0)}"])
 

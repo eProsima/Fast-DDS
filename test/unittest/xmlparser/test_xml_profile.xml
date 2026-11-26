@@ -261,6 +261,9 @@
                         <name>partition_name_b</name>
                     </names>
                 </partition>
+                <data_representation>
+                    <value>XCDR2</value>
+                </data_representation>
                 <publishMode>
                     <kind>ASYNCHRONOUS</kind>
                     <flow_controller_name>test_flow_controller</flow_controller_name>
@@ -382,6 +385,10 @@
                         <name>partition_name_f</name>
                     </names>
                 </partition>
+                <data_representation>
+                    <value>XCDR2</value>
+                    <value>XCDR</value>
+                </data_representation>
                 <userData>
                     <value>56.30.0.1</value>
                 </userData>

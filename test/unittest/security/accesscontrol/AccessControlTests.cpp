@@ -23,6 +23,7 @@
 #include <rtps/messages/CDRMessage.hpp>
 #include <security/accesscontrol/AccessPermissionsHandle.h>
 #include <security/accesscontrol/Permissions.h>
+#include <security/accesscontrol/PermissionsParser.h>
 #include <security/authentication/PKIDH.h>
 #include <security/authentication/PKIHandshakeHandle.h>
 #include <security/authentication/PKIIdentityHandle.h>
@@ -556,6 +557,173 @@ TEST_F(AccessControlTest, participant_creation_fail_with_empty_topic_expression_
     PermissionsHandle* access_handle;
     get_access_handle(subscriber_participant_attr, &access_handle, false);
 
+}
+
+static void set_time_zone(
+        const char* time_zone)
+{
+#ifdef _WIN32
+    _putenv_s("TZ", time_zone);
+    _tzset();
+#else
+    if (*time_zone == '\0')
+    {
+        unsetenv("TZ");
+    }
+    else
+    {
+        setenv("TZ", time_zone, 1);
+    }
+    tzset();
+#endif // _WIN32
+}
+
+// Restores TZ even if the test fails
+struct TimeZoneRestorer
+{
+    ~TimeZoneRestorer()
+    {
+        set_time_zone(previous.c_str());
+    }
+
+    const std::string previous = std::getenv("TZ") != nullptr ? std::getenv("TZ") : "";
+};
+
+static std::string permissions_with_validity(
+        const std::string& not_before,
+        const std::string& not_after)
+{
+    return
+        "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+        "<dds>"
+        "<permissions>"
+        "<grant name=\"Grant\">"
+        "<subject_name>CN=Main Subscriber</subject_name>"
+        "<validity>"
+        "<not_before>" + not_before + "</not_before>"
+        "<not_after>" + not_after + "</not_after>"
+        "</validity>"
+        "<allow_rule>"
+        "<domains><id>0</id></domains>"
+        "<subscribe><topics><topic>*</topic></topics></subscribe>"
+        "</allow_rule>"
+        "<default>DENY</default>"
+        "</grant>"
+        "</permissions>"
+        "</dds>";
+}
+
+TEST(PermissionsParserTest, validity_without_time_zone_is_utc)
+{
+    // Otherwise a UTC machine would pass even when parsing as local time
+    TimeZoneRestorer restorer;
+    set_time_zone("CET-1");
+
+    const std::string xml = permissions_with_validity("2020-01-01T00:00:00", "2030-01-01T00:00:00");
+
+    PermissionsParser parser;
+    ASSERT_TRUE(parser.parse_stream(xml.c_str(), xml.size()));
+
+    PermissionsData data;
+    parser.swap(data);
+    ASSERT_EQ(data.grants.size(), 1u);
+    EXPECT_EQ(data.grants[0].validity.not_before, static_cast<std::time_t>(1577836800));
+    EXPECT_EQ(data.grants[0].validity.not_after, static_cast<std::time_t>(1893456000));
+}
+
+TEST(PermissionsParserTest, validity_time_zone_is_applied)
+{
+    TimeZoneRestorer restorer;
+    set_time_zone("CET-1");
+
+    const std::string xml = permissions_with_validity("2020-01-01T00:00:00.500Z", "2030-01-01T02:00:00+02:00");
+
+    PermissionsParser parser;
+    ASSERT_TRUE(parser.parse_stream(xml.c_str(), xml.size()));
+
+    PermissionsData data;
+    parser.swap(data);
+    ASSERT_EQ(data.grants.size(), 1u);
+    EXPECT_EQ(data.grants[0].validity.not_before, static_cast<std::time_t>(1577836800));
+    EXPECT_EQ(data.grants[0].validity.not_after, static_cast<std::time_t>(1893456000));
+}
+
+TEST(PermissionsParserTest, validity_with_invalid_time_zone_fails)
+{
+    for (const char* not_after : {"2030-01-01T00:00:00+0200", "2030-01-01T00:00:00+15:00", "2030-01-01T00:00:00 UTC"})
+    {
+        const std::string xml = permissions_with_validity("2020-01-01T00:00:00", not_after);
+
+        PermissionsParser parser;
+        EXPECT_FALSE(parser.parse_stream(xml.c_str(), xml.size())) << not_after;
+    }
+}
+
+/**
+ * @test Regression test for local grant domain filtering.
+ *
+ * The local grant must only keep the rules applying to the participant's domain.
+ * Permissions file only allows domains [0, 230], so creating a participant on domain 231 should fail.
+ */
+TEST_F(AccessControlTest, participant_creation_fail_on_domain_not_in_grant)
+{
+    RTPSParticipantAttributes subscriber_participant_attr;
+    fill_subscriber_participant_security_attributes(subscriber_participant_attr);
+
+    SecurityException exception;
+    PermissionsHandle* access_handle = nullptr;
+
+    // Domain allowed by the grant
+    domain_id = 0;
+    get_access_handle(subscriber_participant_attr, &access_handle);
+    ASSERT_NE(access_handle, nullptr);
+    EXPECT_TRUE(access_plugin.check_create_participant(*access_handle, domain_id, exception)) << exception.what();
+    ASSERT_TRUE(access_plugin.return_permissions_handle(access_handle, exception)) << exception.what();
+
+    // Domain not allowed by the grant
+    domain_id = 231;
+    access_handle = nullptr;
+    get_access_handle(subscriber_participant_attr, &access_handle);
+    ASSERT_NE(access_handle, nullptr);
+    EXPECT_FALSE(access_plugin.check_create_participant(*access_handle, domain_id, exception));
+    ASSERT_TRUE(access_plugin.return_permissions_handle(access_handle, exception)) << exception.what();
+}
+
+/**
+ * @test Regression test for local grant domain filtering.
+ *
+ * Permissions allow each topic in a single domain: HelloWorldTopic_domain_5 on domain 5 and
+ * HelloWorldTopic_domain_10 on domain 10. Local endpoints must only be created on the topic
+ * allowed in the participant's domain.
+ */
+TEST_F(AccessControlTest, validate_topic_access_fail_on_topic_allowed_in_other_domain)
+{
+    permissions_file = "permissions_domain_filtered_grant.smime";
+
+    RTPSParticipantAttributes subscriber_participant_attr;
+    fill_subscriber_participant_security_attributes(subscriber_participant_attr);
+    RTPSParticipantAttributes publisher_participant_attr;
+    fill_publisher_participant_security_attributes(publisher_participant_attr);
+
+    domain_id = 10;
+
+    topic_name = "HelloWorldTopic_domain_10";
+    check_local_datareader(subscriber_participant_attr, true);
+    check_local_datawriter(publisher_participant_attr, true);
+
+    topic_name = "HelloWorldTopic_domain_5";
+    check_local_datareader(subscriber_participant_attr, false);
+    check_local_datawriter(publisher_participant_attr, false);
+
+    domain_id = 5;
+
+    topic_name = "HelloWorldTopic_domain_5";
+    check_local_datareader(subscriber_participant_attr, true);
+    check_local_datawriter(publisher_participant_attr, true);
+
+    topic_name = "HelloWorldTopic_domain_10";
+    check_local_datareader(subscriber_participant_attr, false);
+    check_local_datawriter(publisher_participant_attr, false);
 }
 
 int main(

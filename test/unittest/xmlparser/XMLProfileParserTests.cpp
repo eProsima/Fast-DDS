@@ -38,6 +38,7 @@
 #include <fastdds/rtps/transport/UDPTransportDescriptor.hpp>
 #include <fastdds/utils/IPLocator.hpp>
 
+#include <mock/fastdds/dds/log/LogMock.hpp>
 #include <xmlparser/XMLProfileManager.h>
 
 #include "../common/env_var_utils.hpp"
@@ -47,32 +48,9 @@ using namespace eprosima::fastdds::rtps;
 using namespace eprosima::testing;
 using namespace ::testing;
 
-using eprosima::fastdds::dds::Log;
 using eprosima::fastdds::dds::LogMock;
-using eprosima::fastdds::dds::LogConsumer;
 
 LogMock* log_mock = nullptr;
-
-// Initialize Log mock
-void TestRegisterConsumerFunc(
-        std::unique_ptr<LogConsumer>&& c)
-{
-    log_mock->RegisterConsumer(std::move(c));
-}
-
-void TestClearConsumersFunc()
-{
-    log_mock->ClearConsumers();
-}
-
-void TestSetThreadConfigFunc()
-{
-    log_mock->SetThreadConfig();
-}
-
-std::function<void(std::unique_ptr<LogConsumer>&&)> Log::RegisterConsumerFunc = TestRegisterConsumerFunc;
-std::function<void()> Log::ClearConsumersFunc = TestClearConsumersFunc;
-std::function<void()> Log::SetThreadConfigFunc = TestSetThreadConfigFunc;
 
 class XMLProfileParserBasicTests : public ::testing::Test
 {
@@ -136,7 +114,7 @@ protected:
 
     std::string xml_filename_ = "test_xml_profile.xml";
 
-    const std::pair<std::string, std::string> c_environment_values_[169]
+    const std::pair<std::string, std::string> c_environment_values_[172]
     {
         {"XML_PROFILES_ENV_VAR_1",   "123"},
         {"XML_PROFILES_ENV_VAR_2",   "4"},
@@ -306,7 +284,10 @@ protected:
         {"XML_PROFILES_ENV_VAR_166",  "45"},
         {"XML_PROFILES_ENV_VAR_167",  "test_flow_controller"},
         {"XML_PROFILES_ENV_VAR_168",  "251"},
-        {"XML_PROFILES_ENV_VAR_169",  "127.0.0.1"}
+        {"XML_PROFILES_ENV_VAR_169",  "127.0.0.1"},
+        {"XML_PROFILES_ENV_VAR_170",  "XCDR2"},
+        {"XML_PROFILES_ENV_VAR_171",  "XCDR2"},
+        {"XML_PROFILES_ENV_VAR_172",  "XCDR"}
     };
 
 };
@@ -885,6 +866,8 @@ TEST_P(XMLProfileParserTests, XMLParserPublisher)
     EXPECT_EQ(pub_qos.m_reliability.max_blocking_time, dds::c_TimeZero);
     EXPECT_EQ(pub_qos.m_partition.names()[0], "partition_name_a");
     EXPECT_EQ(pub_qos.m_partition.names()[1], "partition_name_b");
+    ASSERT_EQ(pub_qos.representation.m_value.size(), 1u);
+    EXPECT_EQ(pub_qos.representation.m_value[0], dds::XCDR2_DATA_REPRESENTATION);
     EXPECT_EQ(pub_qos.m_publishMode.kind, dds::ASYNCHRONOUS_PUBLISH_MODE);
     EXPECT_EQ(pub_qos.m_publishMode.flow_controller_name, "test_flow_controller");
     EXPECT_EQ(pub_times.initial_heartbeat_delay, dds::c_TimeZero);
@@ -1179,6 +1162,9 @@ TEST_P(XMLProfileParserTests, XMLParserSubscriber)
     EXPECT_EQ(sub_qos.m_partition.names()[1], "partition_name_d");
     EXPECT_EQ(sub_qos.m_partition.names()[2], "partition_name_e");
     EXPECT_EQ(sub_qos.m_partition.names()[3], "partition_name_f");
+    ASSERT_EQ(sub_qos.representation.m_value.size(), 2u);
+    EXPECT_EQ(sub_qos.representation.m_value[0], dds::XCDR2_DATA_REPRESENTATION);
+    EXPECT_EQ(sub_qos.representation.m_value[1], dds::XCDR_DATA_REPRESENTATION);
     EXPECT_EQ(sub_times.initial_acknack_delay, dds::c_TimeZero);
     EXPECT_EQ(sub_times.heartbeat_response_delay.seconds, 18);
     EXPECT_EQ(sub_times.heartbeat_response_delay.nanosec, 81u);

@@ -20,11 +20,14 @@
 
 #include <fastdds/rtps/common/Token.hpp>
 #include <fastdds/rtps/attributes/EndpointSecurityAttributes.hpp>
+#include <rtps/resources/TimedEvent.h>
 #include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <rtps/security/common/Handle.h>
 #include <security/accesscontrol/PermissionsTypes.h>
 
 #include <openssl/x509.h>
+#include <chrono>
+#include <memory>
 #include <string>
 #include <map>
 
@@ -62,6 +65,8 @@ public:
     ParticipantSecurityAttributes governance_rule_;
     std::vector<std::pair<std::string, EndpointSecurityAttributes>> governance_topic_rules_;
     Grant grant;
+    std::chrono::system_clock::time_point identity_expiration_;
+    std::unique_ptr<TimedEvent> expiry_event_;
 };
 
 class Permissions;

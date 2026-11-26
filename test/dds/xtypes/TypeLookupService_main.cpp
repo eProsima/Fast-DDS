@@ -20,10 +20,12 @@
 #include "TypeLookupServicePublisher.h"
 #include "TypeLookupServiceSubscriber.h"
 
+#include <algorithm>
+#include <chrono>
 #include <iostream>
 #include <sstream>
+#include <thread>
 #include <vector>
-#include <algorithm>
 
 struct CommandLineArgs
 {
@@ -31,6 +33,10 @@ struct CommandLineArgs
     int samples {0};
     int timeout {0};
     int expected_matches {0};
+    int start_delay {0};
+    bool expect_no_match {false};
+    uint32_t lease_duration_s {0};
+    uint32_t typelookup_request_timeout_ms {0};
     std::vector<std::string> known_types {};
     uint32_t seed {10800};
     uint32_t builtin_flow_controller_bytes {0};
@@ -74,6 +80,22 @@ CommandLineArgs parse_args(
         {
             args.expected_matches = std::stoi(value);
         }
+        else if (key == "start_delay")
+        {
+            args.start_delay = std::stoi(value);
+        }
+        else if (key == "expect_no_match")
+        {
+            args.expect_no_match = (0 != std::stoi(value));
+        }
+        else if (key == "lease_duration")
+        {
+            args.lease_duration_s = strtol(value.c_str(), nullptr, 10);
+        }
+        else if (key == "typelookup_request_timeout")
+        {
+            args.typelookup_request_timeout_ms = strtol(value.c_str(), nullptr, 10);
+        }
         else if (key == "known_types")
         {
             std::replace(value.begin(), value.end(), ',', ' ');
@@ -110,6 +132,12 @@ int main(
 
     CommandLineArgs args = parse_args(argc, argv);
 
+    // Delay the participant creation, so test cases can order the discovery of their participants
+    if (args.start_delay > 0)
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(args.start_delay));
+    }
+
     try
     {
         switch (args.kind){
@@ -118,14 +146,17 @@ int main(
                 // This case checks that the TypeLookUpService is controller by builtin flow controller, so it will
                 // not be able to send the type object because the builtin flow controller is too small, thus there will
                 // be no data writer to discover.
-                if (args.builtin_flow_controller_bytes > 0 && args.builtin_flow_controller_bytes <= 3000)
+                if (args.expect_no_match ||
+                        (args.builtin_flow_controller_bytes > 0 && args.builtin_flow_controller_bytes <= 3000))
                 {
-                    return (pub.init(args.seed % 230, args.known_types, args.builtin_flow_controller_bytes) &&
+                    return (pub.init(args.seed % 230, args.known_types, args.builtin_flow_controller_bytes,
+                           args.lease_duration_s) &&
                            !pub.wait_discovery(args.expected_matches, args.timeout)) ? 0 : -1;
                 }
                 else
                 {
-                    return (pub.init(args.seed % 230, args.known_types, args.builtin_flow_controller_bytes) &&
+                    return (pub.init(args.seed % 230, args.known_types, args.builtin_flow_controller_bytes,
+                           args.lease_duration_s) &&
                            pub.wait_discovery(args.expected_matches, args.timeout) &&
                            pub.run(args.samples, args.timeout) &&
                            pub.wait_discovery(0, args.timeout)) ? 0 : -1;
@@ -135,7 +166,7 @@ int main(
                 eprosima::fastdds::dds::TypeLookupServiceSubscriber sub;
                 if (args.builtin_flow_controller_bytes > 0 && args.builtin_flow_controller_bytes <= 3000)
                 {
-                    return (sub.init(args.seed % 230, args.known_types, 0) &&
+                    return (sub.init(args.seed % 230, args.known_types, 0, args.typelookup_request_timeout_ms) &&
                            sub.wait_participant_discovery(args.expected_matches, args.timeout) &&
                            // Once asserted that the participant is discovered, we assert that no type is discovered thus
                            // not creating a data reader to match with the data writer.
@@ -143,7 +174,8 @@ int main(
                 }
                 else
                 {
-                    return (sub.init(args.seed % 230, args.known_types, args.builtin_flow_controller_bytes) &&
+                    return (sub.init(args.seed % 230, args.known_types, args.builtin_flow_controller_bytes,
+                           args.typelookup_request_timeout_ms) &&
                            sub.wait_discovery(args.expected_matches, args.timeout) &&
                            sub.run(args.samples, args.timeout)) ? 0 : -1;
                 }

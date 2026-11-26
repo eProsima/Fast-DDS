@@ -1503,7 +1503,7 @@ void MessageReceiver::notify_network_statistics(
         {
             // Check submessage validity
             if ((statistics_submessage_data_length != header.submessageLength) ||
-                    ((msg->pos + header.submessageLength) > msg_length))
+                    ((msg->pos + header.submessageLength) != msg_length))
             {
                 break;
             }

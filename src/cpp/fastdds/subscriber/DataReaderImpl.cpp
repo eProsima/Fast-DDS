@@ -245,6 +245,12 @@ ReturnCode_t DataReaderImpl::enable()
     }
 
     std::shared_ptr<IPayloadPool> pool = get_payload_pool();
+    if (!pool)
+    {
+        EPROSIMA_LOG_ERROR(DATA_READER, "Problem creating payload pool for associated Reader");
+        return RETCODE_ERROR;
+    }
+
     RTPSReader* reader = RTPSDomain::createRTPSReader(
         subscriber_->rtps_participant(),
         guid_.entityId,
@@ -1951,8 +1957,11 @@ std::shared_ptr<IPayloadPool> DataReaderImpl::get_payload_pool()
     {
         std::shared_ptr<ITopicPayloadPool> topic_payload_pool = TopicPayloadPoolRegistry::get(
             topic_->get_impl()->get_rtps_topic_name(), config);
-        topic_payload_pool->reserve_history(config, true);
-        payload_pool_ = topic_payload_pool;
+        if (topic_payload_pool)
+        {
+            topic_payload_pool->reserve_history(config, true);
+            payload_pool_ = topic_payload_pool;
+        }
     }
     return payload_pool_;
 }

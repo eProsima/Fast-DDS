@@ -17,9 +17,9 @@
 #include <limits>
 #include <utility>
 
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
-#include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/transport/ChainingTransport.hpp>
 #include <fastdds/rtps/transport/TransportDescriptorInterface.hpp>
 #include <fastdds/utils/IPFinder.hpp>

@@ -20,10 +20,13 @@
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 
 #include <algorithm>
+#include <iterator>
+#include <unordered_set>
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
+#include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
@@ -40,6 +43,7 @@
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/reader/StatefulReader.hpp>
+#include <rtps/resources/TimedEvent.h>
 #include <rtps/domain/RTPSDomainImpl.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
 
@@ -76,6 +80,19 @@ TypeLookupManager::TypeLookupManager()
 
 TypeLookupManager::~TypeLookupManager()
 {
+    // Delete the event before anything else, as it sends requests and accesses the pending collections
+    delete request_timeout_event_;
+
+    // Stop the processing threads
+    if (nullptr != request_listener_)
+    {
+        request_listener_->stop_request_processor_thread();
+    }
+    if (nullptr != reply_listener_)
+    {
+        reply_listener_->stop_reply_processor_thread();
+    }
+
     if (nullptr != builtin_reply_reader_)
     {
         participant_->deleteUserEndpoint(builtin_reply_reader_->getGuid());
@@ -92,13 +109,15 @@ TypeLookupManager::~TypeLookupManager()
     {
         participant_->deleteUserEndpoint(builtin_request_writer_->getGuid());
     }
+    delete reply_listener_;
+    reply_listener_ = nullptr;
+    delete request_listener_;
+    request_listener_ = nullptr;
+
     delete builtin_request_writer_history_;
     delete builtin_reply_writer_history_;
     delete builtin_request_reader_history_;
     delete builtin_reply_reader_history_;
-
-    delete reply_listener_;
-    delete request_listener_;
 
     delete temp_reader_proxy_data_;
     delete temp_writer_proxy_data_;
@@ -141,10 +160,46 @@ bool TypeLookupManager::init(
 
     type_propagation_ = participant_->type_propagation();
 
+    // Time a request is kept waiting for an answer before it is failed. Zero disables the check
+    uint64_t timeout_ms {default_typelookup_request_timeout_ms};
+    const std::string* timeout_property = fastdds::rtps::PropertyPolicyHelper::find_property(
+        participant_->get_const_attributes().properties, "fastdds.type_lookup_request_timeout_ms");
+    if (nullptr != timeout_property)
+    {
+        try
+        {
+            timeout_ms = std::stoull(*timeout_property);
+        }
+        catch (const std::exception& e)
+        {
+            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE,
+                    "Invalid value for fastdds.type_lookup_request_timeout_ms: " << e.what());
+        }
+    }
+    typelookup_request_timeout_ = std::chrono::milliseconds(timeout_ms);
+
     // Check if ReaderProxyData and WriterProxyData objects were created successfully
     if (temp_reader_proxy_data_ && temp_writer_proxy_data_)
     {
-        return create_endpoints();
+        if (!create_endpoints())
+        {
+            return false;
+        }
+
+        if (std::chrono::milliseconds::zero() < typelookup_request_timeout_)
+        {
+            // Requests are failed between one and two timeouts after being sent
+            request_timeout_event_ = new fastdds::rtps::TimedEvent(participant_->getEventResource(),
+                            [this]() -> bool
+                            {
+                                check_pending_requests_timeout();
+                                return true;
+                            },
+                            static_cast<double>(typelookup_request_timeout_.count()));
+            request_timeout_event_->restart_timer();
+        }
+
+        return true;
     }
     else
     {
@@ -274,6 +329,20 @@ void TypeLookupManager::remove_remote_endpoints(
         tmp_guid.entityId = fastdds::rtps::c_EntityId_TypeLookup_reply_reader;
         builtin_reply_writer_->matched_reader_remove(tmp_guid);
     }
+
+    // The removed participant will not answer the requests sent to it, so they are failed here
+    std::vector<SampleIdentity> failed_requests;
+    {
+        std::lock_guard<std::mutex> lock(async_get_types_mutex_);
+        for (const auto& request : async_get_type_requests_)
+        {
+            if (request.second.type_server.guidPrefix == pdata->guid.guidPrefix)
+            {
+                failed_requests.push_back(request.first);
+            }
+        }
+    }
+    fail_pending_requests(failed_requests, false);
 }
 
 SampleIdentity TypeLookupManager::get_type_dependencies(
@@ -388,41 +457,197 @@ ReturnCode_t TypeLookupManager::check_type_identifier_received(
         return RETCODE_OK;
     }
 
+    // Hold the mutex across the lookup, the request and its bookkeeping, so the request cannot be duplicated and no
+    // reply can be processed before both the callback and the request entries exist
+    std::lock_guard<std::mutex> lock(async_get_types_mutex_);
+
+    // Check if TypeIdentfierWithSize already exists in the map
+    auto it = async_get_type_callbacks.find(type_identifier_with_size);
+    if (it != async_get_type_callbacks.end())
     {
-        // Check if TypeIdentfierWithSize already exists in the map
-        std::lock_guard<std::mutex> lock(async_get_types_mutex_);
-        auto it = async_get_type_callbacks.find(type_identifier_with_size);
-        if (it != async_get_type_callbacks.end())
-        {
-            // TypeIdentfierWithSize exists, add the callback
-            // Make a copy of the proxy to free the EDP pool
-            ProxyType* temp_proxy_data_copy(new ProxyType(*temp_proxy_data));
-            it->second.push_back(std::make_pair(temp_proxy_data_copy, callback));
-            // Return without sending new request
-            return RETCODE_NO_DATA;
-        }
+        // TypeIdentfierWithSize exists, add the callback
+        // Make a copy of the proxy to free the EDP pool
+        ProxyType* temp_proxy_data_copy(new ProxyType(*temp_proxy_data));
+        it->second.push_back(std::make_pair(temp_proxy_data_copy, callback));
+        // Return without sending new request
+        return RETCODE_NO_DATA;
     }
 
     // TypeIdentfierWithSize doesn't exist, create a new entry
     SampleIdentity get_type_dependencies_request = get_type_dependencies(
         {type_identifier_with_size.type_id()}, type_server);
-    if (INVALID_SAMPLE_IDENTITY != get_type_dependencies_request)
-    {
-        // Store the sent requests and callback
-        add_async_get_type_request(get_type_dependencies_request, type_identifier_with_size);
-        std::vector<std::pair<ProxyType*, AsyncCallback>> types;
-        // Make a copy of the proxy to free the EDP pool
-        ProxyType* temp_proxy_data_copy(new ProxyType(*temp_proxy_data));
-        types.push_back(std::make_pair(temp_proxy_data_copy, callback));
-        async_get_type_callbacks.emplace(type_identifier_with_size, std::move(types));
-
-        return RETCODE_NO_DATA;
-    }
-    else
+    if (INVALID_SAMPLE_IDENTITY == get_type_dependencies_request)
     {
         // Failed to send request, return error
         EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Failed to send get_type_dependencies request");
         return RETCODE_ERROR;
+    }
+
+    // Store the sent request and callback
+    std::vector<std::pair<ProxyType*, AsyncCallback>> types;
+    // Make a copy of the proxy to free the EDP pool
+    ProxyType* temp_proxy_data_copy(new ProxyType(*temp_proxy_data));
+    types.push_back(std::make_pair(temp_proxy_data_copy, callback));
+    async_get_type_callbacks.emplace(type_identifier_with_size, std::move(types));
+    add_async_get_type_request_nts(get_type_dependencies_request, type_identifier_with_size, type_server);
+
+    return RETCODE_NO_DATA;
+}
+
+template<typename ProxyType, typename AsyncCallback>
+void TypeLookupManager::take_pending_endpoints_nts(
+        std::unordered_map<xtypes::TypeIdentfierWithSize,
+        std::vector<std::pair<ProxyType*, AsyncCallback>>>& async_get_type_callbacks,
+        const xtypes::TypeIdentfierWithSize& type_identifier_with_size,
+        const fastdds::rtps::GuidPrefix_t& failed_server,
+        bool notify,
+        std::vector<std::pair<ProxyType*, AsyncCallback>>& failed,
+        std::vector<std::pair<ProxyType*, AsyncCallback>>& pending)
+{
+    auto it = async_get_type_callbacks.find(type_identifier_with_size);
+    if (it == async_get_type_callbacks.end())
+    {
+        return;
+    }
+
+    for (auto& proxy_callback_pair : it->second)
+    {
+        // The type server of an endpoint is the participant that announced it
+        if (proxy_callback_pair.first->guid.guidPrefix != failed_server)
+        {
+            pending.push_back(std::move(proxy_callback_pair));
+        }
+        else if (notify)
+        {
+            failed.push_back(std::move(proxy_callback_pair));
+        }
+        else
+        {
+            // The type server is gone, so the endpoint cannot be paired any more
+            delete proxy_callback_pair.first;
+        }
+    }
+    async_get_type_callbacks.erase(it);
+}
+
+void TypeLookupManager::check_pending_requests_timeout()
+{
+    std::vector<SampleIdentity> timed_out_requests;
+    {
+        const auto now = std::chrono::steady_clock::now();
+        std::lock_guard<std::mutex> lock(async_get_types_mutex_);
+        for (const auto& request : async_get_type_requests_)
+        {
+            if (typelookup_request_timeout_ <= now - request.second.sent_time)
+            {
+                timed_out_requests.push_back(request.first);
+            }
+        }
+    }
+
+    if (!timed_out_requests.empty())
+    {
+        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE,
+                "Failing " << timed_out_requests.size() << " TypeLookup requests with no answer.");
+        fail_pending_requests(timed_out_requests, true);
+    }
+}
+
+void TypeLookupManager::fail_pending_requests(
+        const std::vector<SampleIdentity>& failed_requests,
+        bool notify)
+{
+    // Endpoints whose callbacks are notified of the failure, so they are paired by type name
+    std::vector<std::pair<fastdds::rtps::WriterProxyData*, AsyncGetTypeWriterCallback>> failed_writers;
+    std::vector<std::pair<fastdds::rtps::ReaderProxyData*, AsyncGetTypeReaderCallback>> failed_readers;
+    std::vector<SampleIdentity> removed_requests;
+
+    {
+        // A type being resolved may have more than one request outstanding, as pagination sends a new one per
+        // page, so its endpoints are only taken and requested again once
+        std::unordered_set<xtypes::TypeIdentfierWithSize> handled_types;
+
+        std::lock_guard<std::mutex> lock(async_get_types_mutex_);
+        for (const SampleIdentity& failed_request : failed_requests)
+        {
+            auto request_it = async_get_type_requests_.find(failed_request);
+            if (request_it == async_get_type_requests_.end())
+            {
+                continue;
+            }
+            const xtypes::TypeIdentfierWithSize type_identifier_with_size = request_it->second.type_id;
+            const fastdds::rtps::GuidPrefix_t failed_server = request_it->second.type_server.guidPrefix;
+            async_get_type_requests_.erase(request_it);
+            removed_requests.push_back(failed_request);
+
+            if (!handled_types.insert(type_identifier_with_size).second)
+            {
+                continue;
+            }
+
+            std::vector<std::pair<fastdds::rtps::WriterProxyData*, AsyncGetTypeWriterCallback>> pending_writers;
+            std::vector<std::pair<fastdds::rtps::ReaderProxyData*, AsyncGetTypeReaderCallback>> pending_readers;
+            take_pending_endpoints_nts(async_get_type_writer_callbacks_, type_identifier_with_size, failed_server,
+                    notify, failed_writers, pending_writers);
+            take_pending_endpoints_nts(async_get_type_reader_callbacks_, type_identifier_with_size, failed_server,
+                    notify, failed_readers, pending_readers);
+
+            if (pending_writers.empty() && pending_readers.empty())
+            {
+                continue;
+            }
+
+            // Any of the participants that announced the type can serve it, request it again to one of them
+            fastdds::rtps::GUID_t type_server(pending_writers.empty() ?
+                    pending_readers.front().first->guid.guidPrefix :
+                    pending_writers.front().first->guid.guidPrefix,
+                    fastdds::rtps::c_EntityId_Unknown);
+            SampleIdentity new_request = get_type_dependencies(
+                {type_identifier_with_size.type_id()}, type_server);
+            if (INVALID_SAMPLE_IDENTITY != new_request)
+            {
+                if (!pending_writers.empty())
+                {
+                    async_get_type_writer_callbacks_.emplace(type_identifier_with_size, std::move(pending_writers));
+                }
+                if (!pending_readers.empty())
+                {
+                    async_get_type_reader_callbacks_.emplace(type_identifier_with_size, std::move(pending_readers));
+                }
+                add_async_get_type_request_nts(new_request, type_identifier_with_size, type_server);
+            }
+            else
+            {
+                // The request could not be sent, so these endpoints cannot be resolved either. Their own type
+                // server is still there, so they are failed instead of dropped
+                EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Failed to resend get_type_dependencies request");
+                failed_writers.insert(failed_writers.end(),
+                        std::make_move_iterator(pending_writers.begin()),
+                        std::make_move_iterator(pending_writers.end()));
+                failed_readers.insert(failed_readers.end(),
+                        std::make_move_iterator(pending_readers.begin()),
+                        std::make_move_iterator(pending_readers.end()));
+            }
+        }
+    }
+
+    if (nullptr != reply_listener_)
+    {
+        // A request that is not answered would keep its entry in the reply listener forever
+        reply_listener_->remove_replies_with_continuation(removed_requests);
+    }
+
+    // Notify outside the mutex, as the callbacks re-enter discovery. The type could not be resolved, so they are
+    // failed exactly as any other failed resolution, and the endpoints end up paired by type name
+    for (auto& proxy_callback_pair : failed_writers)
+    {
+        proxy_callback_pair.second(RETCODE_NO_DATA, proxy_callback_pair.first);
+        delete proxy_callback_pair.first;
+    }
+    for (auto& proxy_callback_pair : failed_readers)
+    {
+        proxy_callback_pair.second(RETCODE_NO_DATA, proxy_callback_pair.first);
+        delete proxy_callback_pair.first;
     }
 }
 
@@ -430,43 +655,57 @@ void TypeLookupManager::notify_callbacks(
         ReturnCode_t request_ret_status,
         const xtypes::TypeIdentfierWithSize& type_identifier_with_size)
 {
-    bool removed = false;
-    // Check that type is pending to be resolved
-    auto writer_callbacks_it = async_get_type_writer_callbacks_.find(type_identifier_with_size);
-    if (writer_callbacks_it != async_get_type_writer_callbacks_.end())
+    std::vector<std::pair<fastdds::rtps::WriterProxyData*, AsyncGetTypeWriterCallback>> writer_callbacks;
+    std::vector<std::pair<fastdds::rtps::ReaderProxyData*, AsyncGetTypeReaderCallback>> reader_callbacks;
+
     {
-        for (auto& proxy_callback_pair : writer_callbacks_it->second)
+        // Detach the callbacks under the mutex, so they are not invoked while another thread appends to the vectors
+        std::lock_guard<std::mutex> lock(async_get_types_mutex_);
+        auto writer_it = async_get_type_writer_callbacks_.find(type_identifier_with_size);
+        if (writer_it != async_get_type_writer_callbacks_.end())
         {
-            proxy_callback_pair.second(request_ret_status, proxy_callback_pair.first);
+            writer_callbacks = std::move(writer_it->second);
+            async_get_type_writer_callbacks_.erase(writer_it);
         }
-        removed = true;
+        auto reader_it = async_get_type_reader_callbacks_.find(type_identifier_with_size);
+        if (reader_it != async_get_type_reader_callbacks_.end())
+        {
+            reader_callbacks = std::move(reader_it->second);
+            async_get_type_reader_callbacks_.erase(reader_it);
+        }
     }
 
-    auto reader_callbacks_it = async_get_type_reader_callbacks_.find(type_identifier_with_size);
-    if (reader_callbacks_it != async_get_type_reader_callbacks_.end())
+    // Invoke outside the mutex, so a callback that re-enters the TypeLookup service does not deadlock
+    for (auto& proxy_callback_pair : writer_callbacks)
     {
-        for (auto& proxy_callback_pair : reader_callbacks_it->second)
-        {
-            proxy_callback_pair.second(request_ret_status, proxy_callback_pair.first);
-        }
-        removed = true;
+        proxy_callback_pair.second(request_ret_status, proxy_callback_pair.first);
+        delete proxy_callback_pair.first;
     }
-
-    if (removed)
+    for (auto& proxy_callback_pair : reader_callbacks)
     {
-        // Erase the solved TypeIdentfierWithSize
-        remove_async_get_type_callback(type_identifier_with_size);
+        proxy_callback_pair.second(request_ret_status, proxy_callback_pair.first);
+        delete proxy_callback_pair.first;
     }
 }
 
 bool TypeLookupManager::add_async_get_type_request(
         const SampleIdentity& request,
-        const xtypes::TypeIdentfierWithSize& type_identifier_with_size)
+        const xtypes::TypeIdentfierWithSize& type_identifier_with_size,
+        const fastdds::rtps::GUID_t& type_server)
 {
     std::lock_guard<std::mutex> lock(async_get_types_mutex_);
+    return add_async_get_type_request_nts(request, type_identifier_with_size, type_server);
+}
+
+bool TypeLookupManager::add_async_get_type_request_nts(
+        const SampleIdentity& request,
+        const xtypes::TypeIdentfierWithSize& type_identifier_with_size,
+        const fastdds::rtps::GUID_t& type_server)
+{
     try
     {
-        async_get_type_requests_.emplace(request, type_identifier_with_size);
+        async_get_type_requests_.emplace(request,
+                AsyncGetTypeRequest{type_identifier_with_size, type_server, std::chrono::steady_clock::now()});
         return true;
     }
     catch (const std::exception& e)
@@ -475,58 +714,6 @@ bool TypeLookupManager::add_async_get_type_request(
                 "Error in TypeLookupManager::add_async_get_type_request: " << e.what());
         return false;
     }
-
-}
-
-bool TypeLookupManager::remove_async_get_type_callback(
-        const xtypes::TypeIdentfierWithSize& type_identifier_with_size)
-{
-    std::lock_guard<std::mutex> lock(async_get_types_mutex_);
-    try
-    {
-        bool removed = false;
-
-        // Check if the key is in the writer map
-        auto writer_it = async_get_type_writer_callbacks_.find(type_identifier_with_size);
-        if (writer_it != async_get_type_writer_callbacks_.end())
-        {
-            // Delete the proxies and remove the entry
-            for (auto& proxy_callback_pair : writer_it->second)
-            {
-                delete proxy_callback_pair.first;
-            }
-            async_get_type_writer_callbacks_.erase(writer_it);
-            removed = true;
-        }
-        // Check if the key is in the reader map
-        auto reader_it = async_get_type_reader_callbacks_.find(type_identifier_with_size);
-        if (reader_it != async_get_type_reader_callbacks_.end())
-        {
-            // Delete the proxies and remove the entry
-            for (auto& proxy_callback_pair : reader_it->second)
-            {
-                delete proxy_callback_pair.first;
-            }
-            async_get_type_reader_callbacks_.erase(reader_it);
-            removed = true;
-        }
-
-        if (!removed)
-        {
-            // If not found in either map, log an error
-            EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE,
-                    "Error in TypeLookupManager::remove_async_get_type_callback: Key not found");
-        }
-        return removed;
-    }
-    catch (const std::exception& e)
-    {
-        // Log any exception that might occur during erasure
-        EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE,
-                "Error in TypeLookupManager::remove_async_get_type_callback: " << e.what());
-        return false;
-    }
-
 }
 
 bool TypeLookupManager::remove_async_get_type_request(
@@ -703,8 +890,8 @@ TypeLookup_Request* TypeLookupManager::create_request(
     TypeLookup_Request* request = static_cast<TypeLookup_Request*>(pupsubtype.create_data());
     request->header().instanceName() = get_instance_name(type_server);
     request->header().requestId().writer_guid(guid_rtps_2_dds(builtin_request_writer_->getGuid()));
-    request->header().requestId().sequence_number(sequence_number_rtps_2_dds(request_seq_number_));
-    request_seq_number_++;
+    request->header().requestId().sequence_number(
+        sequence_number_rtps_2_dds(fastdds::rtps::SequenceNumber_t(request_seq_number_++)));
     return request;
 }
 

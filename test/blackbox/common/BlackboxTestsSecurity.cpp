@@ -5470,6 +5470,160 @@ TEST(Security, RemoveParticipantAfterIdentityCertificateExpires)
 
 }
 
+TEST(Security, RemoveParticipantAfterPermissionsGrantExpiresThreeParticipants)
+{
+    std::string permissions_file("permissions_grant_expiration.smime");
+    std::string governance_file("governance_helloworld_all_enable.smime");
+
+    // We regenerate the permissions with the subscriber grant expiring in 20 seconds
+#ifdef _WIN32
+    std::string running_command = "python generate_expiring_permissions.py";
+    FILE* pipe = _popen(running_command.c_str(), "r");
+#else
+    std::string running_command = "python3 generate_expiring_permissions.py";
+    FILE* pipe = popen(running_command.c_str(), "r");
+#endif // _WIN32
+
+    int return_code_ = -1;
+    if (pipe)
+    {
+        char buffer[256];
+        while (fgets(buffer, sizeof(buffer), pipe) != nullptr)
+        {
+            std::cout << buffer;
+        }
+#ifdef _WIN32
+        return_code_ = _pclose(pipe);
+#else
+        return_code_ = pclose(pipe);
+#endif // ifdef _WIN32
+    }
+
+    ASSERT_EQ(return_code_, 0);
+
+    // Three participants:
+    //   A (pubsub_writer)
+    //   B (pubsub_reader)
+    //   C (expiring_reader)
+
+    std::string topic_name = "HelloWorldTopic";
+    auto pubsub_writer   = std::make_shared<PubSubWriter<HelloWorldPubSubType>>(topic_name);
+    auto pubsub_reader   = std::make_shared<PubSubReader<HelloWorldPubSubType>>(topic_name);
+    auto expiring_reader = std::make_shared<PubSubReader<HelloWorldPubSubType>>(topic_name);
+
+    //! 1. Configure participant A
+    {
+        PropertyPolicy property_policy;
+        fill_pub_auth(property_policy);
+        fill_access(property_policy, governance_file, permissions_file);
+        fill_crypto(property_policy);
+        pubsub_writer->lease_duration(3, 1);
+        pubsub_writer->property_policy(property_policy);
+    }
+
+    //! 2. Configure participant B, whose grant does not expire
+    {
+        PropertyPolicy property_policy;
+        property_policy.properties().emplace_back("dds.sec.auth.plugin", "builtin.PKI-DH");
+        property_policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                "file://" + std::string(certs_path) + "/maincacert.pem");
+        property_policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                "file://" + std::string(certs_path) + "/pwdpubcert.pem");
+        property_policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.private_key",
+                "file://" + std::string(certs_path) + "/pwdpubkey.pem");
+        property_policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.password", "testkey");
+        fill_access(property_policy, governance_file, permissions_file);
+        fill_crypto(property_policy);
+        pubsub_reader->lease_duration(3, 1);
+        pubsub_reader->property_policy(property_policy);
+    }
+
+    //! 3. Configure participant C
+    {
+        PropertyPolicy property_policy;
+        fill_sub_auth(property_policy);
+        fill_access(property_policy, governance_file, permissions_file);
+        fill_crypto(property_policy);
+        expiring_reader->lease_duration(3, 1);
+        expiring_reader->property_policy(property_policy);
+    }
+
+    pubsub_writer->init();
+    pubsub_reader->init();
+    expiring_reader->init();
+
+    ASSERT_TRUE(pubsub_writer->isInitialized());
+    ASSERT_TRUE(pubsub_reader->isInitialized());
+    ASSERT_TRUE(expiring_reader->isInitialized());
+
+    //! 4. The participants must authorize both of its peers before proceeding.
+    pubsub_writer->wait_authorized(std::chrono::seconds::zero(), 2);
+    pubsub_reader->wait_authorized(std::chrono::seconds::zero(), 2);
+    expiring_reader->wait_authorized(std::chrono::seconds::zero(), 2);
+
+    //! 5. Wait for endpoint discovery.
+    pubsub_writer->wait_discovery(2, std::chrono::seconds(10));
+    pubsub_reader->wait_discovery();
+    expiring_reader->wait_discovery();
+
+    //! 6. Send an initial batch while all three participants are alive.
+    auto data = default_helloworld_data_generator();
+    pubsub_reader->startReception(data);
+    expiring_reader->startReception(data);
+    pubsub_writer->send(data);
+    pubsub_reader->block_for_all();
+    expiring_reader->block_for_all();
+
+    // Wait 30 seconds for the grant to expire.
+    std::this_thread::sleep_for(std::chrono::seconds(30));
+
+    //! 7. A and B must have been notified that C was revoked, and C of its own revocation.
+    pubsub_writer->wait_unauthorized(std::chrono::seconds(15), 1);
+    pubsub_reader->wait_unauthorized(std::chrono::seconds(15), 1);
+    ASSERT_GE(pubsub_reader->unauthorized_count(), 1u);
+    expiring_reader->wait_unauthorized(std::chrono::seconds(15), 1);
+    ASSERT_GE(expiring_reader->unauthorized_count(), 1u);
+
+    //! 8. C's endpoint must have been unmatched from A, while B stays matched.
+    pubsub_writer->wait_discovery(1, std::chrono::seconds(10));
+    ASSERT_EQ(pubsub_writer->get_matched(), 1u);
+    ASSERT_EQ(pubsub_reader->get_matched(), 1u);
+    ASSERT_EQ(expiring_reader->get_matched(), 0u);
+
+    //! 9. B must keep receiving and C must not decrypt anything sent after the expiration.
+    auto post_expiry_data = default_helloworld_data_generator(5);
+    expiring_reader->startReception(post_expiry_data);
+    pubsub_reader->startReception(post_expiry_data);
+    pubsub_writer->send(post_expiry_data);
+    pubsub_reader->block_for_all(std::chrono::seconds(10));
+    ASSERT_EQ(expiring_reader->getReceivedCount(), 0u);
+
+    //! 10. C can no longer create endpoints.
+    eprosima::fastdds::dds::TopicDescription* topic_description =
+            expiring_reader->get_participant()->lookup_topicdescription(
+        expiring_reader->get_native_reader().get_topicdescription()->get_name());
+    ASSERT_NE(topic_description, nullptr);
+    eprosima::fastdds::dds::DataReader* late_datareader =
+            expiring_reader->get_native_subscriber().create_datareader(
+        topic_description, eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT);
+    ASSERT_EQ(late_datareader, nullptr);
+
+    //! 11. A participant discovered after the expiration must not affect C.
+    auto late_writer = std::make_shared<PubSubWriter<HelloWorldPubSubType>>(topic_name);
+    {
+        PropertyPolicy property_policy;
+        fill_pub_auth(property_policy);
+        fill_access(property_policy, governance_file, permissions_file);
+        fill_crypto(property_policy);
+        late_writer->property_policy(property_policy);
+    }
+    late_writer->init();
+    ASSERT_TRUE(late_writer->isInitialized());
+    late_writer->wait_authorized(std::chrono::seconds(10), 2);
+    ASSERT_TRUE(expiring_reader->isInitialized());
+    ASSERT_EQ(expiring_reader->get_matched(), 0u);
+}
+
 using namespace eprosima::fastdds::dds;
 
 class DualTopicParticipant

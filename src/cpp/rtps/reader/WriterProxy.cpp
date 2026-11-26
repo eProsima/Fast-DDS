@@ -309,6 +309,7 @@ bool WriterProxy::received_change_set(
         if (seq_num == changes_from_writer_low_mark_ + 1)
         {
             changes_from_writer_low_mark_ = seq_num;
+            cleanup();
         }
         else
         {
@@ -497,6 +498,19 @@ void WriterProxy::consider_all_notified()
     }
 }
 
+void WriterProxy::consider_all_notified_up_to(
+        const SequenceNumber_t& seq_num)
+{
+#ifdef SHOULD_DEBUG_LINUX
+    assert(get_mutex_owner() == get_thread_id());
+#endif // SHOULD_DEBUG_LINUX
+
+    if (seq_num > last_notified_ && seq_num <= changes_from_writer_low_mark_)
+    {
+        last_notified_ = seq_num;
+    }
+}
+
 bool WriterProxy::perform_initial_ack_nack()
 {
     bool ret_value = false;
@@ -624,6 +638,100 @@ bool WriterProxy::process_heartbeat(
     }
 
     return false;
+}
+
+bool WriterProxy::process_gap(
+        const SequenceNumber_t& gap_start,
+        const SequenceNumberSet_t& gap_list,
+        SequenceNumber_t& validated_start,
+        SequenceNumberSet_t& validated_gap_list)
+{
+    // First sequence number that can be considered for GAP processing
+    SequenceNumber_t first_allowed_gap = changes_from_writer_low_mark_ + 1u;
+
+    // Cap start sequence number
+    SequenceNumber_t initial_seq = std::max(gap_start, first_allowed_gap);
+
+    // Cap the GAP to the maximum sequence number the writer has announced through a
+    // Heartbeat, which is is guaranteed to precede every GAP.
+    // If no Heartbeat has been processed yet, max_sequence_number_ equals
+    // changes_from_writer_low_mark_, so initial_seq >= max_allowed_gap and nothing is
+    // processed (the GAP is ignored until a Heartbeat sets the range).
+    SequenceNumber_t max_allowed_gap = max_sequence_number_ + 1u;
+
+    if (initial_seq == first_allowed_gap)
+    {
+        // Special case for datasharing where no GAP is emitted from the writer's side,
+        // but created locally by the reader for initial positioning
+        max_allowed_gap = std::max(max_allowed_gap, gap_list.base());
+    }
+
+    // Early exit if initial_seq is beyond the allowed range
+    if (initial_seq > max_allowed_gap)
+    {
+        return false;
+    }
+
+    // Maximum sequence number to be considered for contiguous GAP processing
+    SequenceNumber_t finalSN = std::min(gap_list.base(), max_allowed_gap);
+    validated_start = initial_seq;
+    validated_gap_list.base(finalSN);
+
+    if ((initial_seq == first_allowed_gap) && (finalSN > initial_seq))
+    {
+        // Special case when receiving a GAP starting at the next expected sequence number,
+        // which means that all changes below the first sequence number in the gap_list are irrelevant.
+        // We know that irrelevant_change_set would just increment the low mark, so we can just advance
+        // it directly and remove all irrelevant changes in one go.
+
+        // Advance low mark to the last contiguous sequence number before the first sequence number in the gap_list.
+        changes_from_writer_low_mark_ = finalSN - 1u;
+
+        // Update max_sequence_number_ if needed, as irrelevant_change_set would do.
+        if (changes_from_writer_low_mark_ > max_sequence_number_)
+        {
+            max_sequence_number_ = changes_from_writer_low_mark_;
+        }
+
+        // Remove every already received change up to the first sequence number in the gap_list.
+        ChangeIterator first_relevant = std::lower_bound(
+            changes_received_.begin(),
+            changes_received_.end(),
+            finalSN);
+        changes_received_.erase(changes_received_.begin(), first_relevant);
+
+        cleanup();
+    }
+    else
+    {
+        // Cap the final sequence number to avoid CPU denial-of-service attacks by sending a GAP with a huge range.
+        max_allowed_gap = std::min(max_allowed_gap, initial_seq + 512u);
+        finalSN = std::min(finalSN, max_allowed_gap);
+        // Iterate through all sequence numbers in [initial_seq, final_seq)
+        SequenceNumber_t auxSN;
+        for (auxSN = initial_seq; auxSN < finalSN; auxSN++)
+        {
+            irrelevant_change_set(auxSN);
+        }
+    }
+
+    // Early exit if the entire gap_list is beyond the announced range
+    if (gap_list.base() > max_allowed_gap)
+    {
+        return true;
+    }
+
+    // Iterate through all sequence numbers in the gap_list
+    gap_list.for_each(
+        [&](SequenceNumber_t it)
+        {
+            if ((it < max_allowed_gap) && irrelevant_change_set(it))
+            {
+                validated_gap_list.add(it);
+            }
+        });
+
+    return true;
 }
 
 void WriterProxy::update_heartbeat_response_interval(
