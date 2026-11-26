@@ -499,7 +499,17 @@ public:
                             port_segment_.reset();
 
                             SharedMemSegment::remove(segment_name.c_str());
-                            SharedMemSegment::named_mutex::remove((segment_name + "_mutex").c_str());
+
+                            // Keep the port's named mutex. Unlinking the name does not destroy the
+                            // semaphore, it only hides it: a process that opens the name afterwards
+                            // creates a brand new one, so it is no longer excluded against a
+                            // process that opened the previous one. open_port_internal() would then
+                            // run concurrently for the same port id and each caller can remove the
+                            // segment that the other one is still initializing.
+                            // The leftover sem.fastrtps_port<N>_mutex files are bounded, because
+                            // port ids are reused, and they are removed by `fastdds shm clean` or
+                            // by a reboot once no participant is alive.
+                            // SharedMemSegment::named_mutex::remove((segment_name + "_mutex").c_str());
                         }
                     }
                 }
