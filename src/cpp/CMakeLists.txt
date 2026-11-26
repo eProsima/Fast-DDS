@@ -289,6 +289,20 @@ if(MSVC OR MSVC_IDE)
             COMPILE_PDB_NAME_DEBUG lib${PROJECT_NAME}d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
             COMPILE_PDB_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_BINARY_DIR}/symbols"
             )
+
+        # The objects of the static library are compiled by the units, so they have to write the symbols in the
+        # compiler PDB of the library. Otherwise it is never generated and cannot be installed.
+        get_property(fastdds_pdb_units GLOBAL PROPERTY FASTDDS_UNITS)
+        foreach(fastdds_pdb_unit ${fastdds_pdb_units})
+            get_target_property(fastdds_pdb_unit_target ${fastdds_pdb_unit} ALIASED_TARGET)
+            set_target_properties(${fastdds_pdb_unit_target} PROPERTIES
+                COMPILE_PDB_NAME_DEBUG lib${PROJECT_NAME}d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+                COMPILE_PDB_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_BINARY_DIR}/symbols"
+                )
+        endforeach()
+        unset(fastdds_pdb_unit_target)
+        unset(fastdds_pdb_unit)
+        unset(fastdds_pdb_units)
     endif()
 
     if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
