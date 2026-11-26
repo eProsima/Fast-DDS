@@ -21,6 +21,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <thread>
 #include <vector>
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
@@ -36,7 +37,9 @@
 #include <fastdds/rtps/common/Property.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 #include <fastdds/utils/IPFinder.hpp>
+#include <fastdds/utils/IPLocator.hpp>
 
 #include <gtest/gtest.h>
 
@@ -2775,4 +2778,121 @@ TEST(DDSDiscovery, static_edp_malformed_entity_id_property)
     /* Clean up */
     factory->delete_participant(attacker);
     factory->delete_participant(victim);
+}
+
+/*!
+ * @test: Regression test for replies to the first participant announcement being discarded.
+ *
+ * A remote participant answers the first announcement of a new participant only once, and afterwards only sends
+ * its periodic announcements. If that answer arrives before the new participant has registered its receivers,
+ * it is discarded, and the remote participant is not discovered until its next periodic announcement.
+ *
+ * The remote participant listens on two unicast ports, has no initial announcements and a very long announcement
+ * period, so the answer to the first announcement is the only way to discover it during the test.
+ * The new participant sends its first announcement to both ports, and the second send is delayed, so that the answer
+ * to the first one arrives while the new participant is still sending its first announcement.
+ */
+TEST(DDSDiscovery, reply_to_first_participant_announcement_is_not_lost)
+{
+    using namespace eprosima::fastdds::dds;
+    using namespace eprosima::fastdds::rtps;
+
+    class DiscoveryListener : public DomainParticipantListener
+    {
+    public:
+
+        using DomainParticipantListener::on_participant_discovery;
+
+        void on_participant_discovery(
+                DomainParticipant* /*participant*/,
+                ParticipantDiscoveryStatus status,
+                const ParticipantBuiltinTopicData& /*info*/,
+                bool& /*should_be_ignored*/) override
+        {
+            if (status == ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
+            {
+                std::lock_guard<std::mutex> lock(mtx_);
+                discovered_ = true;
+                cv_.notify_all();
+            }
+        }
+
+        bool wait_discovery(
+                std::chrono::milliseconds timeout)
+        {
+            std::unique_lock<std::mutex> lock(mtx_);
+            return cv_.wait_for(lock, timeout, [this]()
+                           {
+                               return discovered_;
+                           });
+        }
+
+    private:
+
+        std::mutex mtx_;
+        std::condition_variable cv_;
+        bool discovered_ = false;
+    };
+
+    auto factory = DomainParticipantFactory::get_instance();
+    const uint32_t domain_id = static_cast<uint32_t>(GET_PID()) % 230;
+    const uint16_t port_1 = global_port;
+    const uint16_t port_2 = static_cast<uint16_t>(global_port + 1);
+
+    Locator_t locator_1;
+    IPLocator::setIPv4(locator_1, 127, 0, 0, 1);
+    locator_1.port = port_1;
+    Locator_t locator_2 = locator_1;
+    locator_2.port = port_2;
+
+    // Remote participant: only discoverable through its answer to the first announcement of the new participant
+    DomainParticipantQos remote_qos = PARTICIPANT_QOS_DEFAULT;
+    remote_qos.transport().use_builtin_transports = false;
+    remote_qos.transport().user_transports.push_back(std::make_shared<UDPv4TransportDescriptor>());
+    auto& remote_builtin = remote_qos.wire_protocol().builtin;
+    remote_builtin.metatrafficMulticastLocatorList.clear();
+    remote_builtin.metatrafficUnicastLocatorList.clear();
+    remote_builtin.metatrafficUnicastLocatorList.push_back(locator_1);
+    remote_builtin.metatrafficUnicastLocatorList.push_back(locator_2);
+    remote_builtin.initialPeersList.clear();
+    remote_builtin.initialPeersList.push_back(locator_1);
+    remote_builtin.discovery_config.initial_announcements.count = 0;
+    remote_builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(3600, 0);
+    remote_builtin.discovery_config.leaseDuration = Duration_t(7200, 0);
+
+    DomainParticipant* remote = factory->create_participant(domain_id, remote_qos);
+    ASSERT_NE(nullptr, remote);
+
+    // New participant: delays the second send towards the remote participant
+    std::atomic<uint32_t> sends_to_remote{0};
+    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    test_transport->interfaceWhiteList.push_back("127.0.0.1");
+    test_transport->locator_filter_ = [&sends_to_remote, port_1, port_2](
+        const Locator& destination, int32_t)
+            {
+                if ((destination.port == port_1 || destination.port == port_2) && (1u == sends_to_remote++))
+                {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+                }
+                return false;
+            };
+
+    DomainParticipantQos new_qos = PARTICIPANT_QOS_DEFAULT;
+    new_qos.transport().use_builtin_transports = false;
+    new_qos.transport().user_transports.push_back(test_transport);
+    auto& new_builtin = new_qos.wire_protocol().builtin;
+    new_builtin.metatrafficMulticastLocatorList.clear();
+    new_builtin.initialPeersList.clear();
+    new_builtin.initialPeersList.push_back(locator_1);
+    new_builtin.initialPeersList.push_back(locator_2);
+
+    DiscoveryListener new_listener;
+    DomainParticipant* new_participant = factory->create_participant(domain_id, new_qos, &new_listener);
+    ASSERT_NE(nullptr, new_participant);
+    EXPECT_GE(sends_to_remote.load(), 2u);
+
+    EXPECT_TRUE(new_listener.wait_discovery(std::chrono::seconds(3)));
+
+    factory->delete_participant(new_participant);
+    factory->delete_participant(remote);
 }
