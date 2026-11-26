@@ -62,6 +62,7 @@ TransportInterface* SharedMemTransportDescriptor::create_transport() const
 SharedMemTransport::SharedMemTransport(
         const SharedMemTransportDescriptor& descriptor)
     : TransportInterface(LOCATOR_KIND_SHM)
+    , host_id_(Host::instance().id())
     , configuration_(descriptor)
 {
 
@@ -69,6 +70,7 @@ SharedMemTransport::SharedMemTransport(
 
 SharedMemTransport::SharedMemTransport()
     : TransportInterface(LOCATOR_KIND_SHM)
+    , host_id_(Host::instance().id())
 {
 }
 
@@ -82,7 +84,7 @@ bool SharedMemTransport::getDefaultMetatrafficMulticastLocators(
         LocatorList& locators,
         uint32_t metatraffic_multicast_port) const
 {
-    locators.push_back(SHMLocator::create_locator(metatraffic_multicast_port, SHMLocator::Type::MULTICAST));
+    locators.push_back(SHMLocator::create_locator(metatraffic_multicast_port, SHMLocator::Type::MULTICAST, host_id_));
 
     return true;
 }
@@ -91,7 +93,7 @@ bool SharedMemTransport::getDefaultMetatrafficUnicastLocators(
         LocatorList& locators,
         uint32_t metatraffic_unicast_port) const
 {
-    locators.push_back(SHMLocator::create_locator(metatraffic_unicast_port, SHMLocator::Type::UNICAST));
+    locators.push_back(SHMLocator::create_locator(metatraffic_unicast_port, SHMLocator::Type::UNICAST, host_id_));
 
     return true;
 }
@@ -100,7 +102,7 @@ bool SharedMemTransport::getDefaultUnicastLocators(
         LocatorList& locators,
         uint32_t unicast_port) const
 {
-    auto locator = SHMLocator::create_locator(unicast_port, SHMLocator::Type::UNICAST);
+    auto locator = SHMLocator::create_locator(unicast_port, SHMLocator::Type::UNICAST, host_id_);
 
     fillUnicastLocator(locator, unicast_port);
     locators.push_back(locator);
@@ -160,7 +162,7 @@ bool SharedMemTransport::is_locator_allowed(
 bool SharedMemTransport::is_locator_reachable(
         const Locator_t& locator)
 {
-    bool is_reachable = SHMLocator::is_shm_and_from_this_host(locator);
+    bool is_reachable = SHMLocator::is_shm_and_from_this_host(locator, host_id_);
 
     if (is_reachable)
     {
@@ -750,6 +752,10 @@ bool SharedMemTransport::fillUnicastLocator(
     {
         locator.port = well_known_port;
     }
+
+    // Local locators must carry the (possibly prefix-derived) transport host id
+    locator.address[1] = octet(host_id_);
+    locator.address[2] = octet(host_id_ >> 8);
 
     return true;
 }

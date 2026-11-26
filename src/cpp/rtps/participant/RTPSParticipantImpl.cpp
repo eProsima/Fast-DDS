@@ -526,7 +526,7 @@ bool RTPSParticipantImpl::setup_transports()
         }
 
         bool transport_registered = register_transport && m_network_Factory.RegisterTransport(
-            transportDescriptor.get(), &m_att.properties, m_att.max_msg_size_no_frag);
+            transportDescriptor.get(), &m_att.properties, m_att.max_msg_size_no_frag, m_att.prefix);
 
         if (socket_descriptor != nullptr)
         {
