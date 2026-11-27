@@ -40,6 +40,8 @@
 #include <rtps/messages/CDRMessage.hpp>
 #include <rtps/network/NetworkFactory.hpp>
 
+#include <utils/thread.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -4049,8 +4051,14 @@ void read_cdr_message_from_regression_file(
 TEST(BuiltinDataSerializationTests, regressions)
 {
     std::vector<std::string> test_files = {
-        "./regressions/25507.bin"           // Redmine issue #25507
+        "./regressions/25507.bin",          // Redmine issue #25507
+        "./regressions/25626.bin"           // Redmine issue #25626
     };
+
+    // Discovery data may be processed on threads with a small stack (e.g. the 1 MiB default on Windows,
+    // or a user-configured ThreadSettings::stack_size). Process each file on a thread with such a stack,
+    // so that inputs exhausting the stack are detected on every platform and build type.
+    constexpr int32_t regression_stack_size = 1024 * 1024;
 
     uint8_t selector = 0;
     std::vector<uint8_t> payload;
@@ -4060,29 +4068,36 @@ TEST(BuiltinDataSerializationTests, regressions)
         CDRMessage_t msg(0);
         read_cdr_message_from_regression_file(test_file, selector, msg);
 
-        // Dispatch on the same selector used by fuzz_proxy_cdr, exercising the exact
-        // deserialization path used when receiving PDP/SEDP discovery data.
-        switch (selector)
-        {
-            case 0:
-            {
-                ParticipantProxyData pdata(RTPSParticipantAllocationAttributes{});
-                EXPECT_NO_THROW(pdata.read_from_cdr_message(&msg, true, network, false, c_VendorId_eProsima));
-                break;
-            }
-            case 1:
-            {
-                ReaderProxyData pdata(max_unicast_locators, max_multicast_locators);
-                EXPECT_NO_THROW(pdata.read_from_cdr_message(&msg, c_VendorId_eProsima));
-                break;
-            }
-            default:
-            {
-                WriterProxyData pdata(max_unicast_locators, max_multicast_locators);
-                EXPECT_NO_THROW(pdata.read_from_cdr_message(&msg, c_VendorId_eProsima));
-                break;
-            }
-        }
+        eprosima::thread worker(regression_stack_size, [&]()
+                {
+                    SCOPED_TRACE(test_file);
+
+                    // Dispatch on the same selector used by fuzz_proxy_cdr, exercising the exact
+                    // deserialization path used when receiving PDP/SEDP discovery data.
+                    switch (selector)
+                    {
+                        case 0:
+                        {
+                            ParticipantProxyData pdata(RTPSParticipantAllocationAttributes{});
+                            EXPECT_NO_THROW(pdata.read_from_cdr_message(&msg, true, network, false,
+                            c_VendorId_eProsima));
+                            break;
+                        }
+                        case 1:
+                        {
+                            ReaderProxyData pdata(max_unicast_locators, max_multicast_locators);
+                            EXPECT_NO_THROW(pdata.read_from_cdr_message(&msg, c_VendorId_eProsima));
+                            break;
+                        }
+                        default:
+                        {
+                            WriterProxyData pdata(max_unicast_locators, max_multicast_locators);
+                            EXPECT_NO_THROW(pdata.read_from_cdr_message(&msg, c_VendorId_eProsima));
+                            break;
+                        }
+                    }
+                });
+        worker.join();
     }
 }
 
