@@ -17,9 +17,14 @@
 #include <fstream>
 #include <future>
 #include <memory>
+#include <mutex>
 #include <sstream>
 #include <string>
 #include <thread>
+
+#if defined(__linux__)
+#include <time.h>
+#endif // if defined(__linux__)
 
 #include <fastcdr/Cdr.h>
 #include <gmock/gmock.h>
@@ -3453,6 +3458,146 @@ TEST(ParticipantTests, FailingSetListener)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(
                 participant_to_discover), RETCODE_OK);
 }
+
+// Keep a participant callback in flight until the test releases it.
+class BlockingParticipantListener : public DomainParticipantListener
+{
+public:
+
+    using DomainParticipantListener::on_participant_discovery;
+
+    BlockingParticipantListener()
+        : entered_(entered_promise_.get_future())
+        , release_(release_promise_.get_future().share())
+    {
+    }
+
+    bool wait_for_callback()
+    {
+        return entered_.wait_for(std::chrono::seconds(10)) == std::future_status::ready;
+    }
+
+    void release_callback()
+    {
+        release_promise_.set_value();
+    }
+
+    void on_participant_discovery(
+            DomainParticipant*,
+            fastdds::rtps::ParticipantDiscoveryStatus,
+            const ParticipantBuiltinTopicData&,
+            bool&) override
+    {
+        std::call_once(once_, [this]
+                {
+                    entered_promise_.set_value();
+                    // Bound the wait so a failed test cannot leave discovery blocked forever.
+                    release_.wait_for(std::chrono::seconds(10));
+                });
+    }
+
+private:
+
+    std::once_flag once_;
+    std::promise<void> entered_promise_;
+    std::future<void> entered_;
+    std::promise<void> release_promise_;
+    std::shared_future<void> release_;
+};
+
+// Drive the real RTPS listener without requiring network discovery or changing its counter directly.
+class ParticipantListenerAccessor : public DomainParticipantImpl
+{
+public:
+
+    static void notify_discovery(
+            DomainParticipantImpl& impl)
+    {
+        auto& listener = impl.*(&ParticipantListenerAccessor::rtps_listener_);
+        bool ignored = false;
+        listener.on_participant_discovery(nullptr,
+                fastdds::rtps::ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT,
+                ParticipantBuiltinTopicData{}, ignored);
+    }
+
+};
+
+// Exercise both successful wait paths and rejection while a callback is in flight.
+class ParticipantListenerWaitTests : public ::testing::TestWithParam<bool>
+{
+};
+
+TEST_P(ParticipantListenerWaitTests, SetListenerWaitsForCallback)
+{
+    BlockingParticipantListener listener;
+    auto factory = DomainParticipantFactory::get_instance();
+    auto deleter = [factory](DomainParticipant* participant)
+            {
+                if (participant != nullptr)
+                {
+                    EXPECT_EQ(factory->delete_participant(participant), RETCODE_OK);
+                }
+            };
+    DomainParticipantFactoryQos original_qos;
+    factory->get_qos(original_qos);
+    auto factory_qos = original_qos;
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    ASSERT_EQ(factory->set_qos(factory_qos), RETCODE_OK);
+    std::unique_ptr<DomainParticipant, decltype(deleter)> participant(
+        factory->create_participant(0, PARTICIPANT_QOS_DEFAULT, &listener), deleter);
+    EXPECT_EQ(factory->set_qos(original_qos), RETCODE_OK);
+    ASSERT_NE(participant, nullptr);
+
+    auto impl = participant.get()->*get_domain_participant_impl_ptr();
+    auto callback = std::async(std::launch::async, [impl]
+                    {
+                        ParticipantListenerAccessor::notify_discovery(*impl);
+                    });
+    ASSERT_TRUE(listener.wait_for_callback());
+    EXPECT_EQ(participant->set_listener(nullptr, std::chrono::seconds(0)), RETCODE_ERROR);
+    EXPECT_EQ(participant->get_listener(), &listener);
+
+    double cpu_seconds = 0;
+    bool clock_valid = true;
+    std::promise<void> started;
+    auto started_future = started.get_future();
+    const bool finite_timeout = GetParam();
+    auto result = std::async(std::launch::async, [&]
+                    {
+#if defined(__linux__)
+                        timespec before{}, after{};
+                        clock_valid = clock_gettime(CLOCK_THREAD_CPUTIME_ID, &before) == 0;
+#endif // if defined(__linux__)
+                        started.set_value();
+                        auto ret = finite_timeout ? participant->set_listener(nullptr, std::chrono::seconds(5)) :
+                        participant->set_listener(nullptr);
+#if defined(__linux__)
+                        clock_valid = (clock_gettime(CLOCK_THREAD_CPUTIME_ID, &after) == 0) && clock_valid;
+                        cpu_seconds = static_cast<double>(after.tv_sec - before.tv_sec) +
+                        static_cast<double>(after.tv_nsec - before.tv_nsec) / 1e9;
+#endif // if defined(__linux__)
+                        return ret;
+                    });
+
+    started_future.wait();
+    EXPECT_EQ(result.wait_for(std::chrono::milliseconds(300)), std::future_status::timeout);
+    listener.release_callback();
+    callback.get();
+    EXPECT_EQ(result.get(), RETCODE_OK);
+    EXPECT_EQ(participant->get_listener(), nullptr);
+#if defined(__linux__)
+    // A blocking wait should use much less than half of the 300 ms observation window.
+    // The old foreign-clock wait_until(max()) path instead burns a CPU core.
+    // With a native steady-clock backend this checks the ordinary blocking path.
+    EXPECT_TRUE(clock_valid);
+    EXPECT_LT(cpu_seconds, 0.15);
+#else
+    static_cast<void>(clock_valid);
+    static_cast<void>(cpu_seconds);
+#endif // if defined(__linux__)
+}
+
+INSTANTIATE_TEST_SUITE_P(ParticipantTests, ParticipantListenerWaitTests, ::testing::Bool());
 
 /*
  * This test checks the negative cases of the check_qos() function.
