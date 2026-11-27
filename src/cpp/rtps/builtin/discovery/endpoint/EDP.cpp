@@ -1307,6 +1307,10 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
     (void)participant_guid;
 
     EPROSIMA_LOG_INFO(RTPS_EDP, rdata->guid << " in topic: \"" << rdata->topic_name << "\"");
+    // Take the PDP mutex before any temporary proxy is taken from the pool, as the EDP listeners do.
+    // Otherwise, threads holding pool entries while waiting for the PDP mutex could block forever
+    // a thread holding the PDP mutex while waiting for a pool entry.
+    std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
 
     mp_RTPSParticipant->forEachUserWriter([&, rdata](BaseWriter& w) -> bool
             {
@@ -1389,6 +1393,10 @@ bool EDP::pairing_reader_proxy_with_local_writer(
         ReaderProxyData& rdata)
 {
     EPROSIMA_LOG_INFO(RTPS_EDP, rdata.guid << " in topic: \"" << rdata.topic_name << "\"");
+    // Take the PDP mutex before any temporary proxy is taken from the pool, as the EDP listeners do.
+    // Otherwise, threads holding pool entries while waiting for the PDP mutex could block forever
+    // a thread holding the PDP mutex while waiting for a pool entry.
+    std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
 
     mp_RTPSParticipant->forEachUserWriter([&](BaseWriter& w) -> bool
             {
@@ -1503,6 +1511,10 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
     (void)participant_guid;
 
     EPROSIMA_LOG_INFO(RTPS_EDP, wdata->guid << " in topic: \"" << wdata->topic_name << "\"");
+    // Take the PDP mutex before any temporary proxy is taken from the pool, as the EDP listeners do.
+    // Otherwise, threads holding pool entries while waiting for the PDP mutex could block forever
+    // a thread holding the PDP mutex while waiting for a pool entry.
+    std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
 
     mp_RTPSParticipant->forEachUserReader([&, wdata](BaseReader& r) -> bool
             {
@@ -1585,6 +1597,10 @@ bool EDP::pairing_writer_proxy_with_local_reader(
         WriterProxyData& wdata)
 {
     EPROSIMA_LOG_INFO(RTPS_EDP, wdata.guid << " in topic: \"" << wdata.topic_name << "\"");
+    // Take the PDP mutex before any temporary proxy is taken from the pool, as the EDP listeners do.
+    // Otherwise, threads holding pool entries while waiting for the PDP mutex could block forever
+    // a thread holding the PDP mutex while waiting for a pool entry.
+    std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
 
     mp_RTPSParticipant->forEachUserReader([&](BaseReader& r) -> bool
             {
